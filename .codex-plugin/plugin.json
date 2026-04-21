@@ -1,7 +1,7 @@
 {
-  "name": "multi-tenant-content-generation",
+  "name": "content-generation",
   "version": "0.1.0",
-  "description": "Standalone Codex plugin for multi-tenant brand normalization and premium content-generation workflows, starting with LinkedIn infographic production.",
+  "description": "Standalone Codex plugin for brand normalization and premium content-generation workflows, starting with LinkedIn infographic production.",
   "author": {
     "name": "Hisham"
   },
@@ -9,12 +9,11 @@
     "content-generation",
     "infographics",
     "branding",
-    "multi-tenant",
     "linkedin"
   ],
   "skills": "./skills/",
   "interface": {
-    "displayName": "Multi-Tenant Content Generation",
+    "displayName": "Content Generation",
     "shortDescription": "Brand-normalized visual content workflows",
     "longDescription": "Package reusable Codex skills for tenant-local brand normalization and premium content-production workflows. Version one includes normalize-brand and generate-infographic, with the plugin designed to grow into a broader content-generation umbrella.",
     "developerName": "Hisham",
