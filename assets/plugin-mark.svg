@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Multi-tenant content generation mark">
+  <rect width="128" height="128" rx="24" fill="#0B1220"/>
+  <rect x="18" y="22" width="92" height="84" rx="18" fill="#1565C0"/>
+  <path d="M34 44h60v10H34zm0 18h40v10H34zm0 18h52v10H34z" fill="#EAF3FF"/>
+</svg>

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Normalize Brand"
+  short_description: "Normalize tenant brand state for reuse."
+  default_prompt: "Use $normalize-brand to turn this tenant folder into a normalized draft brand profile and validation report."

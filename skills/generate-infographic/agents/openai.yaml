@@ -1,0 +1,4 @@
+interface:
+  display_name: "Generate Infographic"
+  short_description: "Generate a branded infographic with QA."
+  default_prompt: "Use $generate-infographic to create a LinkedIn infographic from this source using the tenant folder."
