@@ -20,10 +20,13 @@ Required fields:
 - `output_paths`
 - `render_method`
 - `qa_result`
+- `png_qa_passed`
+- `pdf_back_verification_passed`
+- `linkedin_mobile_checks_passed`
 - `assumptions`
 
 Manifest intent:
 
 - let each final asset folder carry its own production context
 - record what source was used, which tenant folder was used, how the asset was rendered, and what QA outcome was reached
-
+- record whether the accepted PNG, PDF-back verification, and LinkedIn mobile checks actually passed
