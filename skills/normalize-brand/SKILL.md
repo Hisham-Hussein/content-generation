@@ -1,13 +1,13 @@
 ---
 name: normalize-brand
-description: Use when a user wants to turn a messy tenant brand folder into a stable normalized brand profile and validation report for downstream content-generation work.
+description: Use when a tenant brand folder is messy, ambiguous, or needs cleanup into a reusable normalized profile and validation report.
 ---
 
 # Normalize Brand
 
 This skill is the tenant-brand normalization workflow for the multi-tenant content-generation plugin.
 
-Use it when the user provides a tenant folder and wants Codex to inspect brand materials, validate readiness, and produce the canonical tenant-local brand files used by downstream content-generation skills.
+Use it when the user provides a tenant folder and wants Codex to inspect brand materials, clarify ambiguity, and produce optional tenant-local cleanup artifacts for later reuse.
 
 ## Required Inputs
 
@@ -42,6 +42,7 @@ If the user does not provide a tenant folder path, stop and ask for it. Do not g
 - The canonical tenant file is `normalized-brand-profile.md`.
 - The canonical audit file is `brand-validation-report.md`.
 - Tenant state stays in the tenant folder, not in the plugin.
+- `generate-infographic` does not require these files in version one.
 - Incomplete but usable brand kits should continue with clearly recorded inferences and defaults.
 - Over-complete brand kits should be narrowed to the relevant signal without error.
 - Truly blocking gaps should stop the workflow clearly.
@@ -52,4 +53,3 @@ If the user does not provide a tenant folder path, stop and ask for it. Do not g
 - auto-approve a draft normalized brand profile
 - maintain multiple active normalized profiles in version one
 - refresh an existing approved profile automatically unless the user explicitly asks
-

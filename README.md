@@ -1,6 +1,6 @@
 # Content Generation
 
-Standalone Codex plugin for brand-normalized content-generation workflows.
+Standalone Codex plugin for tenant-local content-generation workflows.
 
 Version one is intentionally narrow:
 
@@ -11,12 +11,12 @@ The plugin is designed as the umbrella for a broader content-generation toolkit.
 
 ## What This Plugin Does
 
-`normalize-brand` turns a messy tenant brand folder into stable tenant-local brand state:
+`normalize-brand` is an optional cleanup utility for messy tenant brand folders:
 
 - `normalized-brand-profile.md`
 - `brand-validation-report.md`
 
-`generate-infographic` uses an approved tenant-local normalized brand profile plus source text to drive LinkedIn-first single-page infographic production with:
+`generate-infographic` uses the tenant's original brand materials plus source text to drive LinkedIn-first single-page infographic production with:
 
 - brief review before generation
 - HTML as source of truth
@@ -57,9 +57,8 @@ GitHub repository:
 
 Version one includes:
 
-- tenant-local brand normalization
+- optional tenant-local brand normalization utility
 - LinkedIn-first single-page infographic generation
-- explicit brand approval before generation
 - explicit brief review before generation
 
 Version one does not yet include:
@@ -68,4 +67,3 @@ Version one does not yet include:
 - single-image generation
 - copy polishing
 - broader platform variants beyond the first infographic workflow
-

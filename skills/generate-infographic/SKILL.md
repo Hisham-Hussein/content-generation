@@ -1,6 +1,6 @@
 ---
 name: generate-infographic
-description: Use when a user wants a premium LinkedIn-first single-page infographic generated from source text using a tenant-local approved normalized brand profile.
+description: Use when a user wants a premium LinkedIn-first single-page infographic generated from source text using the tenant's original local brand materials.
 ---
 
 # Generate Infographic
@@ -18,12 +18,13 @@ If the user does not provide a tenant folder, stop and ask for it. Do not infer 
 
 ## Read Before Generating
 
-1. `../normalize-brand/references/normalized-brand-profile-contract.md`
+1. `references/brand-material-intake.md`
 2. `references/infographic-brief-contract.md`
 3. `references/asset-manifest-contract.md`
 4. `references/qa-checklist.md`
 5. `references/production-render-workflow.md`
 6. `references/linkedin-mobile-optimization.md`
+7. `references/render-environment-preflight.md`
 
 ## Workflow
 
@@ -33,14 +34,17 @@ If the user does not provide a tenant folder, stop and ask for it. Do not infer 
    - source label or title
    - source locator
    - attribution notes if present
-2. Resolve the user-provided tenant folder and check for `normalized-brand-profile.md`.
-3. If no normalized brand profile exists:
-   - invoke `normalize-brand`
-   - write the draft normalized brand profile and validation report
-   - surface them for review
-   - stop before generation
-4. If the normalized brand profile exists but is still `draft`, stop and ask the user to review and approve it before generation.
-5. Use the approved normalized brand profile as the canonical brand state. Do not auto-refresh it.
+2. Resolve the user-provided tenant folder and inspect the original brand materials directly.
+3. Read the tenant's available brand sources as-is:
+   - `README.md` when present
+   - tenant `SKILL.md` when present
+   - HTML, CSS, token, or brand-kit files when present
+   - required local assets and approved examples when present
+4. Use the original tenant brand materials as the canonical brand source for the run. Do not flatten them into a required normalized profile.
+5. Stop only on genuine brand blockers:
+   - conflicting active brands or personas
+   - missing essential render assets explicitly required by the tenant materials
+   - ambiguity that prevents choosing a usable active publishing brand
 6. Derive a lightweight normalized infographic brief using `references/infographic-brief-contract.md`.
 7. Surface the brief to the user for explicit review and approval before generation proceeds.
 8. If the brief has unresolved gaps, stop at brief review instead of pretending the brief is complete.
@@ -56,14 +60,19 @@ If the user does not provide a tenant folder, stop and ask for it. Do not infer 
    - fewer words before smaller type
    - restrained branding
    - safe padding and clean section separation
-12. Render PNG from the HTML artboard with Playwright + Chromium.
-13. Open and inspect the rendered PNG using `references/qa-checklist.md`.
-14. If the output is clearly fixable, revise the HTML and re-render within a small bounded loop.
-15. If the PNG is technically valid but still crowded, muddy, weak on first glance, or poor on mobile, treat it as `revise-and-retry`, not `pass`.
-16. If hard QA still fails after bounded retries, stop and escalate instead of presenting the output as accepted.
-17. Export PDF from the verified PNG.
-18. Rasterize the PDF back to an image and verify it matches closely enough for production sanity.
-19. Write the final asset bundle into the target asset folder:
+12. Run render-environment preflight before rendering:
+   - detect an existing Playwright runtime first
+   - detect an existing Chromium runtime first
+   - reuse a machine-level install when available
+   - install only if the required render runtime is genuinely missing
+13. Render PNG from the HTML artboard with Playwright + Chromium.
+14. Open and inspect the rendered PNG using `references/qa-checklist.md`.
+15. If the output is clearly fixable, revise the HTML and re-render within a small bounded loop.
+16. If the PNG is technically valid but still crowded, muddy, weak on first glance, or poor on mobile, treat it as `revise-and-retry`, not `pass`.
+17. If hard QA still fails after bounded retries, stop and escalate instead of presenting the output as accepted.
+18. Export PDF from the verified PNG.
+19. Rasterize the PDF back to an image and verify it matches closely enough for production sanity.
+20. Write the final asset bundle into the target asset folder:
    - `infographic.html`
    - `infographic.png`
    - `infographic.pdf`
@@ -80,6 +89,7 @@ If the user does not provide a tenant folder, stop and ask for it. Do not infer 
 
 - treat Playwright or browser render success as QA success
 - treat a technically valid render as acceptable if it fails mobile readability or composition quality
+- install Playwright browsers before checking whether a usable machine-level runtime already exists
+- require a normalized brand profile before infographic generation
 - skip brief review
-- generate from a draft brand profile as if it were approved
 - introduce carousel, single-image, or other future workflows into version one

@@ -1,7 +1,7 @@
 {
   "name": "content-generation",
   "version": "0.1.0",
-  "description": "Standalone Codex plugin for brand normalization and premium content-generation workflows, starting with LinkedIn infographic production.",
+  "description": "Standalone Codex plugin for premium tenant-local content-generation workflows, starting with LinkedIn infographic production.",
   "author": {
     "name": "Hisham"
   },
@@ -14,8 +14,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Content Generation",
-    "shortDescription": "Brand-normalized visual content workflows",
-    "longDescription": "Package reusable Codex skills for tenant-local brand normalization and premium content-production workflows. Version one includes normalize-brand and generate-infographic, with the plugin designed to grow into a broader content-generation umbrella.",
+    "shortDescription": "Tenant-local visual content workflows",
+    "longDescription": "Package reusable Codex skills for premium tenant-local content-production workflows. Version one includes an optional normalize-brand utility and a generate-infographic workflow that works directly from tenant brand materials.",
     "developerName": "Hisham",
     "category": "Productivity",
     "capabilities": [
@@ -23,9 +23,9 @@
       "Write"
     ],
     "defaultPrompt": [
-      "Normalize this tenant folder into a reusable approved-ready brand profile",
+      "Clean up or clarify this tenant brand folder when the materials are messy",
       "Generate a premium LinkedIn infographic using this tenant folder and source text",
-      "Use the content-generation plugin to normalize brand state before visual production"
+      "Use the content-generation plugin to generate visual assets directly from tenant brand materials"
     ],
     "brandColor": "#1565C0",
     "composerIcon": "./assets/plugin-mark.svg",

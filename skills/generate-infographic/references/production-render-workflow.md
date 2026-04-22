@@ -20,21 +20,23 @@ Use this as the normative execution loop for version-one infographic production.
    - layout concept
    - attribution requirements
 3. Build a deterministic fixed-size HTML artboard.
-4. Render the artboard to PNG with Playwright + Chromium.
-5. Open the PNG and inspect it visually.
-6. Reject outputs that are:
+4. Run render-environment preflight before rendering.
+5. Prefer existing machine-level Playwright and Chromium runtimes before any install step.
+6. Render the artboard to PNG with Playwright + Chromium.
+7. Open the PNG and inspect it visually.
+8. Reject outputs that are:
    - crowded,
    - muddy,
    - weak in hierarchy,
    - hard to read on mobile,
    - structurally broken,
    - or compositionally wrong even if the render succeeded.
-7. Revise the HTML and rerender within a small bounded loop.
-8. Only after the PNG passes QA:
+9. Revise the HTML and rerender within a small bounded loop.
+10. Only after the PNG passes QA:
    - export the verified PNG to PDF,
    - rasterize the PDF back to PNG,
    - verify the PDF-back raster still matches closely enough for production sanity.
-9. Write the final bundle and trace the render method and QA result in the manifest.
+11. Write the final bundle and trace the render method, runtime source, and QA result in the manifest.
 
 ## Deterministic Artboard Rules
 
@@ -45,6 +47,8 @@ Use this as the normative execution loop for version-one infographic production.
 
 ## Render Rules
 
+- Perform environment detection before any Playwright browser install attempt.
+- Reuse existing machine-level runtimes when they are available.
 - Playwright success means only that rendering succeeded.
 - Screenshot review is mandatory after every render pass.
 - Do not export or present the output as final until the PNG passes visual QA.
