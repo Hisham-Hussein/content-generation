@@ -32,32 +32,35 @@ The strongest single-image infographic pattern is a save-worthy field sheet:
    - claim boundaries
    - proof points
    - layout concept
+   - layout profile
    - attribution requirements
 3. Build a deterministic fixed-size HTML artboard.
-4. Run render-environment preflight before rendering.
-5. Prefer existing machine-level Playwright and Chromium runtimes before any install step.
-6. Render the artboard to PNG with Playwright + Chromium.
-7. Open the PNG and inspect it visually.
-8. Reject outputs that are:
+4. Embed the `mobile-linkedin-compliance` JSON block in the HTML and mark each counted content block with `data-content-block`.
+5. Run `scripts/validate-mobile-linkedin-infographic.mjs` before rendering.
+6. Run render-environment preflight before rendering.
+7. Prefer existing machine-level Playwright and Chromium runtimes before any install step.
+8. Render the artboard to PNG with Playwright + Chromium.
+9. Open the PNG and inspect it visually.
+10. Reject outputs that are:
    - crowded,
    - muddy,
    - weak in hierarchy,
    - hard to read on mobile,
    - structurally broken,
    - or compositionally wrong even if the render succeeded.
-9. Revise the HTML and rerender within a small bounded loop.
-10. Only after the PNG passes QA:
+11. Revise the HTML and rerender within a small bounded loop.
+12. Only after the PNG passes QA:
    - export the verified PNG to PDF,
    - rasterize the PDF back to PNG,
    - verify the PDF-back raster still matches closely enough for production sanity.
-11. Write the final bundle and trace the render method, runtime source, and QA result in the manifest.
+13. Write the final bundle and trace the render method, runtime source, mobile compliance result, and QA result in the manifest.
 
 ## Deterministic Artboard Rules
 
 - Use a fixed 4:5 artboard.
-- Default authoring artboard: `1200 x 1500 px`
-- Default PNG export target: `2400 x 3000 px`
-- Default PDF page ratio: `900 x 1125 pt`
+- Default authoring artboard: `1080 x 1350 px`
+- Default PNG export target: `1080 x 1350 px`
+- Default PDF page ratio should preserve the verified PNG ratio
 - Avoid responsive web-page behavior inside the production artboard.
 - Keep the HTML/CSS layout deterministic.
 - Preserve explicit section boundaries and safe internal spacing.
@@ -129,6 +132,7 @@ pdftoppm -png -r 144 <path-to-pdf> <output-prefix>
 The asset is complete only when all of the following are true:
 
 - the brief was approved,
+- the validator passed or was explicitly overridden,
 - the PNG passed screenshot QA,
 - the PDF-back raster check passed,
 - the manifest records the accepted render method and QA result,

@@ -18,6 +18,7 @@ Minimum fields:
 - `claim_guardrails`
 - `visual_angle`
 - `source_attribution_requirements`
+- `layout_profile`
 
 Brief review rule:
 
@@ -25,3 +26,9 @@ Brief review rule:
 - the user may approve it, request changes, or stop
 - if required fields cannot be derived confidently, stop at brief review and surface the gaps clearly
 
+Layout profile rule:
+
+- `layout_profile` must be explicitly chosen before generation
+- allowed version-one values:
+  - `single_idea_infographic`
+  - `stat_poster`

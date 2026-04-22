@@ -2,6 +2,8 @@
 
 Every generated infographic must pass screenshot review by the agent before it is treated as complete.
 
+Validator pass is required before render. QA does not replace validator enforcement.
+
 ## Allowed Outcomes
 
 - `pass`
@@ -26,10 +28,12 @@ Reject before final output if any of these are true:
 - branding, logos, CTA treatment, or proof annotations overpower the educational message
 - safe padding is weak and the layout sits too close to edges
 - the asset looks obviously wrong to a human reviewer within the first second of inspection
+- the validator was skipped or failed without an explicit override token from the user
 
 ## QA Loop Rule
 
 - Playwright success does not mean the asset is acceptable.
+- Validator success does not mean the asset is acceptable.
 - A technically correct render can still fail QA if the composition is weak.
 - If the asset is fixable, revise the HTML and re-render.
 - If the asset still fails after a small bounded number of attempts, stop and escalate instead of presenting it as accepted output.

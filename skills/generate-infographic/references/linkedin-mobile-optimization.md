@@ -13,6 +13,17 @@ Treat LinkedIn infographics as mobile-first visual explanations, not posters.
 
 If the asset cannot be read clearly on a phone, it should not be posted.
 
+## Enforcement Model
+
+These rules are not optional style advice.
+
+- Validator failure is a hard stop by default.
+- The only allowed bypass is an explicit user override token: `OVERRIDE_MOBILE_RULES`
+- The override token is case-sensitive.
+- The override applies to the current generation run only.
+- Override bypasses numeric validator gates only.
+- Override does not bypass screenshot QA, clipped-layout rejection, or unreadable-output rejection.
+
 ## Use 4:5 For Most Infographics
 
 Best for:
@@ -47,6 +58,37 @@ Use square only when the design is simple or desktop consistency matters more th
 - Avoid paragraphs, dense tables, tiny legends, and cramped captions.
 - If a block cannot stay readable at comfortable size, cut the content.
 - If the design feels crowded, reduce copy before shrinking type or lowering contrast.
+
+## Hard Validator Rules
+
+- artboard must be exactly `1080 x 1350 px`
+- safe padding must be at least `80 px` on all sides
+- `headline_px >= 52`
+- `section_px >= 34`
+- `body_px >= 24`
+- `caption_px >= 24`
+- content block count must not exceed `5`
+- the HTML must include:
+  - a `mobile-linkedin-compliance` JSON block
+  - `data-content-block` markers for counted content blocks
+
+## Content Block Taxonomy
+
+For validator counting, only these count toward the `5`-block maximum:
+
+- `hero`
+- `support`
+- `evidence`
+- `proof`
+- `takeaway`
+
+These do not count as content blocks:
+
+- eyebrow or meta labels
+- source notes
+- CTA container
+- signature or logo treatment
+- footer attribution
 
 ## Design For Scanning, Not Reading
 
