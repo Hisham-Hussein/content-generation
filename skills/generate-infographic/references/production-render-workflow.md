@@ -2,6 +2,8 @@
 
 Use this as the normative execution loop for version-one infographic production.
 
+Read this together with `../../references/shared-art-direction-principles.md`.
+
 ## Core Model
 
 - strategic brief first
@@ -9,6 +11,18 @@ Use this as the normative execution loop for version-one infographic production.
 - PNG as the primary publishing asset
 - PDF as a derivative export from the verified PNG
 - the brief is a compression of the post argument, not a decoration of the full post
+- one dominant visual system should carry the page
+- composition quality outranks decorative surface treatment
+
+## Shared Art-Direction Requirements
+
+- Translate the post into a visual argument, not a caption recap.
+- Choose one dominant visual system.
+- Use one memorable structural motif only when it sharpens the idea.
+- Keep cards, borders, and separators selective.
+- Remove copy before shrinking type or lowering contrast.
+- Reject outputs that are technically correct but visually generic, muddy, or overcrowded.
+- If approved tenant examples exist, treat them as a quality floor.
 
 ## Proven Layout Pattern
 
@@ -34,26 +48,30 @@ The strongest single-image infographic pattern is a save-worthy field sheet:
    - layout concept
    - layout profile
    - attribution requirements
-3. Build a deterministic fixed-size HTML artboard.
-4. Embed the `mobile-linkedin-compliance` JSON block in the HTML and mark each counted content block with `data-content-block`.
-5. Run `scripts/validate-mobile-linkedin-infographic.mjs` before rendering.
-6. Run render-environment preflight before rendering.
-7. Prefer existing machine-level Playwright and Chromium runtimes before any install step.
-8. Render the artboard to PNG with Playwright + Chromium.
-9. Open the PNG and inspect it visually.
-10. Reject outputs that are:
+3. Choose one dominant visual system and keep the rest of the page subordinate to it.
+4. If tenant approved or rejected examples exist, use them actively before generating.
+5. Build a deterministic fixed-size HTML artboard.
+6. Embed the `mobile-linkedin-compliance` JSON block in the HTML and mark each counted content block with `data-content-block`.
+7. Run `scripts/validate-mobile-linkedin-infographic.mjs` before rendering.
+8. Run render-environment preflight before rendering.
+9. Prefer existing machine-level Playwright and Chromium runtimes before any install step.
+10. Render the artboard to PNG with Playwright + Chromium.
+11. Open the PNG and inspect it visually.
+12. Reject outputs that are:
    - crowded,
    - muddy,
    - weak in hierarchy,
    - hard to read on mobile,
    - structurally broken,
+   - generic or template-like,
+   - caption-decorative instead of argumentative,
    - or compositionally wrong even if the render succeeded.
-11. Revise the HTML and rerender within a small bounded loop.
-12. Only after the PNG passes QA:
+13. Revise the HTML and rerender within a small bounded loop.
+14. Only after the PNG passes QA:
    - export the verified PNG to PDF,
    - rasterize the PDF back to PNG,
    - verify the PDF-back raster still matches closely enough for production sanity.
-13. Write the final bundle and trace the render method, runtime source, mobile compliance result, and QA result in the manifest.
+15. Write the final bundle and trace the render method, runtime source, mobile compliance result, and QA result in the manifest.
 
 ## Deterministic Artboard Rules
 
@@ -80,7 +98,7 @@ The strongest single-image infographic pattern is a save-worthy field sheet:
 - Perform environment detection before any Playwright browser install attempt.
 - Reuse existing machine-level runtimes when they are available.
 - Recommended render settings:
-  - viewport `1200 x 1500`
+  - viewport `1080 x 1350`
   - device scale factor `2`
   - wait for page load and fonts before screenshot
   - screenshot the fixed artboard, not a responsive page viewport
@@ -106,16 +124,22 @@ Use this sequence for format verification:
    - clipped or hidden sections
    - crowded zones that read as one merged block
 4. Check composition quality, not just render fidelity:
+   - the page communicates one dominant visual system
+   - the main idea is obvious in about 3 seconds
    - structural motifs are selective
    - borders/cards are not overused
    - hierarchy is clear in a 3-second mobile scan
    - no section feels cramped or muddy
-5. Confirm image dimensions.
-6. If PDF output is suspicious:
+   - the output does not feel like a generic social template
+5. When approved tenant examples exist:
+   - compare the output against them for readability, density, and polish
+   - reject the output if it is clearly weaker or more generic
+6. Confirm image dimensions.
+7. If PDF output is suspicious:
    - run `pdfinfo`
    - rasterize the PDF back to PNG with `pdftoppm`
    - visually compare the rasterized PDF against the original PNG
-7. Remove temporary diagnostic files after debugging.
+8. Remove temporary diagnostic files after debugging.
 
 ## Useful Diagnostic Commands
 
@@ -136,6 +160,7 @@ The asset is complete only when all of the following are true:
 - the PNG passed screenshot QA,
 - the PDF-back raster check passed,
 - the manifest records the accepted render method and QA result,
+- the output cleared the shared art-direction quality bar,
 - no temporary diagnostic files remain in the final output folder.
 
 ## Acceptance Criteria
@@ -146,6 +171,7 @@ The asset is complete only when all of the following are true:
 - PDF is one page.
 - PDF has the expected page ratio.
 - Rasterized PDF visually matches the PNG.
+- Output is not obviously weaker than approved tenant examples when they exist.
 - No temporary debug artifacts remain in the final asset folder.
 
 ## Prompting And Agent Sequence
