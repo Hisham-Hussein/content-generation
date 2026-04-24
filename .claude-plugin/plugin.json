@@ -1,0 +1,15 @@
+{
+  "name": "content-generation",
+  "description": "Package reusable skills for premium tenant-local content-production workflows. Version one includes a normalize-brand utility and a generate-infographic workflow that works directly from tenant brand materials.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Hisham"
+  },
+  "license": "MIT",
+  "keywords": [
+    "content-generation",
+    "infographics",
+    "branding",
+    "linkedin"
+  ]
+}

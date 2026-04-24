@@ -1,0 +1,19 @@
+{
+  "name": "content-generation",
+  "owner": {
+    "name": "Hisham"
+  },
+  "metadata": {
+    "description": "Tenant-local visual content workflows for LinkedIn and branded infographic production",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "content-generation",
+      "source": "./",
+      "description": "Skills for premium tenant-local content-production workflows including infographic generation and brand normalization",
+      "version": "0.1.0",
+      "strict": true
+    }
+  ]
+}
