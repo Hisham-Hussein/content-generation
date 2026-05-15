@@ -24,6 +24,7 @@ Required fields:
 - `png_qa_passed`
 - `pdf_back_verification_passed`
 - `linkedin_mobile_checks_passed`
+- `post_render_bounds_passed`
 - `mobile_compliance`
 - `layout_profile`
 - `pdf_matches_png`
@@ -33,6 +34,6 @@ Manifest intent:
 
 - let each final asset folder carry its own production context
 - record what source was used, which tenant folder was used, how the asset was rendered, and what QA outcome was reached
-- record whether the accepted PNG, PDF-back verification, and LinkedIn mobile checks actually passed
+- record whether the accepted PNG, PDF-back verification, post-render bounds check, and LinkedIn mobile checks actually passed
 - record whether the runtime was reused from the machine or required a browser install/download
 - record whether mobile checks passed normally, failed, or were explicitly overridden for the run

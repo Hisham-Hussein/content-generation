@@ -34,7 +34,9 @@ Reject before final output if any of these are true:
 - branding, logos, CTA treatment, or proof annotations overpower the educational message
 - safe padding is weak and the layout sits too close to edges
 - the asset looks obviously wrong to a human reviewer within the first second of inspection
-- the validator was skipped or failed without an explicit override token from the user
+- the pre-render validator was skipped or failed without an explicit override token from the user
+- the post-render bounds check was not run or failed (footer clipped, content overflowing canvas, sections touching with less than 12px gap)
+- QA was declared based on a thumbnail or reduced-size preview instead of the full-size PNG or programmatic checks
 
 ## First-Glance Quality Check
 

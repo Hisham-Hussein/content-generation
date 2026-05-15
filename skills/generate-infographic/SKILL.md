@@ -27,6 +27,7 @@ If the user does not provide a tenant folder, stop and ask for it. Do not infer 
 7. `references/linkedin-mobile-optimization.md`
 8. `references/render-environment-preflight.md`
 9. `scripts/validate-mobile-linkedin-infographic.mjs`
+10. `scripts/validate-post-render.mjs`
 
 ## Workflow
 
@@ -80,13 +81,18 @@ If the user does not provide a tenant folder, stop and ask for it. Do not infer 
    - reuse a machine-level install when available
    - install only if the required render runtime is genuinely missing
 17. Render PNG from the HTML artboard with Playwright + Chromium.
-18. Open and inspect the rendered PNG using `references/qa-checklist.md` and `../../references/shared-art-direction-principles.md`.
-19. If the output is clearly fixable, revise the HTML and re-render within a small bounded loop.
-20. If the PNG is technically valid but still crowded, muddy, generic, template-like, caption-decorative, weak on first glance, or poor on mobile, treat it as `revise-and-retry`, not `pass`.
-21. If hard QA still fails after bounded retries, stop and escalate instead of presenting the output as accepted.
-22. Export PDF from the verified PNG.
-23. Rasterize the PDF back to an image and verify it matches closely enough for production sanity.
-24. Write the final asset bundle into the target asset folder:
+18. Run `scripts/validate-post-render.mjs` against the loaded page inside the Playwright session, before taking the screenshot:
+   - hard fail if the footer is clipped or invisible
+   - hard fail if any content block overflows the canvas
+   - hard fail if consecutive sections have less than 12px gap between them
+   - if post-render validation fails, fix the HTML layout and re-render — do not proceed to screenshot QA with a clipped layout
+19. Open and inspect the rendered PNG using `references/qa-checklist.md` and `../../references/shared-art-direction-principles.md`.
+20. If the output is clearly fixable, revise the HTML and re-render within a small bounded loop.
+21. If the PNG is technically valid but still crowded, muddy, generic, template-like, caption-decorative, weak on first glance, or poor on mobile, treat it as `revise-and-retry`, not `pass`.
+22. If hard QA still fails after bounded retries, stop and escalate instead of presenting the output as accepted.
+23. Export PDF from the verified PNG.
+24. Rasterize the PDF back to an image and verify it matches closely enough for production sanity.
+25. Write the final asset bundle into the target asset folder:
    - `infographic.html`
    - `infographic.png`
    - `infographic.pdf`
@@ -105,7 +111,9 @@ If the user does not provide a tenant folder, stop and ask for it. Do not infer 
 - treat a technically valid render as acceptable if it fails mobile readability or composition quality
 - treat the shared art-direction principles as optional guidance
 - ignore approved tenant examples when they are available
-- skip the validator or treat validator failure as a warning by default
+- skip the pre-render validator or treat validator failure as a warning by default
+- skip the post-render bounds check or treat a clipped footer as acceptable
+- declare QA pass based on a thumbnail — inspect the full-size PNG or run programmatic checks
 - install Playwright browsers before checking whether a usable machine-level runtime already exists
 - require a normalized brand profile before infographic generation
 - skip brief review

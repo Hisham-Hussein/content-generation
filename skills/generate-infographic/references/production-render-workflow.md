@@ -56,8 +56,9 @@ The strongest single-image infographic pattern is a save-worthy field sheet:
 8. Run render-environment preflight before rendering.
 9. Prefer existing machine-level Playwright and Chromium runtimes before any install step.
 10. Render the artboard to PNG with Playwright + Chromium.
-11. Open the PNG and inspect it visually.
-12. Reject outputs that are:
+11. Run post-render bounds check inside the Playwright session before taking the screenshot: verify the footer fits within the canvas, no content blocks are clipped, and consecutive sections have at least 12px gap. Hard fail and fix the HTML if any check fails — do not proceed to visual QA with a clipped layout.
+12. Open the PNG and inspect it visually.
+13. Reject outputs that are:
    - crowded,
    - muddy,
    - weak in hierarchy,
@@ -66,12 +67,12 @@ The strongest single-image infographic pattern is a save-worthy field sheet:
    - generic or template-like,
    - caption-decorative instead of argumentative,
    - or compositionally wrong even if the render succeeded.
-13. Revise the HTML and rerender within a small bounded loop.
-14. Only after the PNG passes QA:
+14. Revise the HTML and rerender within a small bounded loop.
+15. Only after the PNG passes QA:
    - export the verified PNG to PDF,
    - rasterize the PDF back to PNG,
    - verify the PDF-back raster still matches closely enough for production sanity.
-15. Write the final bundle and trace the render method, runtime source, mobile compliance result, and QA result in the manifest.
+16. Write the final bundle and trace the render method, runtime source, mobile compliance result, post-render bounds result, and QA result in the manifest.
 
 ## Deterministic Artboard Rules
 
@@ -156,7 +157,8 @@ pdftoppm -png -r 144 <path-to-pdf> <output-prefix>
 The asset is complete only when all of the following are true:
 
 - the brief was approved,
-- the validator passed or was explicitly overridden,
+- the pre-render validator passed or was explicitly overridden,
+- the post-render bounds check passed (footer visible, no content clipped, section gaps sufficient),
 - the PNG passed screenshot QA,
 - the PDF-back raster check passed,
 - the manifest records the accepted render method and QA result,

@@ -35,6 +35,30 @@ Prefer this order:
 2. existing Playwright CLI or module plus existing Playwright browser cache
 3. fallback install only when neither path is available
 
+## Known Installation Paths
+
+Check these locations before searching or installing:
+
+**Playwright module (Node.js):**
+- Global CLI: `~/.nvm/versions/node/<version>/lib/node_modules/@playwright/cli/node_modules/playwright`
+- Project-local: `./node_modules/playwright`
+- npx cache: `~/.npm/_npx/*/node_modules/playwright`
+
+**Chromium browser binary (Playwright-managed):**
+- `~/.cache/ms-playwright/chromium-*/chrome-linux64/chrome`
+- Multiple versions may exist — use the latest numbered directory
+
+**Quick check commands:**
+```bash
+# Find Playwright module
+find ~/.nvm -path "*/playwright/index.js" 2>/dev/null | head -3
+
+# Find Chromium binary
+find ~/.cache/ms-playwright -name "chrome" -type f 2>/dev/null | head -3
+```
+
+Do not loop through trial-and-error discovery. Check these known paths first, then fall back to install only if none exist.
+
 ## Manifest Trace
 
 Record enough information to explain the render choice:
