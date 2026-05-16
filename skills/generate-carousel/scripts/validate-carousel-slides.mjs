@@ -41,7 +41,8 @@ if (!fs.default.existsSync(resolvedHtml)) {
   process.exit(1);
 }
 
-const playwright = await import(playwrightPath);
+const playwrightModule = await import(playwrightPath);
+const playwright = playwrightModule.default || playwrightModule;
 
 const SLIDE_WIDTH = 1080;
 const SLIDE_HEIGHT = 1350;

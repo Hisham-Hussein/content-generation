@@ -26,6 +26,15 @@ Run programmatic bounds checks on ALL slides. Visually inspect EVERY rendered PN
 **Render success is not QA success.**
 Playwright rendering without errors means nothing about visual quality. A technically valid render can still fail if SVGs are too faint, elements are clipped, or the composition is weak.
 
+**Use Lucide icons when available.**
+When a visual direction calls for standard icons (lock, pencil, database, arrow, etc.), use the Lucide CDN rather than hand-drawing them from SVG path coordinates. Place icons as HTML elements (`<i data-lucide="icon-name">`), not inside SVG. Hand-drawn SVG is appropriate for custom diagrams and compositions that Lucide doesn't cover.
+
+**Stay faithful to the visual direction's intent.**
+Creative embellishment that reinforces the message is fine. Adding unrelated elements that confuse the message is not.
+
+**Airtable slide text is sacred.**
+Every text block from the Airtable carousel slide must appear in the output. If the diagram is too large to fit alongside the text, shrink the diagram — never delete the text. The Airtable content was expert-approved upstream.
+
 </essential_principles>
 
 <quick_start>
@@ -73,7 +82,7 @@ For each carousel slide, compose an HTML section:
 
 - Wrap content in `.slide-content` (top-aligned) or `.slide-content-center` (for CTA)
 - Use `.slide-title`, `.slide-body` for text elements
-- Add the tag row with `.c-tag` and `.c-page-num` inline via flexbox
+- Add the tag row with `.c-tag` and `.c-page-num` inline via flexbox. Page number position must be consistent across all slides — always top-right. For centered layouts (CTA), use an absolutely positioned element outside the content wrapper: `<div style="position:absolute;top:60px;right:60px" class="c-page-num">N / N</div>`.
 - Compose a unique SVG content diagram inside `.slide-viz` following the slide's visual direction:
   - Use the SVG opacity ranges from the brand kit README (40–65% shapes, 85–100% text)
   - Use SVG sizing rules: `flex:1;margin:28px 0`, viewBox width 920, height 340–480px
@@ -81,6 +90,7 @@ For each carousel slide, compose an HTML section:
   - Elements must fill the viewBox — no large canvas with tiny clustered elements
 - Add `.author-footer` with author photo, name, role, logo, URL
 - Add the tenant's theme atmosphere elements as specified in the brand kit README
+  - Atmosphere elements (`.c-qa-ring`, `.c-watermark`, `.c-qa-orb`) must stay within the 1080×1350 frame. Do not use negative offsets — the validation script checks all absolutely positioned elements against the canvas bounds, regardless of `overflow:hidden` clipping.
 - Swipe cues (`.c-swipe`) are optional — the prototype omits them because the author footer already anchors the slide bottom. Include only if the visual direction calls for a navigation hint.
 
 If any slide's visual direction uses icons, include the Lucide icons CDN script and call `lucide.createIcons()` after the body. The brand kit README lists this as an optional dependency.
