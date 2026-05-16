@@ -49,10 +49,19 @@ If the user does not provide a tenant folder, stop and ask for it. Do not infer 
    - missing essential render assets explicitly required by the tenant materials
    - ambiguity that prevents choosing a usable active publishing brand
 6. Apply `../../references/shared-art-direction-principles.md` as the generic visual quality floor for the run.
-7. Derive a lightweight normalized infographic brief using `references/infographic-brief-contract.md`.
-8. Surface the brief to the user for explicit review and approval before generation proceeds.
-9. If the brief has unresolved gaps, stop at brief review instead of pretending the brief is complete.
-10. Translate the approved brief into a single-image infographic job:
+7. Check for a template catalog in the tenant folder:
+   - look for `ui_kits/linkedin_infographic_templates/` (or a similar `*infographic*templates*` directory) inside the tenant folder
+   - if found, read its `README.md` to learn the available layouts and the layout selection heuristic
+   - this step is conditional — if no template catalog exists, skip to brief derivation and generate freehand
+8. Derive a lightweight normalized infographic brief using `references/infographic-brief-contract.md`:
+   - if a template catalog was found in step 7, match the source content's structure against the catalog's layout selection heuristic and add a `recommended_template` field (template name + file) and a `template_rationale` field (one line explaining the match) to the brief
+   - if no template catalog exists, omit these fields and the agent generates the layout freehand
+   - the template recommendation is a suggestion, not a constraint — the user may override it at brief review
+9. Surface the brief to the user for explicit review and approval before generation proceeds:
+   - when a template recommendation is present, show it as part of the brief so the user approves both the content plan and the structural skeleton in one gate
+   - the user may accept the recommended template, request a different one from the catalog, or say "no template" to generate freehand
+10. If the brief has unresolved gaps, stop at brief review instead of pretending the brief is complete.
+11. Translate the approved brief into a single-image infographic job:
    - one main idea
    - one dominant visual system
    - one memorable structural motif only if it improves the message
@@ -60,39 +69,41 @@ If the user does not provide a tenant folder, stop and ask for it. Do not infer 
    - visual structure
    - proof treatment
    - attribution requirements
-11. If the tenant provides approved or rejected examples, treat them as an active quality floor and blacklist for this run.
-12. Build a fixed-size 4:5 HTML artboard as the editable source of truth.
-13. Build the artboard with an explicit mobile compliance contract embedded in the HTML:
+   - if a template was approved, use it as the structural skeleton — clone the template HTML and replace its slots with real content from the brief
+   - if no template was approved, compose the layout freehand using the brief's visual angle and the shared art-direction principles
+12. If the tenant provides approved or rejected examples, treat them as an active quality floor and blacklist for this run.
+13. Build a fixed-size 4:5 HTML artboard as the editable source of truth.
+14. Build the artboard with an explicit mobile compliance contract embedded in the HTML:
    - a `mobile-linkedin-compliance` JSON block
    - `data-content-block` markers for counted content blocks
    - a separate CTA marker when CTA is present
-14. Apply LinkedIn mobile optimization rules before first render:
+15. Apply LinkedIn mobile optimization rules before first render:
    - mobile readability over decorative density
    - fewer words before smaller type
    - restrained branding
    - safe padding and clean section separation
-15. Run `scripts/validate-mobile-linkedin-infographic.mjs` against the HTML before any render:
+16. Run `scripts/validate-mobile-linkedin-infographic.mjs` against the HTML before any render:
    - hard fail on mobile contract violations by default
    - use override only when the user explicitly provided the exact token `OVERRIDE_MOBILE_RULES`
    - the CLI flag `--override-mobile-rules` may only be used when that exact user token is present
-16. Run render-environment preflight before rendering:
+17. Run render-environment preflight before rendering:
    - detect an existing Playwright runtime first
    - detect an existing Chromium runtime first
    - reuse a machine-level install when available
    - install only if the required render runtime is genuinely missing
-17. Render PNG from the HTML artboard with Playwright + Chromium.
-18. Run `scripts/validate-post-render.mjs` against the loaded page inside the Playwright session, before taking the screenshot:
+18. Render PNG from the HTML artboard with Playwright + Chromium.
+19. Run `scripts/validate-post-render.mjs` against the loaded page inside the Playwright session, before taking the screenshot:
    - hard fail if the footer is clipped or invisible
    - hard fail if any content block overflows the canvas
    - hard fail if consecutive sections have less than 12px gap between them
    - if post-render validation fails, fix the HTML layout and re-render — do not proceed to screenshot QA with a clipped layout
-19. Open and inspect the rendered PNG using `references/qa-checklist.md` and `../../references/shared-art-direction-principles.md`.
-20. If the output is clearly fixable, revise the HTML and re-render within a small bounded loop.
-21. If the PNG is technically valid but still crowded, muddy, generic, template-like, caption-decorative, weak on first glance, or poor on mobile, treat it as `revise-and-retry`, not `pass`.
-22. If hard QA still fails after bounded retries, stop and escalate instead of presenting the output as accepted.
-23. Export PDF from the verified PNG.
-24. Rasterize the PDF back to an image and verify it matches closely enough for production sanity.
-25. Write the final asset bundle into the target asset folder:
+20. Open and inspect the rendered PNG using `references/qa-checklist.md` and `../../references/shared-art-direction-principles.md`.
+21. If the output is clearly fixable, revise the HTML and re-render within a small bounded loop.
+22. If the PNG is technically valid but still crowded, muddy, generic, template-like, caption-decorative, weak on first glance, or poor on mobile, treat it as `revise-and-retry`, not `pass`.
+23. If hard QA still fails after bounded retries, stop and escalate instead of presenting the output as accepted.
+24. Export PDF from the verified PNG.
+25. Rasterize the PDF back to an image and verify it matches closely enough for production sanity.
+26. Write the final asset bundle into the target asset folder:
    - `infographic.html`
    - `infographic.png`
    - `infographic.pdf`

@@ -48,6 +48,12 @@ Check these locations before searching or installing:
 - `~/.cache/ms-playwright/chromium-*/chrome-linux64/chrome`
 - Multiple versions may exist — use the latest numbered directory
 
+**Last known-good explicit paths (verified 2026-05-16):**
+- Playwright: `~/.nvm/versions/node/v24.11.1/lib/node_modules/@playwright/cli/node_modules/playwright`
+- Chromium: `~/.cache/ms-playwright/chromium-1217/chrome-linux64/chrome`
+
+Try these first before running discovery commands. If they fail (e.g. node version changed), fall back to discovery.
+
 **Quick check commands:**
 ```bash
 # Find Playwright module
@@ -57,7 +63,7 @@ find ~/.nvm -path "*/playwright/index.js" 2>/dev/null | head -3
 find ~/.cache/ms-playwright -name "chrome" -type f 2>/dev/null | head -3
 ```
 
-Do not loop through trial-and-error discovery. Check these known paths first, then fall back to install only if none exist.
+Do not loop through trial-and-error discovery. Check known-good paths first, then patterns, then install only if none exist.
 
 ## Manifest Trace
 

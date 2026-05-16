@@ -20,6 +20,11 @@ Minimum fields:
 - `source_attribution_requirements`
 - `layout_profile`
 
+Optional fields (present only when a template catalog exists in the tenant folder):
+
+- `recommended_template` — template name and file from the catalog (e.g., "Data Pipeline — `DataPipeline_QuietAurora.html`")
+- `template_rationale` — one line explaining why this template fits the content structure
+
 Brief review rule:
 
 - the derived brief must always be surfaced for user review before generation proceeds
