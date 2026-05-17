@@ -29,6 +29,8 @@ Playwright rendering without errors means nothing about visual quality. A techni
 **Use Lucide icons when available.**
 When a visual direction calls for standard icons (lock, pencil, database, arrow, etc.), use the Lucide CDN rather than hand-drawing them from SVG path coordinates. Place icons as HTML elements (`<i data-lucide="icon-name">`), not inside SVG. Hand-drawn SVG is appropriate for custom diagrams and compositions that Lucide doesn't cover.
 
+**This especially applies to arrows and connectors** — use `arrow-right`, `arrow-left-right`, `arrow-down`, `chevron-right`, etc. instead of hand-drawing SVG `<marker>` arrowheads. SVG markers render poorly at phone scale; Lucide icons stay crisp. Position them as absolutely placed HTML elements over the SVG diagram.
+
 **Stay faithful to the visual direction's intent.**
 Creative embellishment that reinforces the message is fine. Adding unrelated elements that confuse the message is not.
 
@@ -138,8 +140,11 @@ The subagent inspects every slide and returns a pass/fail report with specific f
 If QA fails on any slide:
 - Fix the HTML for the failing slides
 - Re-render only the affected slides
+- Visually read every re-rendered PNG before proceeding — render success is not visual success
 - Re-run programmatic validation and QA subagent on the fixed slides
 - Bounded retry: max 3 revision passes per slide
+
+Do not present fixed slides to the user without visually inspecting the re-rendered PNGs. The composing agent must verify the fix looks correct, not just that the render script succeeded.
 
 If a slide still fails after 3 attempts, stop and escalate to the user.
 

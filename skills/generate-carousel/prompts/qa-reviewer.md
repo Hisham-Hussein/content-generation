@@ -18,7 +18,7 @@ For each slide PNG, inspect and evaluate:
 
 1. **SVG opacity** — Are shape fills visibly in the 40–65% range? Are text labels clearly readable (85–100%)? Are accent colors (as defined in the brand kit) at 85–100%? Are strokes at 50–65%? If shapes look ghostly/faint like an infographic background, FAIL.
 
-2. **SVG composition** — Does the diagram match the slide's visual direction? Is it unique, or does it repeat the same glass card layout as adjacent slides?
+2. **SVG composition** — Does the diagram match the slide's visual direction? Check specific visual properties named in the direction, not just overall composition. If the direction says "↔", verify arrows are visibly bidirectional. If it says "split screen", verify two distinct halves. If it says "red X", verify a red X is present and visible. If it says "timeline", verify a chronological flow. A diagram that captures the general idea but misses a specific directional detail is a FAIL. Also check: is the diagram unique, or does it repeat the same glass card layout as adjacent slides?
 
 3. **Author footer** — Is it visible at the bottom? Is the separator line visible? Are photo, name, role, logo, and URL all present and legible?
 
