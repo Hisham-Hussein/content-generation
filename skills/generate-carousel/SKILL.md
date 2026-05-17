@@ -12,7 +12,7 @@ The Airtable pipeline handles content planning — this skill handles visual pro
 <essential_principles>
 
 **SVG content diagrams, not atmospheric backgrounds.**
-Carousel SVGs are readable content diagrams, not faint background decoration. Shape fills 40–65% opacity, text labels 85–100%, accents 85–100%, strokes 50–65%, internal fonts 22–30px minimum. This is the single most common failure mode — using infographic-level opacity (4–15%) on carousel slides makes them invisible on mobile.
+Carousel SVGs are readable content diagrams, not faint background decoration. SVG opacity ranges and font sizes are defined in the brand kit README's "SVG content diagrams" table — follow those values, not the CSS card-class values which are lower due to backdrop-filter. This is the single most common failure mode — using CSS-level opacity on SVG shapes makes them invisible on mobile.
 
 **Every slide gets a unique SVG.**
 Each Airtable carousel slide has a `Visual:` direction. Compose a unique SVG diagram matching that direction. Do not reuse the same glass card layout across slides — visual monotony kills engagement.
@@ -84,18 +84,18 @@ For each carousel slide, compose an HTML section:
 
 - Wrap content in `.slide-content` (top-aligned) or `.slide-content-center` (for CTA)
 - Use `.slide-title`, `.slide-body` for text elements
-- Add the tag row with `.c-tag` and `.c-page-num` inline via flexbox. Page number position must be consistent across all slides — always top-right. For centered layouts (CTA), use an absolutely positioned element outside the content wrapper: `<div style="position:absolute;top:60px;right:60px" class="c-page-num">N / N</div>`.
+- Add the tag row with `.c-tag` and `.c-page-num` inline via flexbox (`justify-content:space-between`) — the tag sits left, the page number sits right. For centered layouts (CTA) where there is no tag row, use an absolutely positioned element outside the content wrapper: `<div style="position:absolute;top:60px;right:60px" class="c-page-num">N / N</div>`. Page number must appear top-right on every slide.
 - Compose a unique SVG content diagram inside `.slide-viz` following the slide's visual direction:
-  - Use the SVG opacity ranges from the brand kit README (40–65% shapes, 85–100% text)
-  - Use SVG sizing rules: `flex:1;margin:28px 0`, viewBox width 920, height 340–480px
+  - Use the SVG opacity ranges and font sizes from the brand kit README's "SVG content diagrams" table
+  - Use the SVG sizing rules from the brand kit README's "SVG sizing rules" section
   - Scale ALL SVG internals proportionally — fonts, radii, rects, strokes
   - Elements must fill the viewBox — no large canvas with tiny clustered elements
 - Add `.author-footer` with author photo, name, role, logo, URL
 - Add the tenant's theme atmosphere elements as specified in the brand kit README
-  - Atmosphere elements (`.c-qa-ring`, `.c-watermark`, `.c-qa-orb`) must stay within the 1080×1350 frame. Do not use negative offsets — the validation script checks all absolutely positioned elements against the canvas bounds, regardless of `overflow:hidden` clipping.
+  - Atmosphere elements as specified in the brand kit README must stay within the 1080×1350 frame. Do not use negative offsets — the validation script checks all absolutely positioned elements against the canvas bounds, regardless of `overflow:hidden` clipping.
 - Swipe cues (`.c-swipe`) are optional — the prototype omits them because the author footer already anchors the slide bottom. Include only if the visual direction calls for a navigation hint.
 
-If any slide's visual direction uses icons, include the Lucide icons CDN script and call `lucide.createIcons()` after the body. The brand kit README lists this as an optional dependency.
+If any slide's visual direction uses icons, include the Lucide icons CDN script and call `lucide.createIcons()` with the parameters specified in the brand kit README's Dependencies section.
 
 The brand kit includes HTML template files (CoverSlide.html, FeaturePoint.html, etc.) as structural reference patterns. Use them as composition inspiration when a slide's visual direction matches a template's purpose, but do not mechanically instantiate them — each slide's SVG content diagram is always unique per its visual direction.
 
@@ -141,7 +141,8 @@ If QA fails on any slide:
 - Fix the HTML for the failing slides
 - Re-render only the affected slides
 - Visually read every re-rendered PNG before proceeding — render success is not visual success
-- Re-run programmatic validation and QA subagent on the fixed slides
+- Re-run programmatic validation on the fixed slides
+- Re-run the QA subagent with ALL slide PNGs (not just the fixed ones) — cross-slide checks require the full set
 - Bounded retry: max 3 revision passes per slide
 
 Do not present fixed slides to the user without visually inspecting the re-rendered PNGs. The composing agent must verify the fix looks correct, not just that the render script succeeded.
@@ -163,12 +164,12 @@ After all slides pass QA:
 
 <anti_patterns>
 
-- **Using infographic opacity on carousel SVGs.** Shapes at 4–15% are invisible on mobile. Carousel diagrams need 40–65%.
+- **Using CSS card-class or infographic opacity on carousel SVGs.** SVG elements have no backdrop-filter — they need the higher opacity ranges from the brand kit README's "SVG content diagrams" table, not the lower values from CSS card classes.
 - **Same layout for every slide.** Each slide has its own visual direction. Glass cards on every slide = visual monotony.
 - **Declaring done after spot-checking.** Every slide must pass QA. Slide 7 can be broken even if slides 1–6 look fine.
 - **Skipping the QA subagent.** The composing agent has anchoring bias toward its own work. A fresh QA agent catches issues the composer rationalizes away.
 - **Treating Playwright success as QA success.** Render success means the browser didn't crash. It says nothing about visual quality.
-- **Shrinking text instead of removing copy.** If a slide is crowded, the answer is less text, not smaller fonts.
+- **Shrinking text instead of shrinking the diagram.** If a slide is crowded, shrink the SVG diagram — never shrink the text and never delete Airtable-approved copy.
 
 </anti_patterns>
 
@@ -176,7 +177,7 @@ After all slides pass QA:
 The carousel is complete when:
 
 - Every slide has a unique SVG content diagram matching its visual direction
-- SVG opacity follows the brand kit rules (40–65% shapes, 85–100% text)
+- SVG opacity and font sizes follow the brand kit README's "SVG content diagrams" table
 - Author footer is visible and unclipped on every slide
 - Programmatic bounds checks pass on all slides
 - QA subagent passes all slides

@@ -16,7 +16,7 @@ Your output is a structured report. You do not fix issues — you identify them 
 
 For each slide PNG, inspect and evaluate:
 
-1. **SVG opacity** — Are shape fills visibly in the 40–65% range? Are text labels clearly readable (85–100%)? Are accent colors (as defined in the brand kit) at 85–100%? Are strokes at 50–65%? If shapes look ghostly/faint like an infographic background, FAIL.
+1. **SVG opacity** — Compare SVG element opacities against the brand kit README's "SVG content diagrams" opacity table. Shape fills, text labels, accent colors, and strokes must all fall within the ranges specified in that table. Do not accept CSS card-class opacity values (2–12%) on SVG elements — SVG has no backdrop-filter, so it needs the higher ranges from the table. If shapes look ghostly/faint like an infographic background, FAIL.
 
 2. **SVG composition** — Does the diagram match the slide's visual direction? Check specific visual properties named in the direction, not just overall composition. If the direction says "↔", verify arrows are visibly bidirectional. If it says "split screen", verify two distinct halves. If it says "red X", verify a red X is present and visible. If it says "timeline", verify a chronological flow. A diagram that captures the general idea but misses a specific directional detail is a FAIL. Also check: is the diagram unique, or does it repeat the same glass card layout as adjacent slides?
 
@@ -86,6 +86,7 @@ Be specific. "SVG looks wrong" is not actionable. "Shape fills appear ~15% opaci
 - Compare against the brand kit's opacity table, not your own aesthetic preference.
 - If you cannot determine a value precisely (e.g., exact opacity), estimate and state your confidence.
 - A slide that is "close enough" is still a FAIL if it violates a specific rule.
+- SVG opacity and font size violations are ALWAYS HARD REJECTS — NEVER downgrade them to warnings or accept them as "stylistic choices." If the rendered values fall outside the brand kit README's specified ranges, FAIL the slide. Do not rationalize that strokes, contrast, or visual weight compensate for non-compliant values.
 - Report findings per slide, then cross-slide, then a summary.
 
 </rules>
