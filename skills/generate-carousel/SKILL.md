@@ -48,16 +48,6 @@ Provide Airtable carousel slides (text + visual direction per slide) and a tenan
 Minimum invocation: "Generate a carousel from these slides for tenant at `<tenant-folder-path>`"
 </quick_start>
 
-<required_reading>
-Before generating, read these files in order:
-
-1. `../../references/shared-art-direction-principles.md` — plugin-level visual quality floor
-2. The tenant's carousel brand kit README (found inside the tenant folder at `ui_kits/linkedin_carousel/README.md`) — design system: CSS classes, slide layout rules, SVG opacity table, SVG sizing rules, element spacing, author footer pattern
-3. The tenant's carousel brand kit CSS (at `ui_kits/linkedin_carousel/carousel.css`) — available CSS classes
-4. `references/render-workflow.md` — multi-slide render loop with Playwright
-5. `references/carousel-qa-checklist.md` — per-slide and cross-slide QA rules
-</required_reading>
-
 <workflow>
 
 **Step 1: Resolve inputs**
@@ -70,12 +60,14 @@ If either is missing, stop and ask. Do not infer defaults.
 
 **Step 2: Read brand kit**
 
-Read from the tenant folder:
-- `ui_kits/linkedin_carousel/README.md` — layout rules, SVG opacity/sizing tables, author footer pattern, element spacing
-- `ui_kits/linkedin_carousel/carousel.css` — available CSS classes
-- `colors_and_type.css` and `colors_and_type_mobile.css` — base design tokens
-- `assets/` — author photo, logo images referenced by the footer
-- Read `../../references/shared-art-direction-principles.md` as the generic quality floor
+<read_before>
+- `../../references/shared-art-direction-principles.md` — plugin-level visual quality floor
+- The tenant's brand kit README at `ui_kits/linkedin_carousel/README.md` — CSS classes, slide layout rules, SVG opacity table, SVG sizing rules, element spacing, author footer pattern
+- The tenant's carousel CSS at `ui_kits/linkedin_carousel/carousel.css` — available CSS classes
+- The tenant's base tokens at `colors_and_type.css` and `colors_and_type_mobile.css`
+</read_before>
+
+Read the files listed above, plus list the tenant's `assets/` directory to confirm author photo and logo images exist.
 
 Stop on genuine brand blockers only:
 - Missing essential render assets (author photo, logo)
@@ -105,7 +97,9 @@ Assemble all sections into a single HTML document linking the brand kit CSS file
 
 **Step 4: Render per-slide PNGs**
 
-Read `references/render-workflow.md` for the full render loop.
+<read_before>
+- `references/render-workflow.md` — Playwright render loop, HTML assembly structure, screenshot approach, PDF export, asset bundle layout
+</read_before>
 
 - Run render-environment preflight (reuse existing Playwright + Chromium)
 - Render each slide as a 1080×1350 PNG at device scale factor 2
@@ -127,7 +121,10 @@ The validator checks geometry only — opacity, composition quality, and visual 
 
 **Step 6: QA subagent review**
 
-Read `references/carousel-qa-checklist.md` for the full QA criteria.
+<read_before>
+- `references/carousel-qa-checklist.md` — per-slide and cross-slide QA rules (pass to the subagent)
+- `prompts/qa-reviewer.md` — QA subagent system prompt (pass to the subagent)
+</read_before>
 
 Spawn a QA subagent using the prompt at `prompts/qa-reviewer.md`. Provide:
 - All rendered slide PNGs
