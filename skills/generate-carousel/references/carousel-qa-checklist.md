@@ -63,10 +63,9 @@ Validator pass is required before QA. QA does not replace programmatic validatio
 
 <comparative_quality>
 
-If the tenant has a reference carousel (check the `generated/` folder in the tenant directory):
-- Compare the output against it for SVG clarity, opacity, composition quality
+If the tenant has a `references/carousel/` folder, compare the output against the carousels there for SVG clarity, opacity, and composition quality. These are curated quality benchmarks.
 - Reject if the output is clearly weaker in readability or visual polish
-- The reference carousel is the quality benchmark, not a template to copy
+- The reference carousel is a quality benchmark, not a template to copy
 
 </comparative_quality>
 

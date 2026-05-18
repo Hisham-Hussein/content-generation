@@ -37,6 +37,9 @@ Creative embellishment that reinforces the message is fine. Adding unrelated ele
 **Airtable slide text is sacred.**
 Every text block from the Airtable carousel slide must appear in the output. If the diagram is too large to fit alongside the text, shrink the diagram — never delete the text. The Airtable content was expert-approved upstream.
 
+**Auto-size text containers, never hardcode.**
+Any rect, badge, or label background behind text must be sized at runtime using `getBBox()` — never hardcode width values. Include a `<script>` block that runs after DOMContentLoaded to: (1) measure each text element's bounding box and set the parent container's dimensions with appropriate padding, and (2) after all resizing, check for bounding-box overlap between sibling SVG elements and log a console warning for each collision detected. This eliminates text clipping and surfaces layout collisions caused by auto-sizing. If collision is detected, fix the layout spacing — never revert to hardcoded widths.
+
 </essential_principles>
 
 <quick_start>
@@ -90,14 +93,13 @@ For each carousel slide, compose an HTML section:
   - Use the SVG sizing rules from the brand kit README's "SVG sizing rules" section
   - Scale ALL SVG internals proportionally — fonts, radii, rects, strokes
   - Elements must fill the viewBox — no large canvas with tiny clustered elements
+  - Include a post-render `<script>` block that auto-sizes all text containers using `getBBox()` and then checks for bounding-box overlap between sibling SVG elements, logging a console warning for each collision. Do not hardcode `width` on rects behind text labels or badges.
 - Add `.author-footer` with author photo, name, role, logo, URL
 - Add the tenant's theme atmosphere elements as specified in the brand kit README
   - Atmosphere elements as specified in the brand kit README must stay within the 1080×1350 frame. Do not use negative offsets — the validation script checks all absolutely positioned elements against the canvas bounds, regardless of `overflow:hidden` clipping.
 - Swipe cues (`.c-swipe`) are optional — the prototype omits them because the author footer already anchors the slide bottom. Include only if the visual direction calls for a navigation hint.
 
 If any slide's visual direction uses icons, include the Lucide icons CDN script and call `lucide.createIcons()` with the parameters specified in the brand kit README's Dependencies section.
-
-The brand kit includes HTML template files (CoverSlide.html, FeaturePoint.html, etc.) as structural reference patterns. Use them as composition inspiration when a slide's visual direction matches a template's purpose, but do not mechanically instantiate them — each slide's SVG content diagram is always unique per its visual direction.
 
 Assemble all sections into a single HTML document linking the brand kit CSS files.
 
@@ -170,6 +172,7 @@ After all slides pass QA:
 - **Skipping the QA subagent.** The composing agent has anchoring bias toward its own work. A fresh QA agent catches issues the composer rationalizes away.
 - **Treating Playwright success as QA success.** Render success means the browser didn't crash. It says nothing about visual quality.
 - **Shrinking text instead of shrinking the diagram.** If a slide is crowded, shrink the SVG diagram — never shrink the text and never delete Airtable-approved copy.
+- **Hardcoding rect widths behind text.** Text length varies by content. Use `getBBox()` to measure rendered text and size the container dynamically. Hardcoded widths cause clipping on longer text and waste space on shorter text.
 
 </anti_patterns>
 
