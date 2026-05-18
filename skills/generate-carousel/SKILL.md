@@ -40,6 +40,9 @@ Every text block from the Airtable carousel slide must appear in the output. If 
 **Auto-size text containers, never hardcode.**
 Any rect, badge, or label background behind text must be sized at runtime using `getBBox()` — never hardcode width values. Include a `<script>` block that runs after DOMContentLoaded to: (1) measure each text element's bounding box and set the parent container's dimensions with appropriate padding, and (2) after all resizing, check for bounding-box overlap between sibling SVG elements and log a console warning for each collision detected. This eliminates text clipping and surfaces layout collisions caused by auto-sizing. If collision is detected, fix the layout spacing — never revert to hardcoded widths.
 
+**Progressive loading discipline — read ONLY what the current step requires.**
+Each workflow step has a `<read_before>` tag listing the exact files needed for that step. Read ONLY those files at that step. Do NOT front-load reads from later steps "for efficiency" — this wastes context window tokens and degrades performance on the current step by flooding attention with irrelevant material. If a step has no `<read_before>`, it needs no new reads. The agent who reads everything upfront is not being efficient — they are ignoring the skill's progressive loading design.
+
 </essential_principles>
 
 <quick_start>
@@ -107,6 +110,10 @@ Assemble all sections into a single HTML document linking the brand kit CSS file
 
 **Step 5: Programmatic validation**
 
+<read_before>
+- `scripts/validate-carousel-slides.mjs` — programmatic bounds-checking script (read to understand checks and environment variable requirements)
+</read_before>
+
 Run `scripts/validate-carousel-slides.mjs` against the rendered HTML. Pass the Playwright and Chromium paths resolved in Step 4 as `PLAYWRIGHT_PATH` and `CHROMIUM_PATH` environment variables:
 
 - Footer clipping: verify `.author-footer` bottom edge is within canvas
@@ -150,6 +157,10 @@ If a slide still fails after 3 attempts, stop and escalate to the user.
 
 **Step 8: Export PDF + asset bundle**
 
+<read_before>
+- `references/render-workflow.md` § pdf_export and § asset_bundle — PDF export options and asset bundle layout (re-read if context from Step 4 has been compressed)
+</read_before>
+
 After all slides pass QA:
 - Export a combined multi-page PDF (one slide per page, 1080×1350)
 - Derive the asset slug: `{next-sequence-number}-{kebab-carousel-title}` (e.g., `7-brain-vs-hands-carousel`). Determine the sequence number from the count of existing directories in `<tenant-folder>/generated/`.
@@ -170,6 +181,7 @@ After all slides pass QA:
 - **Treating Playwright success as QA success.** Render success means the browser didn't crash. It says nothing about visual quality.
 - **Shrinking text instead of shrinking the diagram.** If a slide is crowded, shrink the SVG diagram — never shrink the text and never delete Airtable-approved copy.
 - **Hardcoding rect widths behind text.** Text length varies by content. Use `getBBox()` to measure rendered text and size the container dynamically. Hardcoded widths cause clipping on longer text and waste space on shorter text.
+- **Front-loading all file reads.** Reading the QA checklist, render workflow, and validation script at Step 2 because "it's efficient" wastes context and violates progressive loading. Each step's `<read_before>` lists exactly what to read — nothing more.
 
 </anti_patterns>
 
