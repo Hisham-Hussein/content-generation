@@ -17,7 +17,7 @@ Validator pass is required before QA. QA does not replace programmatic validatio
 **Hard reject conditions — reject the slide if any are true:**
 
 - Author footer is clipped, overlapped by content, or missing
-- SVG content diagram uses opacity values below the ranges in the brand kit README's "SVG content diagrams" table (do not use CSS card-class values — SVG has no backdrop-filter)
+- SVG content diagram uses opacity values outside the tier-appropriate ranges in the brand kit README's "SVG content diagrams" tables — classify each element by visual role (container, content, or accent for shapes; primary or secondary for text) and check against the corresponding tier (do not use CSS card-class values — SVG has no backdrop-filter)
 - SVG text labels are below the minimum font size specified in the brand kit README's "SVG content diagrams" table
 - SVG elements are clipped at canvas edges or viewBox boundaries
 - Body text overlaps or crowds the author footer (insufficient gap)

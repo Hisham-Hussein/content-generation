@@ -16,7 +16,7 @@ Your output is a structured report. You do not fix issues — you identify them 
 
 For each slide PNG, inspect and evaluate:
 
-1. **SVG opacity** — Compare SVG element opacities against the brand kit README's "SVG content diagrams" opacity table. Shape fills, text labels, accent colors, and strokes must all fall within the ranges specified in that table. Do not accept CSS card-class opacity values (2–12%) on SVG elements — SVG has no backdrop-filter, so it needs the higher ranges from the table. If shapes look ghostly/faint like an infographic background, FAIL.
+1. **SVG opacity** — Compare SVG element opacities against the brand kit README's "SVG content diagrams" opacity tables. The README defines a **three-tier shape fill hierarchy** (container/ambient, content, accent/primary) and a **two-tier text label hierarchy** (primary, secondary/annotation). Classify each SVG element by its visual role, then check against the corresponding tier's range. Do not accept CSS card-class opacity values (2–4%) on SVG elements — SVG has no backdrop-filter. If shapes look ghostly/faint like an infographic background, FAIL.
 
 2. **SVG composition** — Does the diagram match the slide's visual direction? Check specific visual properties named in the direction, not just overall composition. If the direction says "↔", verify arrows are visibly bidirectional. If it says "split screen", verify two distinct halves. If it says "red X", verify a red X is present and visible. If it says "timeline", verify a chronological flow. A diagram that captures the general idea but misses a specific directional detail is a FAIL. Also check: is the diagram unique, or does it repeat the same glass card layout as adjacent slides?
 
@@ -53,7 +53,7 @@ slides:
     findings:
       - check: svg-opacity
         status: PASS | FAIL
-        detail: "Shape fills appear ~50%, text labels ~90%"
+        detail: "Container fills ~10%, content fills ~40%, accent fills ~55%, primary text ~90%, secondary text ~70%"
       - check: footer-visible
         status: PASS
       # ... one entry per check
@@ -63,7 +63,7 @@ slides:
     findings:
       - check: svg-opacity
         status: FAIL
-        detail: "Shape fills appear ~15% — atmospheric, not content diagram"
+        detail: "Content-role fills appear ~4% — CSS card-class values on SVG, not content diagram tier"
       # ...
 
 cross_slide:
@@ -75,7 +75,7 @@ cross_slide:
 summary: "Slides 2 and 5 fail SVG opacity. Slide 8 footer partially clipped. All other slides pass."
 ```
 
-Be specific. "SVG looks wrong" is not actionable. "Shape fills appear ~15% opacity instead of 40–65% range" is actionable.
+Be specific. "SVG looks wrong" is not actionable. "Content-role fills appear ~4% opacity instead of the 20–50% content tier" is actionable. Always classify the element by its visual role (container, content, or accent) before comparing against the corresponding tier range.
 
 </output_format>
 
@@ -86,7 +86,7 @@ Be specific. "SVG looks wrong" is not actionable. "Shape fills appear ~15% opaci
 - Compare against the brand kit's opacity table, not your own aesthetic preference.
 - If you cannot determine a value precisely (e.g., exact opacity), estimate and state your confidence.
 - A slide that is "close enough" is still a FAIL if it violates a specific rule.
-- SVG opacity and font size violations are ALWAYS HARD REJECTS — NEVER downgrade them to warnings or accept them as "stylistic choices." If the rendered values fall outside the brand kit README's specified ranges, FAIL the slide. Do not rationalize that strokes, contrast, or visual weight compensate for non-compliant values.
+- SVG opacity and font size violations are ALWAYS HARD REJECTS — NEVER downgrade them to warnings or accept them as "stylistic choices." Classify each element by its visual role (container, content, or accent for shapes; primary or secondary for text), then check against the corresponding tier in the brand kit README. If the rendered values fall outside the tier's range, FAIL the slide. Do not rationalize that strokes, contrast, or visual weight compensate for non-compliant values.
 - Report findings per slide, then cross-slide, then a summary.
 
 </rules>

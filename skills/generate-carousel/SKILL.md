@@ -12,7 +12,7 @@ The Airtable pipeline handles content planning — this skill handles visual pro
 <essential_principles>
 
 **SVG content diagrams, not atmospheric backgrounds.**
-Carousel SVGs are readable content diagrams, not faint background decoration. SVG opacity ranges and font sizes are defined in the brand kit README's "SVG content diagrams" table — follow those values, not the CSS card-class values which are lower due to backdrop-filter. This is the single most common failure mode — using CSS-level opacity on SVG shapes makes them invisible on mobile.
+Carousel SVGs are readable content diagrams, not faint background decoration. The brand kit README's "SVG content diagrams" section defines a **three-tier shape fill hierarchy** (container/ambient, content, accent/primary) and a **two-tier text label hierarchy** (primary, secondary/annotation) — classify each element by its visual role and apply the corresponding tier's range. Do not use CSS card-class values (2–4%), which rely on backdrop-filter that SVG lacks. This is the single most common failure mode — using CSS-level opacity on SVG shapes makes them invisible on mobile.
 
 **Every slide gets a unique SVG.**
 Each Airtable carousel slide has a `Visual:` direction. Compose a unique SVG diagram matching that direction. Do not reuse the same glass card layout across slides — visual monotony kills engagement.
@@ -163,7 +163,7 @@ After all slides pass QA:
 
 <anti_patterns>
 
-- **Using CSS card-class or infographic opacity on carousel SVGs.** SVG elements have no backdrop-filter — they need the higher opacity ranges from the brand kit README's "SVG content diagrams" table, not the lower values from CSS card classes.
+- **Using CSS card-class or infographic opacity on carousel SVGs.** SVG elements have no backdrop-filter — they need the tier-appropriate opacity ranges from the brand kit README's "SVG content diagrams" tables, not the 2–4% values from CSS card classes.
 - **Same layout for every slide.** Each slide has its own visual direction. Glass cards on every slide = visual monotony.
 - **Declaring done after spot-checking.** Every slide must pass QA. Slide 7 can be broken even if slides 1–6 look fine.
 - **Skipping the QA subagent.** The composing agent has anchoring bias toward its own work. A fresh QA agent catches issues the composer rationalizes away.
