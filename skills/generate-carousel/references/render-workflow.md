@@ -122,10 +122,27 @@ Hard fail and fix HTML if any check fails. Do not proceed to QA with a clipped l
 
 After all slides pass QA:
 
-**Option A: Browser print-to-PDF (preferred for multi-page)**
+**Primary: Combine individual PNGs into PDF (img2pdf)**
+Embeds verified PNGs directly — no re-rendering, no color reinterpretation. Always use this method.
+
+```python
+import img2pdf
+slides = [f'slide-{str(i).zfill(2)}.png' for i in range(1, slide_count + 1)]
+with open('carousel.pdf', 'wb') as f:
+    f.write(img2pdf.convert(slides))
+```
+
+Install if needed: `pip install img2pdf`
+
+Verify the PDF:
+- Page count matches slide count
+- Each page is 1080×1350 ratio
+- Colors match the source PNGs exactly
+
+**Fallback: Browser print-to-PDF**
+Only if img2pdf is unavailable. WARNING: Chromium's print pipeline re-renders the HTML through a different color engine, which can shift colors (especially custom backgrounds and rgba fills). If used, visually compare the PDF against the PNGs and re-export with img2pdf if colors differ.
+
 ```javascript
-// Set each slide to print on its own page using CSS
-// @media print { .infographic { page-break-after: always; } }
 await page.pdf({
   path: 'carousel.pdf',
   width: '1080px',
@@ -134,14 +151,6 @@ await page.pdf({
   margin: { top: 0, right: 0, bottom: 0, left: 0 }
 });
 ```
-
-**Option B: Combine individual PNGs into PDF**
-Use a tool like `img2pdf` or `sharp` if browser PDF has issues.
-
-Verify the PDF:
-- Page count matches slide count
-- Each page is 1080×1350 ratio
-- Rasterize a page back to PNG and compare against the original slide PNG
 
 </pdf_export>
 
