@@ -48,7 +48,7 @@ Each workflow step has a `<read_before>` tag listing the exact files needed for 
 <quick_start>
 Provide Airtable carousel slides (text + visual direction per slide) and a tenant folder path. The skill reads the brand kit, composes per-slide HTML with unique SVG content diagrams, renders PNGs via Playwright, runs programmatic bounds checks and a QA subagent review on every slide, then exports a combined PDF.
 
-Minimum invocation: "Generate a carousel from these slides for tenant at `<tenant-folder-path>`"
+Minimum invocation: "Generate a carousel from these slides for tenant at `<tenant-folder-path>` using theme `<theme-name>`"
 </quick_start>
 
 <workflow>
@@ -58,14 +58,18 @@ Minimum invocation: "Generate a carousel from these slides for tenant at `<tenan
 Require from the user:
 - Airtable carousel slides (text + visual direction per slide), either pasted or fetched
 - Tenant folder path (local filesystem)
+- Theme name (e.g., `quiet-aurora`) — must match a subfolder under `ui_kits/linkedin_carousel/themes/`
 
-If either is missing, stop and ask. Do not infer defaults.
+If any is missing, stop and ask. Do not infer defaults.
+
+After resolving inputs, verify the theme folder exists: `<tenant-folder>/ui_kits/linkedin_carousel/themes/<theme>/README.md`. If the folder or README is missing, stop and tell the user — do not fall back to a different theme or proceed without theme-specific rules.
 
 **Step 2: Read brand kit**
 
 <read_before>
 - `../../references/shared-art-direction-principles.md` — plugin-level visual quality floor
 - The tenant's brand kit README at `ui_kits/linkedin_carousel/README.md` — CSS classes, slide layout rules, SVG opacity table, SVG sizing rules, element spacing, author footer pattern
+- The tenant's theme README at `ui_kits/linkedin_carousel/themes/<theme>/README.md` — atmosphere elements, gradient rules, tag/pill treatment, icon style, card surfaces for the chosen theme
 - The tenant's carousel CSS at `ui_kits/linkedin_carousel/carousel.css` — available CSS classes
 - The tenant's base tokens at `colors_and_type.css` and `colors_and_type_mobile.css`
 </read_before>
@@ -90,8 +94,8 @@ For each carousel slide, compose an HTML section:
   - Elements must fill the viewBox — no large canvas with tiny clustered elements
   - Include a post-render `<script>` block that auto-sizes all text containers using `getBBox()` and then checks for bounding-box overlap between sibling SVG elements, logging a console warning for each collision. Do not hardcode `width` on rects behind text labels or badges.
 - Add `.author-footer` with author photo, name, role, logo, URL
-- Add the tenant's theme atmosphere elements as specified in the brand kit README
-  - Atmosphere elements as specified in the brand kit README must stay within the 1080×1350 frame. Do not use negative offsets — the validation script checks all absolutely positioned elements against the canvas bounds, regardless of `overflow:hidden` clipping.
+- Add the tenant's theme atmosphere elements as specified in the theme README (`themes/<theme>/README.md`)
+  - Atmosphere elements must stay within the 1080×1350 frame. Do not use negative offsets — the validation script checks all absolutely positioned elements against the canvas bounds, regardless of `overflow:hidden` clipping.
 - Swipe cues (`.c-swipe`) are optional — the prototype omits them because the author footer already anchors the slide bottom. Include only if the visual direction calls for a navigation hint.
 
 If any slide's visual direction uses icons, include the Lucide icons CDN script and call `lucide.createIcons()` with the parameters specified in the brand kit README's Dependencies section.
@@ -137,6 +141,7 @@ Spawn a QA subagent using the prompt at `prompts/qa-reviewer.md`. Provide:
 - All rendered slide PNGs
 - The original Airtable carousel slides (text + visual direction per slide) — needed to verify SVG matches intent
 - The carousel brand kit README (SVG opacity/sizing rules)
+- The theme README (`themes/<theme>/README.md`) — needed to verify correct atmosphere elements, gradient usage, and tag treatment for the chosen theme
 - The QA checklist
 
 The subagent inspects every slide and returns a pass/fail report with specific findings per slide.

@@ -53,6 +53,8 @@ html,body{margin:0;overflow:hidden}
 <div class="infographic" id="slide-1">...</div>
 <div class="infographic" id="slide-2">...</div>
 ...
+<!-- Initialize Lucide icons (include only if Lucide CDN is loaded above) -->
+<script>lucide.createIcons({attrs:{'stroke-width':1.5}})</script>
 </body>
 </html>
 ```
