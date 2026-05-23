@@ -120,15 +120,25 @@ Assemble all sections into a single HTML document linking the brand kit CSS file
 
 Run `scripts/validate-carousel-slides.mjs` against the rendered HTML. Pass the Playwright and Chromium paths resolved in Step 4 as `PLAYWRIGHT_PATH` and `CHROMIUM_PATH` environment variables:
 
+Geometry checks:
 - Footer clipping: verify `.author-footer` bottom edge is within canvas
 - Body→footer gap: verify `.slide-body` bottom does not overlap `.author-footer` top
 - SVG clipping: verify no SVG element extends beyond its viewBox or the slide canvas
 - Element overflow: verify no absolutely positioned element escapes the 1080×1350 frame
 - Cross-slide structural check: flags extreme monotony (8+ consecutive identical wrapper structures). Visual layout variety is verified by the QA subagent in Step 6, not this script.
 
-Hard fail on any violation. Fix the HTML and re-render before proceeding.
+SVG property checks (from the general carousel kit README — theme-agnostic):
+- SVG font-size floor: every `<text>` inside `<svg>` must be >= 22px
+- SVG text opacity floor: white/neutral text fill opacity >= 0.65 (use `data-intentional-fade="true"` to allow >= 0.50 for deliberate fade sequences); accent-colored text >= 0.85
+- SVG shape fill tier: hard reject if opacity is 0.01–0.04 (CSS card-class range — no backdrop-filter in SVG); warn if 0.05–0.19 without `data-tier="container"` annotation
+- SVG text-to-container overflow: text `getBBox()` must fit inside its nearest sibling rect (4px tolerance)
 
-The validator checks geometry only — opacity, composition quality, and visual readability are evaluated by the QA subagent in Step 6.
+Structural checks:
+- getBBox auto-sizing script presence: at least one `<script>` block must reference `getBBox`
+
+Hard fail on any violation. Fix the HTML and re-render before proceeding. Warnings (shape fill tier ambiguity) do not block but should be reviewed.
+
+The validator checks geometry, SVG property compliance, and structural requirements. Composition quality and visual readability are evaluated by the QA subagent in Step 6.
 
 **Step 6: QA subagent review**
 

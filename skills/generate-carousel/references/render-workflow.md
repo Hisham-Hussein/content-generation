@@ -127,14 +127,20 @@ After all slides pass QA:
 **Primary: Combine individual PNGs into PDF (img2pdf)**
 Embeds verified PNGs directly — no re-rendering, no color reinterpretation. Always use this method.
 
+First check if img2pdf is already installed — do NOT blindly run `pip install`:
+
+```bash
+python3 -c "import img2pdf" 2>/dev/null && echo "img2pdf available" || pip install img2pdf
+```
+
+Then use it:
+
 ```python
 import img2pdf
 slides = [f'slide-{str(i).zfill(2)}.png' for i in range(1, slide_count + 1)]
 with open('carousel.pdf', 'wb') as f:
     f.write(img2pdf.convert(slides))
 ```
-
-Install if needed: `pip install img2pdf`
 
 Verify the PDF:
 - Page count matches slide count
