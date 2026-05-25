@@ -33,6 +33,15 @@ Use this reference for any visual workflow that generates branded marketing, edu
 - Keep supporting content bounded. If the idea needs more than one image to stay clear, the single-image composition is wrong.
 - Proof should support the message, not take over the composition.
 
+## Visual Argument Requirement
+
+- Infographics that describe processes, frameworks, comparisons, workflows, or data stories must include a dominant visual element — either an SVG content diagram or a CSS-native visual argument (styled checklist, comparison layout, stat blocks).
+- The visual element should carry the argument — text annotates it, not the other way around.
+- A layout where the reader sees mostly text blocks with thin CSS lines or faint decorative effects as the only "visuals" is a hard reject — it is a styled document, not an infographic.
+- The visual element should occupy a substantial portion of the vertical content area between the headline and footer.
+- Text-only layouts are acceptable only for stat posters where a single hero number is the visual (`layout_profile: stat_poster`).
+- Refer to skill-specific references for the diagram type catalog and selection heuristic.
+
 ## Composition Principles
 
 - Build save-worthy structure, not a generic social card.

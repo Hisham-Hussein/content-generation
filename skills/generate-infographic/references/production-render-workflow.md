@@ -53,10 +53,16 @@ The strongest single-image infographic pattern is a save-worthy field sheet:
 5. Build a deterministic fixed-size HTML artboard.
 6. Embed the `mobile-linkedin-compliance` JSON block in the HTML and mark each counted content block with `data-content-block`.
 7. Run `scripts/validate-mobile-linkedin-infographic.mjs` before rendering.
+7a. If the infographic includes an SVG content diagram, verify before rendering:
+   - ViewBox height contains all child elements (calculate max y+height + 10px padding).
+   - SVG width matches available content width (canvas minus 2× safe padding).
+   - All `<text>` elements have explicit `font-size` attributes >= 22px.
+   - Text labels are short enough to fit within their enclosing rects (estimate: character count × ~0.55 × font-size < container rect width).
+   - Mark accent-colored elements with `data-accent="true"`.
 8. Run render-environment preflight before rendering.
 9. Prefer existing machine-level Playwright and Chromium runtimes before any install step.
 10. Render the artboard to PNG with Playwright + Chromium.
-11. Run post-render bounds check inside the Playwright session before taking the screenshot: verify the footer fits within the canvas, no content blocks are clipped, and consecutive sections have at least 12px gap. Hard fail and fix the HTML if any check fails — do not proceed to visual QA with a clipped layout.
+11. Run post-render bounds check inside the Playwright session before taking the screenshot: verify the footer fits within the canvas, no content blocks are clipped, and consecutive sections have at least 12px gap. The post-render validator also runs SVG-specific checks when SVG elements are present: text-to-container overflow (getBBox), text and shape opacity tier compliance, viewBox containment, and font-size floor (22px). Hard fail and fix the HTML if any check fails — do not proceed to visual QA with a clipped layout.
 12. Open the PNG and inspect it visually.
 13. Reject outputs that are:
    - crowded,
@@ -93,6 +99,7 @@ The strongest single-image infographic pattern is a save-worthy field sheet:
 - If the layout feels crowded, reduce copy before shrinking or dimming important text.
 - Avoid generic robot imagery, magic-wand visuals, or hype motifs.
 - Keep structural motifs selective instead of repeating borders or cards everywhere.
+- SVG content diagrams use structural opacity tiers from `svg-content-diagram-rules.md`. Theme-specific colors and accents come from the tenant's brand materials.
 
 ## Render Rules
 

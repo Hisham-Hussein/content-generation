@@ -37,6 +37,16 @@ Reject before final output if any of these are true:
 - the pre-render validator was skipped or failed without an explicit override token from the user
 - the post-render bounds check was not run or failed (footer clipped, content overflowing canvas, sections touching with less than 12px gap)
 - QA was declared based on a thumbnail or reduced-size preview instead of the full-size PNG or programmatic checks
+- the infographic describes a process, framework, workflow, or data story but has no SVG content diagram and no CSS-native visual argument — it is a text document with a dark background
+- the infographic has a visual element but it is small decoration rather than the dominant structural element carrying the argument
+- the infographic could be fully understood by extracting only the text — the visual design adds no structural meaning
+- SVG text labels overflow their enclosing containers
+- SVG elements are clipped at viewBox boundaries
+- SVG text labels are below the 22px font-size floor
+- SVG shape fills use the 0.01-0.04 opacity range (invisible without backdrop-filter)
+- large whitespace gaps exist between sections that could be used for larger, more readable content
+
+Note: `stat_poster` layout is exempt from the SVG diagram requirement — the hero number is the visual.
 
 ## First-Glance Quality Check
 
@@ -44,6 +54,8 @@ Reject before final output if any of these are true:
 - Is one visual system clearly dominant?
 - Is the page organized around one intentional structural move rather than scattered parts?
 - Does the layout feel designed, not merely fitted?
+- Does the SVG diagram (or CSS visual argument) carry the argument, or is it decorative?
+- Could this infographic work as plain text? If yes, the visual design failed.
 
 ## Comparative Quality Check
 

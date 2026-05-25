@@ -129,6 +129,14 @@ Avoid:
 - Avoid oversized logos, repeated slogans, or promotional clutter.
 - Avoid over-promotional copy and dense brand slogans.
 
+## SVG Content Diagrams
+
+- When an infographic includes an SVG diagram, treat it as a **content diagram** (readable on mobile), not atmospheric decoration.
+- Use the sizing, opacity, and font rules from `svg-content-diagram-rules.md`.
+- The SVG should fill the available content width (canvas width minus safe padding on both sides).
+- Gradient fills, theme accents, and color choices are determined by the tenant's brand materials — this reference governs structure only.
+- Mark accent-colored SVG elements with `data-accent="true"` so the post-render validator applies the correct opacity floor.
+
 ## Choose Format By Use Case
 
 - Single infographic: `1080 x 1350 px`

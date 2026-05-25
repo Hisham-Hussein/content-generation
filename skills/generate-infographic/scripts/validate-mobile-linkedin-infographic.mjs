@@ -127,6 +127,20 @@ export function validateInfographicHtml(
     );
   }
 
+  // SVG presence check: if diagram_type is declared and not "none", HTML must contain an <svg>
+  if (
+    contract.layout_profile === 'single_idea_infographic' &&
+    contract.diagram_type &&
+    contract.diagram_type !== 'none'
+  ) {
+    const hasSvg = /<svg[\s>]/i.test(html);
+    if (!hasSvg) {
+      errors.push(
+        `diagram_type is "${contract.diagram_type}" but HTML contains no <svg> element.`,
+      );
+    }
+  }
+
   const status =
     errors.length === 0 ? 'pass' : overrideTokenPresent ? 'overridden' : 'fail';
 

@@ -26,8 +26,9 @@ If the user does not provide a tenant folder, stop and ask for it. Do not infer 
 6. `references/production-render-workflow.md`
 7. `references/linkedin-mobile-optimization.md`
 8. `references/render-environment-preflight.md`
-9. `scripts/validate-mobile-linkedin-infographic.mjs`
-10. `scripts/validate-post-render.mjs`
+9. `references/svg-content-diagram-rules.md`
+10. `scripts/validate-mobile-linkedin-infographic.mjs`
+11. `scripts/validate-post-render.mjs`
 
 ## Workflow
 
@@ -57,6 +58,7 @@ If the user does not provide a tenant folder, stop and ask for it. Do not infer 
    - if a template catalog was found in step 7, match the source content's structure against the catalog's layout selection heuristic and add a `recommended_template` field (template name + file) and a `template_rationale` field (one line explaining the match) to the brief
    - if no template catalog exists, omit these fields and the agent generates the layout freehand
    - the template recommendation is a suggestion, not a constraint — the user may override it at brief review
+   - match the source content's structure against the content-to-diagram selection heuristic in `references/svg-content-diagram-rules.md` and add the recommended `diagram_type` (or `"none"` for CSS-native visual arguments) and a one-sentence `diagram_description` to the brief
 9. Surface the brief to the user for explicit review and approval before generation proceeds:
    - when a template recommendation is present, show it as part of the brief so the user approves both the content plan and the structural skeleton in one gate
    - the user may accept the recommended template, request a different one from the catalog, or say "no template" to generate freehand
@@ -71,8 +73,10 @@ If the user does not provide a tenant folder, stop and ask for it. Do not infer 
    - attribution requirements
    - if a template was approved, use it as the structural skeleton — clone the template HTML and replace its slots with real content from the brief
    - if no template was approved, compose the layout freehand using the brief's visual angle and the shared art-direction principles
+   - if the brief specifies a `diagram_type` other than `"none"`, the SVG content diagram must be the dominant visual element — build it at full content width using the sizing rules in `references/svg-content-diagram-rules.md` — the diagram carries the argument, text is secondary
+   - if `diagram_type` is `"none"`, build a CSS-native visual argument (checklist, comparison, stat blocks) as the dominant element
 12. If the tenant provides approved or rejected examples, treat them as an active quality floor and blacklist for this run.
-13. Build a fixed-size 4:5 HTML artboard as the editable source of truth.
+13. Build a fixed-size 4:5 HTML artboard as the editable source of truth. If the infographic includes an SVG content diagram, apply the sizing, opacity, and font rules from `references/svg-content-diagram-rules.md`. Verify the viewBox height contains all elements. Mark accent-colored SVG elements with `data-accent="true"`.
 14. Build the artboard with an explicit mobile compliance contract embedded in the HTML:
    - a `mobile-linkedin-compliance` JSON block
    - `data-content-block` markers for counted content blocks
@@ -95,6 +99,7 @@ If the user does not provide a tenant folder, stop and ask for it. Do not infer 
 19. Run `scripts/validate-post-render.mjs` against the loaded page inside the Playwright session, before taking the screenshot:
    - hard fail if the footer is clipped or invisible
    - hard fail if any content block overflows the canvas
+   - when SVG elements are present, the validator also checks: text-to-container overflow (getBBox), text and shape opacity compliance, SVG viewBox containment, and font-size floor (22px) — warnings are reported separately from errors
    - hard fail if consecutive sections have less than 12px gap between them
    - if post-render validation fails, fix the HTML layout and re-render — do not proceed to screenshot QA with a clipped layout
 20. Open and inspect the rendered PNG using `references/qa-checklist.md` and `../../references/shared-art-direction-principles.md`.
