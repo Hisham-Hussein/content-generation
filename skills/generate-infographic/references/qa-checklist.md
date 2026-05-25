@@ -45,6 +45,7 @@ Reject before final output if any of these are true:
 - SVG text labels are below the 22px font-size floor
 - SVG shape fills use the 0.01-0.04 opacity range (invisible without backdrop-filter)
 - large whitespace gaps exist between sections that could be used for larger, more readable content
+- SVG text containers use hardcoded widths instead of getBBox auto-sizing (caught by post-render validator)
 
 Note: `stat_poster` layout is exempt from the SVG diagram requirement — the hero number is the visual.
 

@@ -107,3 +107,21 @@ When the heuristic outputs "none", set `diagram_type: "none"` in the brief and b
 - Elements using tenant accent colors must be marked with `data-accent="true"` by the composing agent.
 - The validator checks this attribute, not RGB values — this keeps validation theme-agnostic.
 - The composing agent knows the tenant's accent colors from brand materials.
+
+---
+
+## F. Auto-Sizing Rule
+
+Never hardcode rect, badge, or container widths behind text. Text length varies by content and font rendering.
+
+Every infographic with SVG content diagrams must include a `<script>` block that runs after `document.fonts.ready` to:
+
+1. For each SVG `<text>` element, measure its `getBBox()`
+2. Find the nearest enclosing `<rect>` (walk up to 15 previous siblings, match by center proximity)
+3. If the text getBBox extends past the rect, expand the rect width and/or height with padding (16-20px)
+4. Cap expansion at viewBox bounds — never expand a rect past the viewBox width or height
+5. After all resizing, check for bounding-box overlap between sibling SVG elements and log a console warning for each collision detected
+
+If collision is detected, fix the layout spacing — never revert to hardcoded widths.
+
+This eliminates the manual text-fitting cycle (shorten text, re-render, still overflows, shorten more, re-render) that wastes hours. Cards derive from text, not the other way around.

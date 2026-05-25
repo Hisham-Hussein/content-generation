@@ -165,10 +165,12 @@ export async function validatePostRenderOnPage(page) {
       svgTexts.forEach((textEl) => {
         try {
           const textBox = textEl.getBBox();
-          // Walk previous siblings to find nearest rect
+          // Walk previous siblings to find nearest enclosing rect.
+          // Use depth 15 to handle SVGs with icons (circles, paths, lines)
+          // between the container rect and the text labels.
           let prev = textEl.previousElementSibling;
           let containerRect = null;
-          for (let i = 0; i < 3 && prev; i++) {
+          for (let i = 0; i < 15 && prev; i++) {
             if (prev.tagName === 'rect') {
               const rectBox = prev.getBBox();
               const textCenterX = textBox.x + textBox.width / 2;
@@ -219,6 +221,18 @@ export async function validatePostRenderOnPage(page) {
           } catch (e) { /* getBBox may fail */ }
         });
       });
+
+      // 9. getBBox auto-sizing script presence
+      const scripts = document.querySelectorAll('script');
+      let hasBBoxScript = false;
+      scripts.forEach((s) => {
+        if (s.textContent && s.textContent.includes('getBBox')) {
+          hasBBoxScript = true;
+        }
+      });
+      if (!hasBBoxScript) {
+        errors.push('No getBBox auto-sizing script found. SVG text containers must be sized at runtime — never hardcode rect widths.');
+      }
     }
 
     const status = errors.length > 0 ? 'fail' : warnings.length > 0 ? 'warn' : 'pass';

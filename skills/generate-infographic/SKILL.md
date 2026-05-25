@@ -76,7 +76,7 @@ If the user does not provide a tenant folder, stop and ask for it. Do not infer 
    - if the brief specifies a `diagram_type` other than `"none"`, the SVG content diagram must be the dominant visual element — build it at full content width using the sizing rules in `references/svg-content-diagram-rules.md` — the diagram carries the argument, text is secondary
    - if `diagram_type` is `"none"`, build a CSS-native visual argument (checklist, comparison, stat blocks) as the dominant element
 12. If the tenant provides approved or rejected examples, treat them as an active quality floor and blacklist for this run.
-13. Build a fixed-size 4:5 HTML artboard as the editable source of truth. If the infographic includes an SVG content diagram, apply the sizing, opacity, and font rules from `references/svg-content-diagram-rules.md`. Verify the viewBox height contains all elements. Mark accent-colored SVG elements with `data-accent="true"`.
+13. Build a fixed-size 4:5 HTML artboard as the editable source of truth. If the infographic includes an SVG content diagram, apply the sizing, opacity, and font rules from `references/svg-content-diagram-rules.md`. Verify the viewBox height contains all elements. Mark accent-colored SVG elements with `data-accent="true"`. Include a `<script>` block that runs after `document.fonts.ready` to: (1) measure each SVG text element's getBBox, (2) resize the nearest ancestor/sibling rect to fit the text with padding, (3) cap rect expansion at viewBox bounds, (4) after all resizing, check for bounding-box overlap between sibling SVG elements and log a console warning for each collision. Never hardcode rect widths behind text labels — the getBBox script handles sizing.
 14. Build the artboard with an explicit mobile compliance contract embedded in the HTML:
    - a `mobile-linkedin-compliance` JSON block
    - `data-content-block` markers for counted content blocks
@@ -134,3 +134,4 @@ If the user does not provide a tenant folder, stop and ask for it. Do not infer 
 - require a normalized brand profile before infographic generation
 - skip brief review
 - introduce carousel, single-image, or other future workflows into version one
+- hardcode SVG rect or container widths — use a getBBox auto-sizing script that measures rendered text and resizes containers at runtime

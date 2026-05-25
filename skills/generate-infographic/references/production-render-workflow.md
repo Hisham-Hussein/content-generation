@@ -59,6 +59,7 @@ The strongest single-image infographic pattern is a save-worthy field sheet:
    - All `<text>` elements have explicit `font-size` attributes >= 22px.
    - Text labels are short enough to fit within their enclosing rects (estimate: character count × ~0.55 × font-size < container rect width).
    - Mark accent-colored elements with `data-accent="true"`.
+   - Include a getBBox auto-sizing script (see `svg-content-diagram-rules.md` § F). The script must run before the Playwright screenshot. Never hardcode rect widths.
 8. Run render-environment preflight before rendering.
 9. Prefer existing machine-level Playwright and Chromium runtimes before any install step.
 10. Render the artboard to PNG with Playwright + Chromium.
