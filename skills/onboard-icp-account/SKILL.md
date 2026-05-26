@@ -59,21 +59,25 @@ Show the user a summary of the scraped data:
 - Follower/connection counts
 - Any mutual connections
 
-Then ask for three decisions:
+Then ask for four decisions:
 
-1. **Account Tier** — High, Medium, or Low
+1. **Account Type** — Buyer or Strategic Partner
+   - Buyer: potential customer for our services/products
+   - Strategic Partner: peer worth building a relationship with for referrals, co-marketing, audience overlap
+
+2. **Account Tier** — High, Medium, or Low
    - High: decision-maker at target company, strong ICP fit
    - Medium: ICP match but not yet a clear decision-maker
    - Low: tangential relevance, worth monitoring
 
-2. **Suggested Framework** — Ask, Share, Build On, Challenge, or Support
+3. **Suggested Framework** — Ask, Share, Build On, Challenge, or Support
    - Ask: pose a question to learn about their workflow
    - Share: offer relevant content or insights
    - Build On: extend something they already said
    - Challenge: respectfully push back on a take
    - Support: validate and amplify their point
 
-3. **Which Persona** to link to — look up available personas from the Personas table
+4. **Which Persona** to link to — look up available personas from the Personas table
 
 **Step 4: Create the ICP Account record**
 
@@ -82,6 +86,7 @@ Create the record in the ICP Accounts table (`tblOY0n0NKqp9iDsJ`) with these fie
 | Field ID | Field | Source |
 |----------|-------|--------|
 | `fldaixpV78VeByf4B` | Account Name | `firstName` + `lastName` from scrape |
+| `fldWjxqeaadB3pEq9` | Account Type | User's choice from Step 3 (Buyer or Strategic Partner) |
 | `fldb4Un5lqk7dwsBO` | LinkedIn URL | The profile URL used for scraping |
 | `fldRJc1rHebU92Q0T` | LinkedIn Posts URL | Constructed from `publicIdentifier` |
 | `fldux9S6rYBKItllT` | Company | `companyName` from scrape |
