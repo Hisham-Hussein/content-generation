@@ -25,10 +25,12 @@ User provides a LinkedIn profile URL. You scrape it, review the data together, t
 **LinkedIn Posts URL pattern.** Always construct the activity feed URL from the scraped `publicIdentifier`: `https://www.linkedin.com/in/{publicIdentifier}/recent-activity/all/` — this lets the user browse their posts without triggering a profile view notification.
 
 **Scraper location:** `/home/hisham/ai-agency/content-engine/experiments/linkedin-profile-scraper-spike/`
-- Command: `pnpm scrape:supreme-coder "{linkedin-profile-url}"`
+- Primary command: `pnpm scrape:dev-fusion "{linkedin-profile-url}"` (dev_fusion actor — richer schema: `about`, structured `experiences`, firmographics, contact fields, recommendations)
+- Fallback command: `pnpm scrape:supreme-coder "{linkedin-profile-url}"` (use if dev-fusion returns 0 results or fails; also the only actor that returns `mutualConnections`)
 - Requires: `source /home/hisham/ai-agency/content-engine/.env` for `APIFY_API_KEY`
-- Cost: $0.003 per profile
+- Cost: ~$0.003 per profile
 - Output: JSON capture saved to `captures/` directory
+- Note: the two actors use different field names for the same data (e.g. dev-fusion `experiences`/`about`/`followers` vs supreme-coder `positions`/`summary`/`followerCount`). The Step 4 field mapping below targets the dev-fusion schema.
 
 </essential_principles>
 
@@ -45,10 +47,12 @@ If the user provides context about how they found this person (a post, a comment
 ```bash
 cd /home/hisham/ai-agency/content-engine/experiments/linkedin-profile-scraper-spike && \
 set -a && source /home/hisham/ai-agency/content-engine/.env && set +a && \
-pnpm scrape:supreme-coder "{url}"
+pnpm scrape:dev-fusion "{url}"
 ```
 
 Read the captured JSON file. Verify the scraped person matches who the user intended by checking `headline` and `firstName`/`lastName`. If it's the wrong person, stop and ask for the correct URL.
+
+If the run returns 0 results or fails, retry once, then fall back to `pnpm scrape:supreme-coder "{url}"` (and read its capture instead). When a run fails with exit code 137, that is an out-of-memory kill — the actor needs more memory than its 128 MB default; the runner now requests 512 MB by default, so a fresh retry usually clears it.
 
 **Step 3: Present the profile summary and get user decisions**
 
@@ -57,7 +61,7 @@ Show the user a summary of the scraped data:
 - Current company and job title
 - Career history (focus on relevant roles)
 - Follower/connection counts
-- Any mutual connections
+- Any mutual connections (only available from the supreme-coder fallback actor; dev-fusion does not return this)
 
 Then ask for four decisions:
 
