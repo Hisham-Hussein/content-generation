@@ -1,6 +1,6 @@
 ---
 name: capture-post-engagers
-description: Use to reverse-onboard the people who engaged with a LinkedIn post into ICP Accounts. Two modes — (a) YOUR published post, capturing inbound leads who reacted/commented; (b) an amplifier's post, harvesting ICP buyers from their audience. Triggers on "capture engagers", "who engaged with my post", "scrape my post's commenters", "harvest this amplifier's audience", "reverse onboard", "pull reactors from this post", or when the user wants to turn post engagement into tracked ICP accounts.
+description: Use when the user wants to turn LinkedIn post engagement into tracked ICP accounts — the people who reacted to or commented on their own post, or the ICP buyers sitting in an amplifier's audience. Triggers on "capture engagers", "who engaged with my post", "scrape my post's commenters", "harvest this amplifier's audience", "reverse onboard", "pull reactors from this post", "add these engagers to ICP".
 ---
 
 <objective>
