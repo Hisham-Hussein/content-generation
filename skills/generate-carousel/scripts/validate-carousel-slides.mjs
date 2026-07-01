@@ -16,6 +16,8 @@
  *   - SVG text opacity floor: white/neutral text >= 0.65, accent-colored text >= 0.85
  *   - SVG shape fill tier: reject 0.01–0.04 (CSS card-class), warn 0.05–0.19 without data-tier="container"
  *   - SVG text-to-container overflow: text getBBox must fit inside its nearest sibling rect
+ *   - Icon-text overlap: absolutely-positioned HTML icons overlapping SVG text elements
+ *   - Path-shape penetration: SVG path endpoints cutting through destination shapes
  *
  * Structural checks:
  *   - getBBox auto-sizing script presence: at least one <script> block must reference getBBox
@@ -70,6 +72,18 @@ await page.evaluate(() => document.fonts.ready);
 const results = await page.evaluate(({ slideWidth, slideHeight, minFooterGap }) => {
   const slides = document.querySelectorAll('.infographic');
   const findings = [];
+
+  // Helper: extract start and end coordinates from SVG path d attribute
+  function parsePathEndpoints(d) {
+    const numbers = d.match(/-?[\d.]+/g);
+    if (!numbers || numbers.length < 4) return null;
+    return {
+      startX: parseFloat(numbers[0]),
+      startY: parseFloat(numbers[1]),
+      endX: parseFloat(numbers[numbers.length - 2]),
+      endY: parseFloat(numbers[numbers.length - 1]),
+    };
+  }
 
   slides.forEach((slide, idx) => {
     const slideNum = idx + 1;
@@ -156,6 +170,24 @@ const results = await page.evaluate(({ slideWidth, slideHeight, minFooterGap }) 
     });
     if (!overflowFound) {
       slideFindings.push({ check: 'element-overflow', status: 'PASS' });
+    }
+
+    // --- Check: brand punctuation (no em/en dashes or curly quotes in visible text) ---
+    // Scopes to rendered text only (slide.textContent) so HTML comments and <title> are
+    // ignored. Plain ASCII hyphens (computer-use, four-item) and straight quotes are fine.
+    const visibleText = slide.textContent || '';
+    const banned = visibleText.match(/[—–‘’“”]/g); // — – ‘ ’ “ ”
+    if (banned) {
+      const hit = visibleText.search(/[—–‘’“”]/);
+      const snippet = visibleText.slice(Math.max(0, hit - 25), hit + 25).replace(/\s+/g, ' ').trim();
+      const chars = [...new Set(banned)].join(' ');
+      slideFindings.push({
+        check: 'text-punctuation',
+        status: 'FAIL',
+        detail: `Banned punctuation (${chars}) in visible text near: "...${snippet}...". Use straight quotes, periods/commas, and "X to Y" ranges.`,
+      });
+    } else {
+      slideFindings.push({ check: 'text-punctuation', status: 'PASS' });
     }
 
     // --- Check A: SVG font-size floor (min 22px) ---
@@ -313,6 +345,136 @@ const results = await page.evaluate(({ slideWidth, slideHeight, minFooterGap }) 
     });
     if (!textOverflowFailed && svgTexts.length > 0) {
       slideFindings.push({ check: 'svg-text-overflow', status: 'PASS' });
+    }
+
+    // --- Check E: HTML-to-SVG icon-text overlap ---
+    let iconTextOverlapFailed = false;
+    const vizContainersE = slide.querySelectorAll('.slide-viz');
+    vizContainersE.forEach((viz) => {
+      // Collect absolutely-positioned descendants (Lucide icons after replacement, etc.)
+      const absIcons = [];
+      viz.querySelectorAll('*').forEach((el) => {
+        const style = window.getComputedStyle(el);
+        if (style.position !== 'absolute') return;
+        const r = el.getBoundingClientRect();
+        if (r.width === 0 || r.height === 0) return;
+        absIcons.push(r);
+      });
+
+      // Collect all <text> elements inside SVGs in this .slide-viz
+      const textRects = [];
+      viz.querySelectorAll('svg text').forEach((textEl) => {
+        const r = textEl.getBoundingClientRect();
+        if (r.width === 0 || r.height === 0) return;
+        textRects.push({ rect: r, content: (textEl.textContent || '').trim().substring(0, 30) });
+      });
+
+      // AABB overlap test with 4px inward shrink on both rects
+      const overlapTolerance = 4;
+      absIcons.forEach((iconRect) => {
+        textRects.forEach(({ rect: textRect, content }) => {
+          const iL = iconRect.left + overlapTolerance;
+          const iR = iconRect.right - overlapTolerance;
+          const iT = iconRect.top + overlapTolerance;
+          const iB = iconRect.bottom - overlapTolerance;
+          const tL = textRect.left + overlapTolerance;
+          const tR = textRect.right - overlapTolerance;
+          const tT = textRect.top + overlapTolerance;
+          const tB = textRect.bottom - overlapTolerance;
+
+          if (iL >= iR || iT >= iB || tL >= tR || tT >= tB) return;
+
+          if (iL < tR && iR > tL && iT < tB && iB > tT) {
+            iconTextOverlapFailed = true;
+            const relLeft = Math.round(iconRect.left - slideRect.left);
+            const relTop = Math.round(iconRect.top - slideRect.top);
+            slideFindings.push({
+              check: 'icon-text-overlap',
+              status: 'FAIL',
+              detail: `Icon at (${relLeft},${relTop}) overlaps SVG text "${content}"`,
+            });
+          }
+        });
+      });
+    });
+    if (!iconTextOverlapFailed && vizContainersE.length > 0) {
+      slideFindings.push({ check: 'icon-text-overlap', status: 'PASS' });
+    } else if (vizContainersE.length === 0) {
+      slideFindings.push({ check: 'icon-text-overlap', status: 'INFO', detail: 'No .slide-viz containers — icon-text overlap not checked' });
+    }
+
+    // --- Check F: SVG path-to-shape penetration ---
+    let pathPenetrationFailed = false;
+    let hasPathShapeSlides = false;
+    const allSlideSvgs = slide.querySelectorAll('svg');
+    allSlideSvgs.forEach((svgEl) => {
+      // Skip Lucide icon SVGs and SVGs outside .slide-viz
+      if (svgEl.classList.contains('lucide')) return;
+      if (!svgEl.closest('.slide-viz')) return;
+
+      const paths = svgEl.querySelectorAll('path');
+      const shapes = svgEl.querySelectorAll('rect, circle, ellipse');
+      if (paths.length === 0 || shapes.length === 0) return;
+      hasPathShapeSlides = true;
+
+      // Pre-compute shape bounding boxes
+      const shapeBBoxes = [];
+      shapes.forEach((shape) => {
+        try {
+          const bbox = shape.getBBox();
+          if (bbox.width === 0 || bbox.height === 0) return;
+          shapeBBoxes.push({ bbox, tag: shape.tagName });
+        } catch (e) { /* skip hidden shapes */ }
+      });
+
+      const penetrationTolerance = 6;
+
+      paths.forEach((pathEl) => {
+        const d = pathEl.getAttribute('d');
+        if (!d) return;
+        // Skip closed paths (shapes, not connectors)
+        if (/Z\s*$/i.test(d.trim())) return;
+        // Skip filled paths (decorative, not connectors)
+        const fill = pathEl.getAttribute('fill');
+        if (fill && fill !== 'none') return;
+
+        // Allow opt-out for illustration paths that intentionally enter shapes
+        if (pathEl.hasAttribute('data-allow-penetration')) return;
+
+        const coords = parsePathEndpoints(d);
+        if (!coords) return;
+
+        // Check if endpoint is deep inside any shape it didn't start from
+        shapeBBoxes.forEach(({ bbox, tag }) => {
+          if (coords.endX > bbox.x && coords.endX < bbox.x + bbox.width &&
+              coords.endY > bbox.y && coords.endY < bbox.y + bbox.height) {
+            const depthL = coords.endX - bbox.x;
+            const depthR = (bbox.x + bbox.width) - coords.endX;
+            const depthT = coords.endY - bbox.y;
+            const depthB = (bbox.y + bbox.height) - coords.endY;
+            const minDepth = Math.min(depthL, depthR, depthT, depthB);
+
+            if (minDepth > penetrationTolerance) {
+              // Is the start point inside this same shape? (source shape — expected)
+              const startInside = (
+                coords.startX > bbox.x && coords.startX < bbox.x + bbox.width &&
+                coords.startY > bbox.y && coords.startY < bbox.y + bbox.height
+              );
+              if (!startInside) {
+                pathPenetrationFailed = true;
+                slideFindings.push({
+                  check: 'path-shape-penetration',
+                  status: 'FAIL',
+                  detail: `Path endpoint (${Math.round(coords.endX)},${Math.round(coords.endY)}) penetrates <${tag}> by ${Math.round(minDepth)}px (tolerance ${penetrationTolerance}px)`,
+                });
+              }
+            }
+          }
+        });
+      });
+    });
+    if (!pathPenetrationFailed && hasPathShapeSlides) {
+      slideFindings.push({ check: 'path-shape-penetration', status: 'PASS' });
     }
 
     findings.push({ slide: slideNum, checks: slideFindings });

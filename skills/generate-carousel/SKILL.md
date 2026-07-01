@@ -86,6 +86,7 @@ For each carousel slide, compose an HTML section:
 
 - Wrap content in `.slide-content` (top-aligned) or `.slide-content-center` (for CTA)
 - Use `.slide-title`, `.slide-body` for text elements
+- **Slide text punctuation (brand rule):** No em dashes (—), en dashes (–), or curly quotes (' ' " "). Use periods or commas instead of dashes, straight quotes, and write number ranges as "30K to 50K" / "3 to 5". Applies to all visible text (`.slide-title`, `.slide-body`, cover/CTA text, big numbers, SVG `<text>`); HTML comments are exempt. The Step 5 validator hard-fails on any violation.
 - Add the tag row with `.c-tag` and `.c-page-num` inline via flexbox (`justify-content:space-between`) — the tag sits left, the page number sits right. For centered layouts (CTA) where there is no tag row, use an absolutely positioned element outside the content wrapper: `<div style="position:absolute;top:60px;right:60px" class="c-page-num">N / N</div>`. Page number must appear top-right on every slide.
 - Compose a unique SVG content diagram inside `.slide-viz` following the slide's visual direction:
   - Use the SVG opacity ranges and font sizes from the brand kit README's "SVG content diagrams" table
@@ -132,9 +133,14 @@ SVG property checks (from the general carousel kit README — theme-agnostic):
 - SVG text opacity floor: white/neutral text fill opacity >= 0.65 (use `data-intentional-fade="true"` to allow >= 0.50 for deliberate fade sequences); accent-colored text >= 0.85
 - SVG shape fill tier: hard reject if opacity is 0.01–0.04 (CSS card-class range — no backdrop-filter in SVG); warn if 0.05–0.19 without `data-tier="container"` annotation
 - SVG text-to-container overflow: text `getBBox()` must fit inside its nearest sibling rect (4px tolerance)
+- Icon-text overlap: absolutely-positioned HTML icons (e.g., Lucide) overlapping SVG `<text>` elements within `.slide-viz` containers (4px tolerance)
+- Path-shape penetration: SVG `<path>` connector endpoints cutting more than 6px inside destination shapes (skips closed paths, filled paths, and paths with `data-allow-penetration`; excludes source shape where path starts)
 
 Structural checks:
 - getBBox auto-sizing script presence: at least one `<script>` block must reference `getBBox`
+
+Text checks:
+- Brand punctuation: no em dashes (—), en dashes (–), or curly quotes (' ' " ") in any visible slide text. Use straight quotes, periods/commas, and "X to Y" ranges.
 
 Hard fail on any violation. Fix the HTML and re-render before proceeding. Warnings (shape fill tier ambiguity) do not block but should be reviewed.
 
@@ -197,6 +203,7 @@ After all slides pass QA:
 - **Shrinking text instead of shrinking the diagram.** If a slide is crowded, shrink the SVG diagram — never shrink the text and never delete Airtable-approved copy.
 - **Hardcoding rect widths behind text.** Text length varies by content. Use `getBBox()` to measure rendered text and size the container dynamically. Hardcoded widths cause clipping on longer text and waste space on shorter text.
 - **Front-loading all file reads.** Reading the QA checklist, render workflow, and validation script at Step 2 because "it's efficient" wastes context and violates progressive loading. Each step's `<read_before>` lists exactly what to read — nothing more.
+- **Em dashes, en dashes, or curly quotes in slide text.** An AI-writing tell and a brand violation. Use periods/commas, straight quotes, and "X to Y" ranges. The validator hard-fails on them.
 
 </anti_patterns>
 
