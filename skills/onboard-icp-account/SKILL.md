@@ -63,25 +63,32 @@ Show the user a summary of the scraped data:
 - Follower/connection counts
 - Any mutual connections (only available from the supreme-coder fallback actor; dev-fusion does not return this)
 
-Then ask for four decisions:
+Then ask for these decisions:
 
-1. **Account Type** — Buyer or Strategic Partner
+1. **Account Type** — Buyer or Strategic Partner (WHO they are to us)
    - Buyer: potential customer for our services/products
    - Strategic Partner: peer worth building a relationship with for referrals, co-marketing, audience overlap
 
-2. **Account Tier** — High, Medium, or Low
-   - High: decision-maker at target company, strong ICP fit
-   - Medium: ICP match but not yet a clear decision-maker
+2. **Engagement Role** — Convert, Amplify, or Refer (WHY we engage — orthogonal to Account Type; one account can be a Buyer AND an Amplify target)
+   - **Convert**: engage to move them toward buying. Default for buyers.
+   - **Amplify**: engage to reach THEIR audience, not to convert them. Use for any expert with a large following whose audience overlaps our buyers — legal-tech experts (implementers, consultants, trainers, educators, researchers, founders) first, and general-AI experts second (iSemantics is legal-AI-focused but still a general-purpose AI partner). The qualifying test is **audience composition, not their profession**. Success = buyers discovered from their audience (Buyers Sourced), NOT their reciprocation.
+   - **Refer**: engage to build a cross-referral relationship (e.g. a peer in an adjacent vertical who sends work your way).
+
+3. **Account Tier** — High, Medium, or Low
+   - High: decision-maker at target company, strong ICP fit. For Amplify accounts: legal-tech amplifier with a genuinely ICP-dense audience.
+   - Medium: ICP match but not yet a clear decision-maker. For Amplify: general-AI amplifier, or legal amplifier with a mixed audience.
    - Low: tangential relevance, worth monitoring
 
-3. **Suggested Framework** — Ask, Share, Build On, Challenge, or Support
+4. **Suggested Framework** — Ask, Share, Build On, Challenge, or Support
    - Ask: pose a question to learn about their workflow
    - Share: offer relevant content or insights
    - Build On: extend something they already said
    - Challenge: respectfully push back on a take
    - Support: validate and amplify their point
 
-4. **Which Persona** to link to — look up available personas from the Personas table
+5. **Which Persona** to link to — look up available personas from the Personas table
+
+**Account Source** is not a decision here — this skill always sets it to **Outbound** (you found them by exploring LinkedIn). Inbound accounts are created by the `capture-post-engagers` skill instead.
 
 **Step 4: Create the ICP Account record**
 
@@ -91,6 +98,9 @@ Create the record in the ICP Accounts table (`tblOY0n0NKqp9iDsJ`) with these fie
 |----------|-------|--------|
 | `fldaixpV78VeByf4B` | Account Name | `firstName` + `lastName` from scrape |
 | `fldWjxqeaadB3pEq9` | Account Type | User's choice from Step 3 (Buyer or Strategic Partner) |
+| `fldDEj7z3WCTclrNQ` | Engagement Role | User's choice from Step 3 (Convert, Amplify, or Refer) |
+| `fldQAe6kuhwufdYQv` | Account Source | Always `Outbound` for this skill |
+| `fldqQfgZPVOSvtN9h` | Discovery Source | Optional. Record ID of the Amplify account whose comment section surfaced this buyer (see amplifier note below). Leave empty otherwise. |
 | `fldb4Un5lqk7dwsBO` | LinkedIn URL | The profile URL used for scraping |
 | `fldRJc1rHebU92Q0T` | LinkedIn Posts URL | Constructed from `publicIdentifier` |
 | `fldux9S6rYBKItllT` | Company | `companyName` from scrape |
@@ -105,6 +115,14 @@ Create the record in the ICP Accounts table (`tblOY0n0NKqp9iDsJ`) with these fie
 | `fldswXZjClsRUYAoR` | Persona | Record ID of chosen persona |
 
 Save the returned record ID — it's needed for linking ICP Post and Engagement Log.
+
+**If Engagement Role = Amplify, write an amplifier playbook into Framework Detail** (not a warming-to-a-deal playbook):
+- The goal is visibility with the buyer subset of THEIR audience. Comment early and substantively on their posts so their followers see you; do not pitch the amplifier.
+- Before investing effort, tell the user to **audit the amplifier's comment section for buyer density** — if the commenters are real ICP buyers, lean in; if they're mostly peers/students/vendors, keep effort Low. An amplifier's value is buyer density, not follower count.
+- State plainly that the amplifier may never reciprocate, and that's fine — success is measured by **Buyers Sourced** (buyers you later harvest from their audience), not their replies. Engagement Status will track YOUR commenting cadence on their posts (each logged Comment advances New → Warming → Active), which is the correct signal.
+- To systematically harvest buyers from an amplifier's comment section, use the `capture-post-engagers` skill in amplifier mode on one of their posts.
+
+**Discovery Source (attribution):** if the person you're onboarding is a *buyer you found inside an amplifier's comment section*, set `Discovery Source` (`fldqQfgZPVOSvtN9h`) to that amplifier's ICP Account record ID, and keep Account Source = Outbound. This feeds the amplifier's Buyers Sourced count — the metric that proves which amplifiers actually produce pipeline.
 
 **Step 5: Create ICP Post record (if applicable)**
 
@@ -138,6 +156,8 @@ After creating engagement records, check if Engagement Status should advance:
 - 1+ interactions → "Warming"
 - 3+ interactions → "Active"
 Update the ICP Account record if needed.
+
+For **Amplify** accounts, the interactions driving this are YOUR own comments on their posts (Activity Type = Comment), so Status reflects your presence cadence in their comment section — reaching "Active" means you're showing up consistently, not that the amplifier reciprocated. That is the intended behavior.
 
 **Step 7: Summary**
 
