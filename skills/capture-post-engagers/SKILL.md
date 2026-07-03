@@ -80,6 +80,7 @@ Ask which post this is (or infer from the URL):
   1. Find the Post record: search Posts (`tblSqtKPIEod2c1bW`) for `Published URL` (`fldpPkTJgmaUyRYgs`) matching the URL. Save the Post record ID (for `Linked Post`).
   2. Derive the **Persona** from that Post's Persona link (`fld2NPiDinrswa8gs`) — do not guess it.
   3. Engagers → `Account Source = Inbound`. `Linked Post` = the Post record.
+  4. **Three engager kinds in my-post mode.** Reactors + commenters come from the scrape (Step 2). **Post-followers** — people who *followed* Hisham because of this post — are the **strongest** inbound signal (they sought him out with zero prompt) but are **NOT scrapable**: "Followers gained from this post" is private analytics only Hisham sees while logged in. Capture followers **manually** — Hisham opens the post's analytics → Followers and pastes the profile URLs; log them with `Activity Type = Follow`. For legal posts, followers skew ~90% ICP — but still classify each (a follower can be Convert OR Amplify; e.g. a consultant or founder whose *audience* is your buyers).
 
 - **amplifier-post mode** — a post by an existing `Amplify` account:
   1. Find that amplifier's ICP Account (by name/LinkedIn URL). Confirm its `Engagement Role = Amplify`.
@@ -119,7 +120,7 @@ Dedup against existing ICP Accounts by LinkedIn slug (commenters) or URN (reacto
 **Step 5: Create the Engagement Log entry**
 
 For each captured engager, create a record in Engagement Log (`tblyaWrUUMsyveMhn`):
-- `Activity Type` (`fld0cV5HDpYvB2TfR`) = `Comment` or `Reaction` (whichever the scrape found — direction is carried by Account Source + Linked Post, not a separate value).
+- `Activity Type` (`fld0cV5HDpYvB2TfR`) = `Comment` or `Reaction` (whichever the scrape found), or `Follow` for manually-captured post-followers. Direction is carried by Account Source + Linked Post, not a separate value.
 - `Date` = today (or the engagement date if known). `Notes` = what they engaged with and any signal from their comment.
 - `ICP Account` = the record from Step 4.
 - `Linked Post` (`fldfiQ9afwBoHmpAy`) = the Post record (my-post mode only; leave empty in amplifier mode — it's their post, not ours).
