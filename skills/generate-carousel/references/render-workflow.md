@@ -72,7 +72,12 @@ Each slide section uses `class="infographic"` for the 80px safe padding. Content
 Render each slide individually:
 
 ```javascript
-const playwright = await import('[resolved-playwright-path]');
+// playwright resolves as CommonJS. Use a default import and destructure:
+//   import pw from '[resolved-playwright-path]'; const { chromium } = pw;
+// A named import — `import { chromium } from '[path]'` — FAILS ("Named export
+// 'chromium' not found"). The dynamic form below also works.
+const playwright = (await import('[resolved-playwright-path]')).default
+  ?? await import('[resolved-playwright-path]');
 
 const browser = await playwright.chromium.launch({
   executablePath: '[resolved-chromium-path]',
@@ -83,6 +88,11 @@ const context = await browser.newContext({
   deviceScaleFactor: 2
 });
 const page = await context.newPage();
+
+// Fail loud: capture page/console errors so a broken render can't pass silently.
+const renderErrors = [];
+page.on('pageerror', (e) => renderErrors.push('pageerror: ' + e.message));
+page.on('console', (m) => { if (m.type() === 'error') renderErrors.push('console: ' + m.text()); });
 
 await page.goto('file://' + htmlPath, { waitUntil: 'networkidle' });
 await page.waitForLoadState('load');
@@ -100,11 +110,20 @@ for (let i = 1; i <= slideCount; i++) {
 }
 
 await browser.close();
+
+// Exit non-zero on any render error, and print an explicit success sentinel.
+if (renderErrors.length) {
+  console.error('RENDER FAILED:\n' + renderErrors.join('\n'));
+  process.exit(1);
+}
+console.log(`Rendered ${slideCount} slides.`);
 ```
 
 - Device scale factor: 2 (for retina-quality PNGs)
 - Wait for fonts before each screenshot
 - Screenshot each slide element individually, not the full viewport
+- **Import form:** playwright is CommonJS — `import pw from '<path>'; const { chromium } = pw;` (or the dynamic form above). A named import fails.
+- **Fail loud, and confirm the sentinel.** The script must capture `pageerror`/console errors, exit non-zero on any, and print `Rendered N slides` on success. Do NOT pipe the run through `tail`/`head` (it can swallow the error and exit code), and do NOT inspect the PNGs until you have SEEN the `Rendered N slides` line — otherwise a silent failure leaves you eyeballing a STALE image from a previous run.
 
 </per_slide_render_loop>
 

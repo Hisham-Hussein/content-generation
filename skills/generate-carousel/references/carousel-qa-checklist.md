@@ -29,6 +29,8 @@ Validator pass is required before QA. QA does not replace programmatic validatio
 - Safe padding is weak — content sits too close to slide edges
 - Theme atmosphere elements (as specified in brand kit README) are missing
 - Bar chart elements overflow their axes (y + height must equal axis y-position)
+- A connector (line or path) cuts through a shape's outline instead of terminating at its edge, or an overlay icon sits visibly off the target it should mark (e.g. an icon meant to be centered in a node drifting off-center)
+- A visual/diagram LABEL uses jargon the post's ICP would not grasp instantly (e.g. "eval pass rate", "RAG"): propose a plain-language swap for the user to confirm — pillar-calibrated, do NOT demand a technical-ICP deck be dumbed down
 
 **First-glance quality — assess within 3 seconds:**
 

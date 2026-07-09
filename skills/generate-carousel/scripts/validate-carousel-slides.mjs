@@ -18,6 +18,7 @@
  *   - SVG text-to-container overflow: text getBBox must fit inside its nearest sibling rect
  *   - Icon-text overlap: absolutely-positioned HTML icons overlapping SVG text elements
  *   - Path-shape penetration: SVG path endpoints cutting through destination shapes
+ *   - Line-shape penetration: SVG <line> connector endpoints cutting through destination shapes
  *
  * Structural checks:
  *   - getBBox auto-sizing script presence: at least one <script> block must reference getBBox
@@ -475,6 +476,79 @@ const results = await page.evaluate(({ slideWidth, slideHeight, minFooterGap }) 
     });
     if (!pathPenetrationFailed && hasPathShapeSlides) {
       slideFindings.push({ check: 'path-shape-penetration', status: 'PASS' });
+    }
+
+    // --- Check F2: SVG line-to-shape penetration (connectors must not cross outlines) ---
+    // Parallel to Check F but for <line> elements. A <line> has no `d` string, so read the
+    // x1/y1/x2/y2 attributes directly (do NOT route through parsePathEndpoints). The closed-path
+    // / filled-path skips do not apply to lines. Same 6px tolerance, start-inside (source-shape)
+    // exemption, and data-allow-penetration opt-out as the path check.
+    // Known limits (inherited from Check F): shape.getBBox() is measured AFTER the deck's own
+    // getBBox auto-size script runs, so a connector must terminate at a rect's rendered
+    // (post-autosize) edge; and getBBox returns an UNROTATED local bbox, so this is unreliable
+    // for a connector terminating at a rotated shape (use data-allow-penetration there).
+    let linePenetrationFailed = false;
+    let hasLineShapeSlides = false;
+    allSlideSvgs.forEach((svgEl) => {
+      if (svgEl.classList.contains('lucide')) return;
+      if (!svgEl.closest('.slide-viz')) return;
+
+      const lines = svgEl.querySelectorAll('line');
+      const shapes = svgEl.querySelectorAll('rect, circle, ellipse');
+      if (lines.length === 0 || shapes.length === 0) return;
+      hasLineShapeSlides = true;
+
+      const shapeBBoxes = [];
+      shapes.forEach((shape) => {
+        try {
+          const bbox = shape.getBBox();
+          if (bbox.width === 0 || bbox.height === 0) return;
+          shapeBBoxes.push({ bbox, tag: shape.tagName });
+        } catch (e) { /* skip hidden shapes */ }
+      });
+
+      const penetrationTolerance = 6;
+
+      lines.forEach((lineEl) => {
+        // Opt-out for connectors that intentionally enter a shape
+        if (lineEl.hasAttribute('data-allow-penetration')) return;
+
+        const startX = parseFloat(lineEl.getAttribute('x1'));
+        const startY = parseFloat(lineEl.getAttribute('y1'));
+        const endX = parseFloat(lineEl.getAttribute('x2'));
+        const endY = parseFloat(lineEl.getAttribute('y2'));
+        if ([startX, startY, endX, endY].some((n) => Number.isNaN(n))) return;
+
+        // Flag when the END point sits deep inside a shape the line did not originate from.
+        shapeBBoxes.forEach(({ bbox, tag }) => {
+          if (endX > bbox.x && endX < bbox.x + bbox.width &&
+              endY > bbox.y && endY < bbox.y + bbox.height) {
+            const depthL = endX - bbox.x;
+            const depthR = (bbox.x + bbox.width) - endX;
+            const depthT = endY - bbox.y;
+            const depthB = (bbox.y + bbox.height) - endY;
+            const minDepth = Math.min(depthL, depthR, depthT, depthB);
+
+            if (minDepth > penetrationTolerance) {
+              const startInside = (
+                startX > bbox.x && startX < bbox.x + bbox.width &&
+                startY > bbox.y && startY < bbox.y + bbox.height
+              );
+              if (!startInside) {
+                linePenetrationFailed = true;
+                slideFindings.push({
+                  check: 'line-shape-penetration',
+                  status: 'FAIL',
+                  detail: `Line endpoint (${Math.round(endX)},${Math.round(endY)}) penetrates <${tag}> by ${Math.round(minDepth)}px (tolerance ${penetrationTolerance}px). Connectors must terminate at the shape edge, not cross it — add data-allow-penetration only if intentional.`,
+                });
+              }
+            }
+          }
+        });
+      });
+    });
+    if (!linePenetrationFailed && hasLineShapeSlides) {
+      slideFindings.push({ check: 'line-shape-penetration', status: 'PASS' });
     }
 
     findings.push({ slide: slideNum, checks: slideFindings });

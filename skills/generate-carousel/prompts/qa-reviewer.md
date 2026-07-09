@@ -34,6 +34,10 @@ For each slide PNG, inspect and evaluate:
 
 9. **Page number** — Present and consistent format (N / Total)?
 
+10. **Connectors & icon placement** — Do connector lines/arrows terminate AT the edge of the shapes they join, or do they cut through an outline (a line running into a box or circle, crossing its border)? Crossing an outline is a FAIL. And does each overlay icon sit where it should — e.g. an icon meant to mark the center of a node actually centered in it, not visibly drifted off? (Judge intent: an icon deliberately placed in a corner is fine; only flag an icon that has clearly slipped off the spot it is meant to occupy.)
+
+11. **Visual-label jargon (ICP fit)** — Does any label text INSIDE a diagram (gauge label, axis label, node caption, stat label) use a technical term the post's ICP would not grasp instantly — e.g. "eval pass rate", "token", "RAG", "inference"? If so, FLAG it with a proposed plain-language swap ("accuracy", "cost", "memory") for the user to confirm. Pillar-calibrated: a deck whose ICP is itself technical may keep such terms — do NOT demand blanket simplification; flag only genuine mismatches.
+
 After inspecting all slides individually, check cross-slide quality:
 - Visual rhythm: do slide layouts vary or is it monotonous?
 - Consistency: footer position, typography, atmosphere uniform across all slides?

@@ -31,6 +31,10 @@ When a visual direction calls for standard icons (lock, pencil, database, arrow,
 
 **This especially applies to arrows and connectors** — use `arrow-right`, `arrow-left-right`, `arrow-down`, `chevron-right`, etc. instead of hand-drawing SVG `<marker>` arrowheads. SVG markers render poorly at phone scale; Lucide icons stay crisp. Position them as absolutely placed HTML elements over the SVG diagram.
 
+**A script-positioned overlay icon must NOT also carry a CSS `transform`.** When a `<script>` positions an overlay icon by setting `left`/`top`, any leftover CSS transform (e.g. `transform:translate(-50%,0)`) applies ON TOP of that and silently shifts the icon off its target — this once pushed a hub icon 30px off-center. When your positioner sets `left`/`top`, have it also set `transform:'none'` (or omit the transform from the element's inline style entirely). Do not rely on `left:50%;transform:translate(-50%,0)` centering AND a JS positioner on the same element — pick one.
+
+**Connectors touch outlines, never cross them.** Any connector (SVG `<line>` or `<path>`) must start at the EDGE of its source shape and end at the EDGE of its target — compute the rim/edge endpoints (e.g. a point on a circle's radius, or a rect's border), never the shape's center. A line drawn from one shape's center to another's center slices through both outlines and reads as broken. The Step 5 validator hard-fails on `<line>`/`<path>` endpoints that land more than 6px inside a shape they don't originate from (opt out with `data-allow-penetration` only for deliberate illustration paths).
+
 **Stay faithful to the visual direction's intent.**
 Creative embellishment that reinforces the message is fine. Adding unrelated elements that confuse the message is not.
 
@@ -64,6 +68,8 @@ If any is missing, stop and ask. Do not infer defaults.
 
 After resolving inputs, verify the theme folder exists: `<tenant-folder>/ui_kits/linkedin_carousel/themes/<theme>/README.md`. If the folder or README is missing, stop and tell the user — do not fall back to a different theme or proceed without theme-specific rules.
 
+**Output-folder resolution (do NOT enumerate `generated/` here).** If the slides were provided from an existing `<tenant-folder>/generated/<slug>/` folder (e.g. the invocation opened that folder's `slides.txt`), THAT folder is the output bundle — write outputs into it, and do not compute a new sequence number. Only when creating a brand-new bundle is a slug derived, and that derivation belongs to Step 8, at bundle-write time. Do not list `generated/` during Step 1 — enumerating it now is a premature read that floods context and pre-empts a Step 8 concern.
+
 **Step 2: Read brand kit**
 
 <read_before>
@@ -87,6 +93,7 @@ For each carousel slide, compose an HTML section:
 - Wrap content in `.slide-content` (top-aligned) or `.slide-content-center` (for CTA)
 - Use `.slide-title`, `.slide-body` for text elements
 - **Slide text punctuation (brand rule):** No em dashes (—), en dashes (–), or curly quotes (' ' " "). Use periods or commas instead of dashes, straight quotes, and write number ranges as "30K to 50K" / "3 to 5". Applies to all visible text (`.slide-title`, `.slide-body`, cover/CTA text, big numbers, SVG `<text>`); HTML comments are exempt. The Step 5 validator hard-fails on any violation.
+- **ICP language on visual labels (propose, don't auto-apply):** slide titles, bullets, AND the SVG/diagram LABEL text a reader sees *inside* the graphic (a gauge label, an axis label, a node caption) must use language the post's ICP grasps instantly. Flag any too-technical term — e.g. "eval pass rate", "token", "harness", "RAG", "inference" — and PROPOSE a plain-language swap ("accuracy", "cost", "memory") or a ≤4-word inline definition; the USER confirms each swap. **Pillar-calibrated, never a blanket strip:** a deck for a technical ICP may legitimately keep more terms — over-simplifying dilutes depth. Visual labels are the sneakiest place for jargon to hide because caption-level checks never see them (this is where "eval pass rate" slipped onto a cover). Mirrors Dimension 13 of the post-revision drill.
 - Add the tag row with `.c-tag` and `.c-page-num` inline via flexbox (`justify-content:space-between`) — the tag sits left, the page number sits right. For centered layouts (CTA) where there is no tag row, use an absolutely positioned element outside the content wrapper: `<div style="position:absolute;top:60px;right:60px" class="c-page-num">N / N</div>`. Page number must appear top-right on every slide.
 - Compose a unique SVG content diagram inside `.slide-viz` following the slide's visual direction:
   - Use the SVG opacity ranges and font sizes from the brand kit README's "SVG content diagrams" table
@@ -98,6 +105,7 @@ For each carousel slide, compose an HTML section:
 - Add the tenant's theme atmosphere elements as specified in the theme README (`themes/<theme>/README.md`)
   - Atmosphere elements must stay within the 1080×1350 frame. Do not use negative offsets — the validation script checks all absolutely positioned elements against the canvas bounds, regardless of `overflow:hidden` clipping.
 - Swipe cues (`.c-swipe`) are optional — the prototype omits them because the author footer already anchors the slide bottom. Include only if the visual direction calls for a navigation hint.
+- **Vary wrapper structure across content slides** so no run of 8+ consecutive slides shares an identical `.slide-content` child structure — the Step 5 cross-slide check hard-fails on that. Easy, genuine variation: drop a redundant tag row on slides where the tag merely repeats the title (use an absolutely positioned `.c-page-num` instead), or alternate whether the diagram sits above or below the body. This is real variety, not gaming — don't manufacture meaningless wrapper churn.
 
 If any slide's visual direction uses icons, include the Lucide icons CDN script and call `lucide.createIcons()` with the parameters specified in the brand kit README's Dependencies section.
 
@@ -135,6 +143,7 @@ SVG property checks (from the general carousel kit README — theme-agnostic):
 - SVG text-to-container overflow: text `getBBox()` must fit inside its nearest sibling rect (4px tolerance)
 - Icon-text overlap: absolutely-positioned HTML icons (e.g., Lucide) overlapping SVG `<text>` elements within `.slide-viz` containers (4px tolerance)
 - Path-shape penetration: SVG `<path>` connector endpoints cutting more than 6px inside destination shapes (skips closed paths, filled paths, and paths with `data-allow-penetration`; excludes source shape where path starts)
+- Line-shape penetration: SVG `<line>` connector endpoints cutting more than 6px inside destination shapes (same 6px tolerance, source-shape exemption, and `data-allow-penetration` opt-out as the path check). Connectors must terminate at a shape's edge, never cross its outline.
 
 Structural checks:
 - getBBox auto-sizing script presence: at least one `<script>` block must reference `getBBox`
@@ -172,7 +181,7 @@ If QA fails on any slide:
 - Re-run the QA subagent with ALL slide PNGs (not just the fixed ones) — cross-slide checks require the full set
 - Bounded retry: max 3 revision passes per slide
 
-Do not present fixed slides to the user without visually inspecting the re-rendered PNGs. The composing agent must verify the fix looks correct, not just that the render script succeeded.
+Do not present fixed slides to the user without visually inspecting the re-rendered PNGs. The composing agent must verify the fix looks correct, not just that the render script succeeded. **After fixing any positioning or geometry issue specifically, confirm the RE-RENDERED PNG (not the pre-fix image) — a stale or unre-rendered file makes "I fixed it" a false claim. Where the fix is a coordinate/alignment change, prefer a quick numeric confirmation (e.g. compare the element's rendered center to its intended target) over eyeballing alone.**
 
 If a slide still fails after 3 attempts, stop and escalate to the user.
 
@@ -184,7 +193,9 @@ If a slide still fails after 3 attempts, stop and escalate to the user.
 
 After all slides pass QA:
 - Export a combined multi-page PDF (one slide per page, 1080×1350)
-- Derive the asset slug: `{next-sequence-number}-{kebab-carousel-title}` (e.g., `7-brain-vs-hands-carousel`). Determine the sequence number from the count of existing directories in `<tenant-folder>/generated/`.
+- Determine the output folder:
+  - **If the slides came from an existing `generated/<slug>/` folder** (per Step 1), that folder IS the bundle — reuse it; do NOT derive a new slug or enumerate `generated/`.
+  - **Only for a brand-new bundle:** derive the asset slug `{next-sequence-number}-{kebab-carousel-title}` (e.g., `7-brain-vs-hands-carousel`), taking the sequence number from the count of existing directories in `<tenant-folder>/generated/`. This is the one and only place that enumeration happens.
 - Write the final asset bundle to `<tenant-folder>/generated/<asset-slug>/`:
   - `carousel.html` — the editable source
   - `slide-01.png` through `slide-NN.png` — individual slide PNGs
@@ -204,6 +215,9 @@ After all slides pass QA:
 - **Hardcoding rect widths behind text.** Text length varies by content. Use `getBBox()` to measure rendered text and size the container dynamically. Hardcoded widths cause clipping on longer text and waste space on shorter text.
 - **Front-loading all file reads.** Reading the QA checklist, render workflow, and validation script at Step 2 because "it's efficient" wastes context and violates progressive loading. Each step's `<read_before>` lists exactly what to read — nothing more.
 - **Em dashes, en dashes, or curly quotes in slide text.** An AI-writing tell and a brand violation. Use periods/commas, straight quotes, and "X to Y" ranges. The validator hard-fails on them.
+- **Connectors drawn center-to-center.** A line/path from one shape's center to another's slices through both outlines and reads as broken. Terminate connectors at the shapes' edges. The Step 5 line/path-penetration checks hard-fail on this.
+- **A JS-positioned overlay icon that also has a CSS `transform`.** The transform shifts it off the position the script set (this drifted a hub icon 30px). Clear the transform when positioning by script.
+- **Technical jargon on a visual label.** "eval pass rate" on a gauge, "RAG" on a node — caption checks never see label text, so jargon hides there. Propose a plain-language swap (user confirms), pillar-calibrated.
 
 </anti_patterns>
 
