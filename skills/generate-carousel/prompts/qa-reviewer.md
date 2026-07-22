@@ -38,8 +38,15 @@ For each slide PNG, inspect and evaluate:
 
 11. **Visual-label jargon (ICP fit)** — Does any label text INSIDE a diagram (gauge label, axis label, node caption, stat label) use a technical term the post's ICP would not grasp instantly — e.g. "eval pass rate", "token", "RAG", "inference"? If so, FLAG it with a proposed plain-language swap ("accuracy", "cost", "memory") for the user to confirm. Pillar-calibrated: a deck whose ICP is itself technical may keep such terms — do NOT demand blanket simplification; flag only genuine mismatches.
 
+12. **Brand-asset usage** — For any element that represents a NAMED real-world brand/product/tool (per the visual direction — e.g. "a Claude node", "posted to Slack"), verify it uses that brand's actual logo, not a generic stand-in (a sparkle for Claude, a cloud for Slack, a robot for an AI). A named brand drawn with a generic glyph is a FAIL. (Generic icons remain correct for *unnamed* standard concepts like lock/arrow/database.)
+
+13. **Text dimness (brand-token floor)** — No readable text — HTML copy OR SVG label — may be dimmer than the brand's muted token at full opacity. FAIL any label that looks washed-out/hard to read, especially where a muted color has been further dimmed by stacked opacity or fade. Check HTML captions and body copy, not only SVG labels.
+
+14. **Containment margin** — Text inside any shape (circle, node, box, badge, pill) must have comfortable internal margin, not merely avoid overflow. A label touching or nearly touching its container's outline is a FAIL — the fix is a bigger shape or a shorter label, never cramped text.
+
 After inspecting all slides individually, check cross-slide quality:
-- Visual rhythm: do slide layouts vary or is it monotonous?
+- Visual rhythm: do slide *bodies/diagrams* vary, or is it monotonous?
+- Chrome consistency: is the recurring chrome (category pill/tag, page number, author footer, atmosphere) present and uniform on EVERY slide? A pill/tag on some slides but missing on others is a FAIL unless the omission is clearly intentional.
 - Consistency: footer position, typography, atmosphere uniform across all slides?
 - Cover and CTA structurally distinct from content slides?
 

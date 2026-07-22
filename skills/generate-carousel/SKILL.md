@@ -26,8 +26,21 @@ Run programmatic bounds checks on ALL slides. Visually inspect EVERY rendered PN
 **Render success is not QA success.**
 Playwright rendering without errors means nothing about visual quality. A technically valid render can still fail if SVGs are too faint, elements are clipped, or the composition is weak.
 
-**Use Lucide icons when available.**
-When a visual direction calls for standard icons (lock, pencil, database, arrow, etc.), use the Lucide CDN rather than hand-drawing them from SVG path coordinates. Place icons as HTML elements (`<i data-lucide="icon-name">`), not inside SVG. Hand-drawn SVG is appropriate for custom diagrams and compositions that Lucide doesn't cover.
+**Brand assets outrank generic icons — resolve named entities first.**
+When a visual direction names a real-world entity — a brand, product, tool, or company ("a Claude node", "posted to Slack", "inside Google Docs") — represent it with that entity's real logo, never a generic stand-in (a sparkle for Claude, a cloud for Slack). Resolve each named entity's icon in this order:
+1. **Local brand-asset library first.** Look in the tenant's brand-icon folder, `<tenant-folder>/assets/brand-logos/`. If the logo is there, use it as an absolutely-positioned `<img>` overlay.
+2. **Fetch and cache if missing.** If the brand has no local asset, search online for its *official* logo (prefer a transparent-background SVG or PNG — the real mark, not fan art or a look-alike), download it, and **save it into that same `<tenant-folder>/assets/brand-logos/` folder** under a normalized lowercase filename (`notion.svg`, `hubspot.png`). That folder is a persistent, shared, growing brand-icon library — once a logo is fetched it is reused by every future carousel and never re-downloaded.
+3. **Generic fallback last.** Only if the entity cannot be resolved locally or online (or the network is unavailable) fall back to a Lucide/hand-drawn glyph — and note the fallback so it is visible for review.
+A named brand rendered with a generic glyph is a defect, not a shortcut.
+
+**Use Lucide icons for unnamed standard concepts.**
+When a visual direction calls for a standard, *unbranded* icon (lock, pencil, database, arrow, etc.), use the Lucide CDN rather than hand-drawing from SVG path coordinates. Place icons as HTML elements (`<i data-lucide="icon-name">`), not inside SVG. Hand-drawn SVG is appropriate for custom diagrams and compositions that Lucide doesn't cover. (Named brands use their real logo — see the principle above.)
+
+**Brand text tokens define the dimness floor — never stack de-emphasis.**
+Every piece of visible text (HTML and SVG) takes its color from a defined brand text token — headline / body / muted — at FULL opacity. Achieve a quieter, secondary look by choosing a quieter *token*, never by layering `opacity`, `fill-opacity`, or a fade on top of an already-muted color. The brand's muted token at full strength is the readability floor; compounding opacity on it produces off-brand, hard-to-read text. Reduced opacity belongs on shapes and atmosphere, not on readable text labels.
+
+**Consistent chrome, varied body.**
+Separate each slide's *chrome* — the recurring fixed affordances every slide shares (category pill/tag, page number, author footer, theme atmosphere) — from its *body* — the unique diagram and copy. Decide the chrome template once and apply it uniformly to every slide; draw variety from the body, not by dropping chrome on some slides. A recurring affordance present on some slides but absent on others reads as an inconsistency, not as rhythm. (The "vary wrapper structure" guidance in Step 3 applies to the body/diagram, never to the shared chrome.)
 
 **This especially applies to arrows and connectors** — use `arrow-right`, `arrow-left-right`, `arrow-down`, `chevron-right`, etc. instead of hand-drawing SVG `<marker>` arrowheads. SVG markers render poorly at phone scale; Lucide icons stay crisp. Position them as absolutely placed HTML elements over the SVG diagram.
 
@@ -43,6 +56,8 @@ Every text block from the Airtable carousel slide must appear in the output. If 
 
 **Auto-size text containers, never hardcode.**
 Any rect, badge, or label background behind text must be sized at runtime using `getBBox()` — never hardcode width values. Include a `<script>` block that runs after DOMContentLoaded to: (1) measure each text element's bounding box and set the parent container's dimensions with appropriate padding, and (2) after all resizing, check for bounding-box overlap between sibling SVG elements and log a console warning for each collision detected. This eliminates text clipping and surfaces layout collisions caused by auto-sizing. If collision is detected, fix the layout spacing — never revert to hardcoded widths.
+
+**Containment needs breathing room, not just non-overlap.** "Text fits without overflowing" is a lower bar than "text has margin." Size every text container to the text PLUS a minimum internal padding on all sides. For fixed-size shapes that hold a label — circles, nodes, badges, pills — size the shape to the longest label plus padding, or shrink the label. Text must never reach or nearly touch its container's outline (this applies radially for circles), even when it technically fits inside. Cramped text kissing an edge reads as an error even when geometry says it is fine.
 
 **Progressive loading discipline — read ONLY what the current step requires.**
 Each workflow step has a `<read_before>` tag listing the exact files needed for that step. Read ONLY those files at that step. Do NOT front-load reads from later steps "for efficiency" — this wastes context window tokens and degrades performance on the current step by flooding attention with irrelevant material. If a step has no `<read_before>`, it needs no new reads. The agent who reads everything upfront is not being efficient — they are ignoring the skill's progressive loading design.
@@ -87,6 +102,11 @@ Stop on genuine brand blockers only:
 - Ambiguity preventing brand resolution
 
 **Step 3: Compose per-slide HTML**
+
+Before composing individual slides, do two deck-wide passes so brands and chrome are consistent everywhere:
+
+- **Named-entity → brand-asset pass.** Scan every slide's `Visual:` direction for named brands/products/tools. Resolve each to a logo using the three-tier order in the essential principle "Brand assets outrank generic icons" — local `<tenant-folder>/assets/brand-logos/` first, then fetch-and-cache the official logo online into that same folder, then a generic glyph only as a last resort. Build the entity→asset map once, up front, so the same brand renders identically wherever it appears across the deck.
+- **Chrome template pass.** Decide the fixed per-slide chrome once — category pill/tag, top-right page number (`N / N`), author footer, theme atmosphere — and apply it uniformly to every slide. Vary the body (diagram + copy) for rhythm; never vary the chrome by dropping it on some slides.
 
 For each carousel slide, compose an HTML section:
 
@@ -218,6 +238,10 @@ After all slides pass QA:
 - **Connectors drawn center-to-center.** A line/path from one shape's center to another's slices through both outlines and reads as broken. Terminate connectors at the shapes' edges. The Step 5 line/path-penetration checks hard-fail on this.
 - **A JS-positioned overlay icon that also has a CSS `transform`.** The transform shifts it off the position the script set (this drifted a hub icon 30px). Clear the transform when positioning by script.
 - **Technical jargon on a visual label.** "eval pass rate" on a gauge, "RAG" on a node — caption checks never see label text, so jargon hides there. Propose a plain-language swap (user confirms), pillar-calibrated.
+- **A named brand drawn with a generic glyph.** A sparkle for Claude, a cloud for Slack, a robot for any AI. Named brands resolve to their real logo (local → fetch-and-cache → generic only as a last resort). Generic Lucide icons are for *unnamed* standard concepts only.
+- **Dimming an already-muted color.** Stacking `opacity`/`fill-opacity`/fade on the muted token pushes text below the brand's readability floor. Secondary = a quieter *token* at full opacity, never a dimmed one.
+- **Chrome present on some slides but not others.** A category pill on the workflow slides but missing on the intro/closing slides reads as inconsistency. Decide chrome once, apply to all; vary the body instead.
+- **Text cramped against a container edge.** Passing the non-overlap check is not enough — a label kissing a circle/box outline reads as broken. Size the shape to the label plus padding, or shrink the label.
 
 </anti_patterns>
 

@@ -31,6 +31,9 @@ Validator pass is required before QA. QA does not replace programmatic validatio
 - Bar chart elements overflow their axes (y + height must equal axis y-position)
 - A connector (line or path) cuts through a shape's outline instead of terminating at its edge, or an overlay icon sits visibly off the target it should mark (e.g. an icon meant to be centered in a node drifting off-center)
 - A visual/diagram LABEL uses jargon the post's ICP would not grasp instantly (e.g. "eval pass rate", "RAG"): propose a plain-language swap for the user to confirm — pillar-calibrated, do NOT demand a technical-ICP deck be dumbed down
+- A NAMED real-world brand/product/tool is drawn with a generic icon instead of its real logo (when the tenant has the logo locally or it can be fetched online — see the "Brand assets outrank generic icons" principle)
+- Readable text (HTML or SVG) is dimmer than the brand's muted token at full opacity — e.g. opacity or fade stacked on an already-muted color, producing washed-out copy
+- Text inside a shape (circle, node, box, badge, pill) lacks internal margin — it touches or nearly touches the outline — even if it does not technically overflow
 
 **First-glance quality — assess within 3 seconds:**
 
@@ -44,12 +47,13 @@ Validator pass is required before QA. QA does not replace programmatic validatio
 <cross_slide_checks>
 
 **Visual rhythm:**
-- Slide layouts vary visually — no long runs of visually identical compositions (the programmatic script checks structural wrappers only; visual variety is YOUR responsibility)
+- Slide *bodies/diagrams* vary visually — no long runs of visually identical compositions (the programmatic script checks structural wrappers only; visual variety is YOUR responsibility). Variety comes from the body, not from dropping shared chrome.
 - Cover (slide 1) is structurally distinct from content slides
 - CTA (last slide) is structurally distinct from content slides
 - SVG diagrams vary across slides — no repeated identical compositions
 
-**Consistency:**
+**Consistency (chrome uniform across all slides):**
+- Recurring chrome — category pill/tag, page number, author footer, theme atmosphere — is present and consistent on EVERY slide. A pill/tag on some slides but missing on others is an inconsistency, not variety (fail unless intentional).
 - Author footer appears on every slide in the same position
 - Page number format is consistent (N / Total)
 - Typography scale is consistent across all slides

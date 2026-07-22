@@ -231,7 +231,43 @@ const results = await page.evaluate(({ slideWidth, slideHeight, minFooterGap }) 
              (r < 60 && g > 140 && b > 240);       // blue (45,167,255)
     }
 
+    // Muted/secondary brand token — #9a979b (154,151,155). It is the readability FLOOR:
+    // it must be used at full opacity, never further dimmed by opacity/fill-opacity/fade.
+    // A quieter label is achieved by choosing a quieter token, not by stacking opacity.
+    function isMutedFill(fill) {
+      if (!fill) return false;
+      const f = fill.trim().toLowerCase();
+      if (f === '#9a979b') return true;
+      const m = f.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
+      if (m) return Math.abs(+m[1] - 154) < 12 && Math.abs(+m[2] - 151) < 12 && Math.abs(+m[3] - 155) < 12;
+      return false;
+    }
+    // Effective text alpha = element opacity × fill-opacity × rgba-alpha of the fill.
+    // (The earlier checks read only the rgba alpha of `fill`, so a hex fill dimmed by a
+    // separate opacity="0.8" attribute slipped through — this composites all three.)
+    function effectiveTextAlpha(textEl) {
+      const op = parseFloat(textEl.getAttribute('opacity'));
+      const fo = parseFloat(textEl.getAttribute('fill-opacity'));
+      const parsed = parseRgbaOpacity(textEl.getAttribute('fill'));
+      return (isNaN(op) ? 1 : op) * (isNaN(fo) ? 1 : fo) * (parsed ? parsed.a : 1);
+    }
+
     let opacityFailed = false;
+
+    // Muted token must never be further dimmed (opacity stacked on an already-muted color).
+    svgTexts.forEach((textEl) => {
+      if (!isMutedFill(textEl.getAttribute('fill'))) return;
+      const eff = effectiveTextAlpha(textEl);
+      if (eff < 0.99) {
+        opacityFailed = true;
+        const content = (textEl.textContent || '').trim().substring(0, 30);
+        slideFindings.push({
+          check: 'svg-text-dimness',
+          status: 'FAIL',
+          detail: `Muted text "${content}" effective opacity ${eff.toFixed(2)} — the muted token is the readability floor and must be full opacity. For a readable secondary label pick a brighter brand token; never stack opacity on a muted color.`,
+        });
+      }
+    });
 
     // Text opacity checks
     svgTexts.forEach((textEl) => {
@@ -299,6 +335,38 @@ const results = await page.evaluate(({ slideWidth, slideHeight, minFooterGap }) 
       slideFindings.push({ check: 'svg-opacity-tier', status: 'PASS' });
     }
 
+    // --- Check B2: HTML text dimness (brand token floor) ---
+    // Readable HTML copy inside the content wrapper must not be dimmer than the muted
+    // token at full opacity: reject text with composited opacity < 0.75, or a muted
+    // color further dimmed by opacity. The author footer is chrome (brand-defined
+    // opacities) and is intentionally excluded — it lives outside .slide-content.
+    let htmlDimFailed = false;
+    slide.querySelectorAll('.slide-content, .slide-content-center').forEach((wrap) => {
+      wrap.querySelectorAll('*').forEach((el) => {
+        const hasText = Array.from(el.childNodes).some((n) => n.nodeType === 3 && n.textContent.trim().length > 1);
+        if (!hasText) return;
+        let op = 1, node = el;
+        while (node && node !== slide) {
+          const o = parseFloat(window.getComputedStyle(node).opacity);
+          if (!isNaN(o)) op *= o;
+          node = node.parentElement;
+        }
+        const content = (el.textContent || '').trim().substring(0, 30);
+        const cm = window.getComputedStyle(el).color.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
+        const muted = cm && Math.abs(+cm[1] - 154) < 14 && Math.abs(+cm[2] - 151) < 14 && Math.abs(+cm[3] - 155) < 14;
+        if (op < 0.75) {
+          htmlDimFailed = true;
+          slideFindings.push({ check: 'html-text-dimness', status: 'FAIL', detail: `HTML text "${content}" composited opacity ${op.toFixed(2)} — too transparent to read.` });
+        } else if (muted && op < 0.99) {
+          htmlDimFailed = true;
+          slideFindings.push({ check: 'html-text-dimness', status: 'FAIL', detail: `HTML text "${content}" uses the muted token with opacity ${op.toFixed(2)} — do not stack opacity on a muted color; choose a brighter brand token for readable text.` });
+        }
+      });
+    });
+    if (!htmlDimFailed) {
+      slideFindings.push({ check: 'html-text-dimness', status: 'PASS' });
+    }
+
     // --- Check C: SVG text-to-container overflow ---
     let textOverflowFailed = false;
     svgTexts.forEach((textEl) => {
@@ -347,6 +415,47 @@ const results = await page.evaluate(({ slideWidth, slideHeight, minFooterGap }) 
     if (!textOverflowFailed && svgTexts.length > 0) {
       slideFindings.push({ check: 'svg-text-overflow', status: 'PASS' });
     }
+
+    // --- Check C2: text needs breathing room inside its container (margin, not just non-overlap) ---
+    // "Does not overflow" is a lower bar than "has margin". Warn when a label sits within
+    // MIN_PAD of its container edge — for rects AND circles/ellipses (nodes, badges, pills).
+    const MIN_PAD = 6;
+    svgTexts.forEach((textEl) => {
+      try {
+        const t = textEl.getBBox();
+        const tcx = t.x + t.width / 2, tcy = t.y + t.height / 2;
+        let prev = textEl.previousElementSibling;
+        for (let i = 0; i < 4 && prev; i++) {
+          const tag = prev.tagName;
+          if (tag === 'rect') {
+            const b = prev.getBBox();
+            if (tcx >= b.x && tcx <= b.x + b.width && tcy >= b.y && tcy <= b.y + b.height) {
+              // Horizontal crowding only: text reaching the left/right edge is the real
+              // "no breathing room" case. Vertical tightness in a fixed-height pill/tag is
+              // normal, and true vertical overflow is already a hard FAIL in Check C.
+              const margin = Math.min(t.x - b.x, (b.x + b.width) - (t.x + t.width));
+              if (margin >= 0 && margin < MIN_PAD) {
+                slideFindings.push({ check: 'svg-text-margin', status: 'WARN', detail: `Text "${(textEl.textContent || '').trim().substring(0, 24)}" nearly reaches its container's side edge (${Math.round(margin)}px, min ${MIN_PAD}px) — widen the container or shorten the label.` });
+              }
+              break;
+            }
+          } else if (tag === 'circle' || tag === 'ellipse') {
+            const b = prev.getBBox();
+            const cx = b.x + b.width / 2, cy = b.y + b.height / 2, r = Math.min(b.width, b.height) / 2;
+            if (tcx >= b.x && tcx <= b.x + b.width && tcy >= b.y && tcy <= b.y + b.height) {
+              const dx = Math.max(Math.abs(t.x - cx), Math.abs(t.x + t.width - cx));
+              const dy = Math.max(Math.abs(t.y - cy), Math.abs(t.y + t.height - cy));
+              const margin = r - Math.sqrt(dx * dx + dy * dy);
+              if (margin < MIN_PAD) {
+                slideFindings.push({ check: 'svg-text-margin', status: 'WARN', detail: `Text "${(textEl.textContent || '').trim().substring(0, 24)}" reaches within ${Math.round(margin)}px of its ${tag} edge (min ${MIN_PAD}px) — enlarge the ${tag} or shrink the label so text never touches the outline.` });
+              }
+              break;
+            }
+          }
+          prev = prev.previousElementSibling;
+        }
+      } catch (e) { /* getBBox may fail on hidden elements */ }
+    });
 
     // --- Check E: HTML-to-SVG icon-text overlap ---
     let iconTextOverlapFailed = false;
@@ -588,11 +697,16 @@ const results = await page.evaluate(({ slideWidth, slideHeight, minFooterGap }) 
     }
   });
 
+  // --- Cross-slide chrome consistency: recurring category pill/tag ---
+  let tagCount = 0;
+  slides.forEach((s) => { if (s.querySelector('.c-tag')) tagCount++; });
+
   return {
     slides: findings,
     slideCount: slides.length,
     maxConsecutiveIdentical: maxConsecutive,
     hasBBoxScript: hasBBoxScript,
+    tagCount: tagCount,
   };
 }, { slideWidth: SLIDE_WIDTH, slideHeight: SLIDE_HEIGHT, minFooterGap: MIN_FOOTER_GAP });
 
@@ -646,6 +760,14 @@ if (!results.hasBBoxScript) {
   console.log(`\ngetBBox script: FAIL — no <script> block references getBBox. The composing agent must include an auto-sizing script.`);
 } else {
   console.log(`\ngetBBox script: PASS`);
+}
+
+// Chrome consistency: a recurring category pill/tag should be on every slide or none
+if (results.tagCount > 0 && results.tagCount < results.slideCount) {
+  hasWarnings = true;
+  console.log(`\nChrome consistency: WARN — category pill/tag on ${results.tagCount}/${results.slideCount} slides. Recurring chrome (pill, page number, footer) should be uniform across every slide unless an omission is intentional.`);
+} else {
+  console.log(`\nChrome consistency: PASS (tag on ${results.tagCount}/${results.slideCount} slides)`);
 }
 
 const verdict = hasFailures ? 'FAIL' : (hasWarnings ? 'PASS (with warnings)' : 'PASS');
