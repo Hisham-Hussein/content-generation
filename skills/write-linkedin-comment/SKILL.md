@@ -65,7 +65,7 @@ These patterns have been flagged repeatedly as AI tells. Using any of them will 
 - Starting sentences with "The" as a habitual opener
 - Substituting "that" for "the" to dodge the above rules
 - Tailing negations ("no guessing", "no wasted motion")
-- "Not only X but Y" / "It's not just X, it's Y"
+- "Not only X but Y" / "It's not just X, it's Y" / "It's not X, it's Y"
 - Starting with the article "the" every time
 
 **Banned words and phrases:**
@@ -78,6 +78,7 @@ These patterns have been flagged repeatedly as AI tells. Using any of them will 
 - every CEO I've talked to
 - nobody's talking about / nobody is talking about
 - X is the right call
+- X is exactly where/what/how Y
 - X is everything / X is perfect
 - The X is what separates / The X is how we decide
 - crucial / pivotal / landscape / delve / foster / showcase
