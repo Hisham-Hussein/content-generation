@@ -25,7 +25,7 @@ Provide a LinkedIn post (paste or screenshot). Specify if it's your own post or 
 
 6. **The author is CEO of an AI agency with a team.** Never frame as a solopreneur. Can reference client work but don't lead every comment with "we built/we do/we hire." Add value from perspective, not resume.
 
-7. **Don't lead with acknowledgment.** Brief acknowledgment is fine ("good breakdown", "solid list") but never sycophantic ("Great post!", "Spot on!", "This is amazing!"). Get to the value fast.
+7. **Acknowledge briefly, then add value.** For others' posts, start with a short acknowledgment ("good breakdown", "solid point"), then add your value. Keep acknowledgment to a few words, never sycophantic ("Great post!", "Spot on!", "This is amazing!").
 
 8. **Vary sentence openers.** Never start every comment with the same word. Never habitually start with "the."
 
@@ -105,7 +105,7 @@ Identify one specific point where you can add genuine expert insight the post do
 
 **Step 3: Draft the comment.**
 - 1-3 sentences, casual, lowercase
-- Lead with the value, not acknowledgment
+- Brief acknowledgment first, then the value-add
 - Don't regurgitate what the post says
 - Don't contradict the author
 - Don't invent fictional scenarios or client stories
