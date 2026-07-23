@@ -1,7 +1,7 @@
 {
   "name": "content-generation",
-  "description": "Package reusable skills for premium tenant-local content-production workflows. Version one includes a normalize-brand utility and a generate-infographic workflow that works directly from tenant brand materials.",
-  "version": "0.1.0",
+  "description": "Private tenant-local skills for premium LinkedIn infographics, carousels, and raster visual conversion.",
+  "version": "0.2.0",
   "author": {
     "name": "Hisham"
   },
@@ -9,6 +9,7 @@
   "keywords": [
     "content-generation",
     "infographics",
+    "carousels",
     "branding",
     "linkedin"
   ]

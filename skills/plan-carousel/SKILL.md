@@ -1,6 +1,6 @@
 ---
 name: plan-carousel
-description: Use when a finished LinkedIn post caption needs a matching carousel but the slides do not exist yet — it authors the carousel deck (slide text plus a designer-quality visual direction per slide) from the caption and its knowledge item. Triggers on "make a carousel from this post", "carousel from the caption", "turn this post into a carousel", "plan the carousel", "build carousel slides from the caption", or any time someone has a caption and wants a carousel to go with it. Use this BEFORE content-generation:generate-carousel: generate-carousel only renders slides that already exist, so reach for plan-carousel first whenever the slides still need to be written from the caption.
+description: "Use when a finished LinkedIn post caption needs a matching carousel but the slides do not exist yet — it authors the carousel deck (slide text plus a designer-quality visual direction per slide) from the caption and its knowledge item. Triggers on 'make a carousel from this post', 'carousel from the caption', 'turn this post into a carousel', 'plan the carousel', 'build carousel slides from the caption', or any time someone has a caption and wants a carousel to go with it. Use this BEFORE content-generation:generate-carousel: generate-carousel only renders slides that already exist, so reach for plan-carousel first whenever the slides still need to be written from the caption."
 ---
 
 <objective>
@@ -23,7 +23,7 @@ Minimum invocation: "Plan a carousel from this caption for tenant at `<tenant-fo
 
 **Slide text is scannable in about five seconds.** The diagram does the heavy lifting and the caption holds the full detail, so slides carry short lines: ~2–3 short bullets, real `•` bullets (not the caption's `↳` plain-text hack), short titles (a long title wraps to two lines and looks broken, and on the cover it steals room from the hero). The cover is a ≤2-line title drawn from the caption's hook plus a dominant hero visual plus no body text.
 
-**The visual direction is this skill's real product, not decoration.** generate-carousel renders your `Visual:` line faithfully — its governing rule is "stay faithful to the visual direction's intent." So the quality of the rendered slide is bounded by the quality of your direction. A weak "three icons in a row" direction renders as a weak slide. Author each `Visual:` line as a world-class designer would; the craft principles live in `references/visual-direction-craft.md`.
+**The visual direction is this skill's real product, not decoration.** generate-carousel renders your `Visual:` line faithfully — its governing rule is "stay faithful to the visual direction's intent." So the quality of the rendered slide is bounded by the quality of your direction. A weak "three icons in a row" direction renders as a weak slide. Because it is the leverage point, Step 5 authors the directions as a **three-agent sequence** (art-director sets one motif → a single whole-deck author writes every `Visual:` line → a deck-level critic reviews them and loops back to revise). The craft principles live in `references/visual-direction-craft.md`.
 
 **No color words in a visual direction — the brand kit owns the palette.** This is the handoff contract with generate-carousel. A `Visual:` line directs layout, icon, hierarchy, and emphasis intent only ("lower emphasis", "hero element", "dead center", "dwarfed by"), never color ("red arrow", "green badge"). Color and contrast come from the theme; naming them here fights the brand system and produces off-theme renders.
 
@@ -66,13 +66,27 @@ Map the arc to slides: a cover, the context or "before" state, the method or tur
 
 Short scannable lines, ~2–3 short `•` bullets per slide. Short titles (a few words). Cover = ≤2-line title drawn from the caption's hook + a dominant hero visual + no body text. Apply the anti-AI-writing bar. Surface Dim-13 jargon swaps and let the user confirm each — never bulk-strip technical terms.
 
-**Step 5: Designer pass on the visual directions**
+**Step 5: Author the visual directions — three-agent sequence**
+
+The visual direction is this skill's real product and the render is bounded by it, so the designer pass runs as **three specialist agents in strict sequence**, not an inline pass. Spawn each with the Agent tool (general-purpose), in order, feeding each the prior agent's output. Do NOT fan out one agent per slide — a single author that sees the whole deck at once is what keeps the motif coherent; per-slide isolation produces locally-clever but globally-inconsistent directions, and a per-slide critic cannot see cross-slide drift.
+
+**GUARDRAIL — this step MUST run as three spawned agents. It is not optional and you do not do it yourself.**
+- First action of Step 5: create three todos (5a art-director, 5b visual author, 5c critic) with TodoWrite. This makes the spawn commitment visible and trackable.
+- Spawn each agent with the Agent tool using the ready-made role prompt in `references/visual-agent-prompts.md` (fill its `{{...}}` slots) — do not improvise a thin prompt; the prompts are calibrated to force art-director-grade, artistic, varied, scroll-stopping output.
+- You MUST NOT write or hand-edit any `Visual:` line yourself. That is agent 5b's job exclusively. If you catch yourself composing a Visual line directly, stop — you are violating the process. The orchestrator's only jobs here are: prep inputs, spawn the three agents in order, run the 5b↔5c revise loop, and relay results.
+- Skipping an agent, merging two into one, or inlining the authoring is a process violation. Three agents, in sequence, every time.
+
+Before spawning, write the current deck (the Step 4 slide text, with any draft `Visual:` lines) to `slides.txt` so each agent reads and edits the file directly. Read both `references/visual-direction-craft.md` and `references/visual-agent-prompts.md` yourself, and pass the craft reference to every agent, along with: the theme name and its temperament (from the tenant `THEMES.md`), and the caption + knowledge-item arc.
 
 <read_before>
-- `references/visual-direction-craft.md` — the designer-pass principles and worked before/after examples
+- `references/visual-direction-craft.md` — the designer-pass principles and worked before/after examples (read it yourself, and hand it to every agent)
 </read_before>
 
-For each slide, author a `Visual:` line the way a world-class designer would: a consistent motif across the deck, one clear hero focal point per slide, hierarchical and emotional staging, a single strong cover metaphor, screenshot-worthy recap slides, real brand/tool names so the renderer uses their logos, and no color words. Bar-not-floor: if a direction is already strong, leave it.
+- **5a — Art-director (motif, runs once).** One agent. Input: the whole deck's slide text, the theme, the story arc. Output: a short deck-wide visual system — the ONE recurring motif (a pipeline, a locator map, a consistent node style), the cover's single hero metaphor, and the emotional-staging plan (which slides enlarge or shrink what, to carry meaning). It writes no per-slide `Visual:` lines. This is the coherence anchor: decided once, obeyed by every slide.
+
+- **5b — Visual author (all slides, runs once).** ONE agent, never one per slide. Input: 5a's motif spec, every slide's text, the craft reference. It writes the `Visual:` line for every slide directly into `slides.txt`, each obeying the 5a motif, each with a single hero focal point, real brand/tool names (so the renderer uses their logos), zero color words, and Dim-13-clean labels. Seeing the whole deck in one pass is what enforces motif consistency and stops two slides sharing a composition. Bar-not-floor: a direction that is already strong passes through unchanged.
+
+- **5c — Visual critic (deck-level, runs once) + revise loop.** One agent reviews ALL directions together — the only vantage from which coherence defects are visible. It returns a punch-list: motif consistency across every slide, one clear focal point per slide, no two slides with the same composition, zero color words, real brands named, and Dim-13 label jargon. Route the findings back to the 5b author for a revise pass, then re-critique. Bound the loop to 2 rounds; if items remain after round 2, surface them to the user rather than looping forever. A per-slide critic is explicitly wrong here — coherence is a whole-deck property.
 
 **Step 6: Standalone-readability gate**
 
@@ -104,6 +118,7 @@ On approval, invoke `content-generation:generate-carousel` with the slides, the 
 - **Rendering before the user has approved the slide text.** The render is the expensive step; approve first.
 - **Jargon on a diagram label** the caption never had to explain. Label text is where technical terms hide from the caption's checks.
 - **Em dashes, "it's not X, it's Y", or tailing negations on slides.** Same anti-AI bar as the caption.
+- **Fanning out one visual agent per slide.** The Step 5 author (5b) and critic (5c) are BOTH deck-level. Per-slide isolation breaks the shared motif and hides cross-slide drift — the very defects the step exists to prevent.
 
 </anti_patterns>
 
@@ -111,6 +126,7 @@ On approval, invoke `content-generation:generate-carousel` with the slides, the 
 
 - `slides.txt` written: one idea per slide, scannable, standalone-readable, real `•` bullets, cover = title + hero + no body.
 - Every slide has a render-ready `Visual:` direction with a clear focal point, a coherent motif across the deck, and no color words.
+- The visual directions were authored by the Step 5 three-agent sequence (art-director → single whole-deck author → deck-level critic + revise loop), not an inline or per-slide pass.
 - Slide text and diagram labels pass the anti-AI bar and the Dim-13 jargon pass (swaps user-confirmed).
 - `titles.txt` written: 3 titles under 58 chars (curiosity / SEO / benefit).
 - The user approved the deck BEFORE rendering.
@@ -119,6 +135,7 @@ On approval, invoke `content-generation:generate-carousel` with the slides, the 
 </success_criteria>
 
 <reference_index>
+**Step 5 agent role prompts (ready to paste):** references/visual-agent-prompts.md
 **Designer pass (visual direction craft):** references/visual-direction-craft.md
 **Sibling render skill:** content-generation:generate-carousel
 **Plugin art-direction floor:** ../../references/shared-art-direction-principles.md

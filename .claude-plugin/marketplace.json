@@ -4,15 +4,15 @@
     "name": "Hisham"
   },
   "metadata": {
-    "description": "Tenant-local visual content workflows for LinkedIn and branded infographic production",
-    "version": "0.1.0"
+    "description": "Private tenant-local visual content workflows for LinkedIn infographics and carousels",
+    "version": "0.2.0"
   },
   "plugins": [
     {
       "name": "content-generation",
       "source": "./",
-      "description": "Skills for premium tenant-local content-production workflows including infographic generation and brand normalization",
-      "version": "0.1.0",
+      "description": "Skills for premium tenant-local content production including carousel generation and raster visual conversion",
+      "version": "0.2.0",
       "strict": true
     }
   ]

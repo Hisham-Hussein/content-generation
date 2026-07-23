@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 
 const HARD_LIMITS = {
   artboard: { width: 1080, height: 1350 },
-  safePaddingMin: 80,
+  safePaddingMin: 40,
   fontScale: {
     headlineMin: 52,
     sectionMin: 34,

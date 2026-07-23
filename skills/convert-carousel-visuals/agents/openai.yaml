@@ -1,0 +1,4 @@
+interface:
+  display_name: "Convert Carousel Visuals"
+  short_description: "Replace carousel SVGs with raster visuals."
+  default_prompt: "Use $convert-carousel-visuals to make a non-destructive image-based version of this carousel."

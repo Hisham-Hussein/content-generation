@@ -45,7 +45,7 @@ test('fails when body text is below hard minimum', () => {
 });
 
 test('fails when safe padding is below hard minimum', () => {
-  const html = validHtml.replace('"left": 80', '"left": 56');
+  const html = validHtml.replace('"left": 80', '"left": 32');
   const result = validateInfographicHtml(html);
   assert.equal(result.status, 'fail');
   assert.match(result.errors.join('\n'), /safe padding/i);

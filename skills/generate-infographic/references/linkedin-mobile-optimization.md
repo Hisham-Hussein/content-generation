@@ -62,7 +62,7 @@ Use square only when the design is simple or desktop consistency matters more th
 ## Hard Validator Rules
 
 - artboard must be exactly `1080 x 1350 px`
-- safe padding must be at least `80 px` on all sides
+- safe padding must be at least `40 px` on all sides (research 2026-07: LinkedIn mandates no safe zone for single 4:5 feed images; 80px convention originates from PDF-carousel overlays)
 - `headline_px >= 52`
 - `section_px >= 34`
 - `body_px >= 24`
@@ -114,7 +114,7 @@ Avoid:
 
 ## Layout Safety
 
-- Keep safe padding in the `80 to 120 px` range.
+- Keep safe padding in the `40 to 120 px` range (60-80px preferred for carousels, 40px acceptable for single feed images).
 - Keep logos, CTA zones, and signature zones away from edges.
 - Keep footer and proof strips clearly separated from the body.
 - Do not let chips, labels, or proof annotations crowd core reading areas.
@@ -174,7 +174,7 @@ For AI and systems content, prioritize:
 
 - `1080 x 1350 px`
 - dark background
-- `80 to 100 px` safe padding
+- `40 to 100 px` safe padding
 - big hook at the top
 - 3 to 5 content blocks
 - one visual system or metaphor

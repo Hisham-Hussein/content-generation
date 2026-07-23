@@ -1,13 +1,6 @@
 # Content Generation
 
-Standalone Codex plugin for tenant-local content-generation workflows.
-
-Version one is intentionally narrow:
-
-- `normalize-brand`
-- `generate-infographic`
-
-The plugin is designed as the umbrella for a broader content-generation toolkit. Infographics are the first public workflow, not the final boundary of the plugin.
+Private content-generation plugin for tenant-local LinkedIn content workflows.
 
 ## What This Plugin Does
 
@@ -24,6 +17,10 @@ The plugin is designed as the umbrella for a broader content-generation toolkit.
 - PDF derived from the verified PNG
 - bounded screenshot QA
 
+`plan-carousel` and `generate-carousel` turn approved post content into a branded SVG-first carousel.
+
+`convert-carousel-visuals` creates a non-destructive `carousel-vN` variant that replaces authored SVG content diagrams with information-bearing raster visuals. It preserves exact facts through deterministic composition, keeps critical scene subjects visible, and supports top, bottom, left, right, or safe-negative-space information layouts.
+
 ## Current Repo Structure
 
 ```text
@@ -35,35 +32,13 @@ content-generation/
   skills/
     normalize-brand/
     generate-infographic/
+    plan-carousel/
+    generate-carousel/
+    convert-carousel-visuals/
 ```
-
-## Installed Location
-
-This standalone plugin currently lives at:
-
-`~/plugins/content-generation`
-
-The home-local marketplace entry is:
-
-`~/.agents/plugins/marketplace.json`
 
 ## GitHub
 
 GitHub repository:
 
 `https://github.com/Hisham-Hussein/content-generation`
-
-## Version One Boundaries
-
-Version one includes:
-
-- optional tenant-local brand normalization utility
-- LinkedIn-first single-page infographic generation
-- explicit brief review before generation
-
-Version one does not yet include:
-
-- carousel generation
-- single-image generation
-- copy polishing
-- broader platform variants beyond the first infographic workflow
