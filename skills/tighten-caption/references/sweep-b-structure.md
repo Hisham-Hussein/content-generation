@@ -83,6 +83,12 @@ with the same part of speech and shape:
 > ✅ Delegate the approvals
 > ✅ Speed up the reporting
 
+**Boundary: parallelize list CONTENT directly; framework LABELS only by proposal.**
+Rewording a named bucket/pillar/step label (e.g. "Requires your judgment" →
+"Reserve for your judgment") is a substance change even when the motive is Rule 15 —
+labels may be mirrored by a carousel or a prior post. Put label renames in the diff
+summary as approve/reject items; never apply them silently.
+
 Repeat or drop the leading article/preposition consistently across a series ("in spring,
 summer, or winter" — never "in spring, summer, or in winter"). Correlatives (both/and,
 either/or, first/second) take the same construction on both sides.

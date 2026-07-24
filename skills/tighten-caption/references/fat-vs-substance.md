@@ -30,9 +30,19 @@ in fewer words, and fails when it says fewer things.
 - The KI source URL in the caption body.
 - The framework itself — every pillar, phase, or step. Dropping one leg of a
   three-legged framework is amputation, not tightening.
+- The framework's NAMED LABELS (bucket names, pillar names, step titles) — even a
+  one-word rewording is a substance change, not a word-level trim. A carousel or
+  future post may mirror these labels verbatim; renaming one silently breaks that
+  mirror. Rewording a label (for parallelism, brevity, anything) is ALWAYS a
+  proposal, never a direct edit.
 - The closing beats: engagement question → save → repost → "And follow Hisham H. Shihab".
 - The first-hand POV beat — the follow-worthiness lever. Tighten its wording, never
   delete the beat.
+
+**Bridge beats:** a short line that hands off into a list or section ("This is not
+theoretical." before case studies) can look like scaffolding but may be load-bearing
+flow. Cut it only if the re-read shows no seam; if the jump feels abrupt, restore it
+and find the chars elsewhere.
 
 ## The decision test
 
