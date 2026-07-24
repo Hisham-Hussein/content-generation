@@ -5,14 +5,14 @@
   },
   "metadata": {
     "description": "Private tenant-local visual content workflows for LinkedIn infographics and carousels",
-    "version": "0.3.2"
+    "version": "0.3.3"
   },
   "plugins": [
     {
       "name": "content-generation",
       "source": "./",
       "description": "Skills for premium tenant-local content production including carousel generation and raster visual conversion",
-      "version": "0.3.2",
+      "version": "0.3.3",
       "strict": true
     }
   ]

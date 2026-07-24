@@ -1,5 +1,5 @@
 ---
-name: tighten-caption
+name: edit-caption
 description: "Use when a finished LinkedIn post caption is fluffy, wordy, padded, or over its character ceiling and needs a prose-tightening edit before publishing. Triggers on 'tighten this caption', 'the caption is fluffy', 'trim the fluff', 'cut this down', 'too wordy', 'get it under the char limit', 'Strunk pass', 'edit the caption down', or any time a drafted caption reads padded, repeats itself, or exceeds its length ceiling. Run it on a caption that is already written and voice-matched (drill Steps 1–6 done), not while drafting. This skill formalizes drill Steps 7 and 7b: the Elements-of-Style tightening pass plus the chained humanizer pass."
 ---
 
