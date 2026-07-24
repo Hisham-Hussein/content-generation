@@ -1,7 +1,7 @@
 {
   "name": "content-generation",
   "description": "Private tenant-local skills for premium LinkedIn infographics, carousels, and raster visual conversion.",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "author": {
     "name": "Hisham"
   },

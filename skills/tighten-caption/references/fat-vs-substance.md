@@ -36,6 +36,10 @@ in fewer words, and fails when it says fewer things.
   mirror. Rewording a label (for parallelism, brevity, anything) is ALWAYS a
   proposal, never a direct edit.
 - The closing beats: engagement question → save → repost → "And follow Hisham H. Shihab".
+- EVERY CTA and action instruction — the closing beats above, and mid-post ones like a
+  carousel pointer's action verb ("Swipe through to diagnose your own bottlenecks").
+  A CTA's wording may be tightened; the ACTION it asks for is never deleted. Reducing
+  "swipe to diagnose" to a bare "the audit is below" removes the instruction, not fat.
 - The first-hand POV beat — the follow-worthiness lever. Tighten its wording, never
   delete the beat.
 

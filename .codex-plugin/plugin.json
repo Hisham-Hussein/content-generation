@@ -1,6 +1,6 @@
 {
   "name": "content-generation",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Private tenant-local content-generation workflows for branded LinkedIn infographics and carousels.",
   "author": {
     "name": "Hisham"
