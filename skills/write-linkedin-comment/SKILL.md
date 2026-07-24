@@ -25,9 +25,9 @@ Provide a LinkedIn post (paste or screenshot). Specify if it's your own post or 
 
 6. **The author is CEO of an AI agency with a team.** Never frame as a solopreneur. Can reference client work but don't lead every comment with "we built/we do/we hire." Add value from perspective, not resume.
 
-7. **Acknowledge briefly, then add value.** For others' posts, start with a short acknowledgment ("good breakdown", "solid point"), then add your value. Keep acknowledgment to a few words, never sycophantic ("Great post!", "Spot on!", "This is amazing!").
+7. **Acknowledge briefly, then add value.** For others' posts, start with a short acknowledgment then add your value. Keep acknowledgment to a few words, never sycophantic ("Great post!", "Spot on!", "This is amazing!"). **Vary the acknowledgment every time** — don't repeat "good framework" / "solid breakdown" / "good list" across comments. Sometimes skip the explicit acknowledgment and just engage directly with a specific point from the post.
 
-8. **Vary sentence openers.** Never start every comment with the same word. Never habitually start with "the."
+8. **Vary sentence openers.** Never start every comment with the same word. Never habitually start with "the." Never default to "good/solid/interesting + noun" as a crutch.
 
 9. **For Arabic posts:** Use Egyptian Arabic dialect, casual tone.
 
@@ -79,6 +79,7 @@ These patterns have been flagged repeatedly as AI tells. Using any of them will 
 - nobody's talking about / nobody is talking about
 - X is the right call
 - X is exactly where/what/how Y
+- X changed/changes everything / X changed how we Y (all variations)
 - X is everything / X is perfect
 - The X is what separates / The X is how we decide
 - crucial / pivotal / landscape / delve / foster / showcase

@@ -22,9 +22,13 @@ not a pile of clip-art slides.
 Your job is NOT to write per-slide visuals. It is to decide the visual SYSTEM the whole
 deck will obey. From the full deck text below, deliver:
 
-1. THE MOTIF — the single recurring visual device that appears on (nearly) every slide
-   (a locator map, a left-to-right pipeline, a consistent node/card style, a recurring
-   gate). State exactly how it recurs and how it varies per slide without breaking.
+1. THE MOTIF — the shared visual LANGUAGE that ties the deck together (a locator map, a
+   consistent node/card style, one type system, a recurring gate). It is a language, NOT a
+   fixed layout. You MUST NOT write any rule that makes a run of slides use the same
+   composition. Do the opposite: require each slide to earn its own distinct treatment
+   within the language, and explicitly forbid collapsing a group of similar slides (a
+   glossary, a checklist) into one repeated layout. State how the language recurs AND how
+   every slide varies its vantage, scale, and layout so no two frames read as the same shot.
 2. THE COVER — one hero metaphor that conveys the whole thesis with restraint. Not two
    symbols side by side. One image that means the whole post.
 3. EMOTIONAL STAGING — for the pivotal slides, what gets enlarged, shrunk, or
@@ -60,8 +64,11 @@ the motif stays coherent and no two slides look alike.
 The bar for each `Visual:` line:
 - ARTISTIC and appealing, not a labeled diagram. Compose it like a designer would.
 - One UNMISTAKABLE hero focal point per slide. The eye lands in one place.
-- VARIETY: every slide obeys the one motif, but no two slides share the same composition.
-  Rotate the framing, scale, and vantage so the deck never feels like a template.
+- VARIETY (overrides everything, including the motif brief): every slide obeys the shared
+  language, but no two slides share the same composition. Rotate the framing, scale, and
+  vantage so the deck never feels like a template. If the motif brief tells you to make a
+  run of slides identical or "read as one set", do NOT comply — give each its own shot. A
+  run of near-identical slides (the same three boxes 15 times) is an automatic failure.
 - EMOTION through hierarchy: use scale and emphasis to carry meaning, not just to decorate.
 - Name real brands/tools by name (Slack, Claude, Zapier, n8n...) so the renderer uses their
   real logos.
@@ -92,9 +99,12 @@ lines together. You do not rubber-stamp.
 
 Return a punch-list. For each problem: slide number, the defect, and the specific fix.
 Check every slide for:
-- MOTIF DRIFT — a slide that ignores or breaks the deck's one motif.
+- MOTIF DRIFT — a slide that abandons the shared visual language entirely.
 - NO FOCAL POINT — a slide with several equally weighted elements and no hero.
-- REPETITION — two or more slides with the same composition (a template smell).
+- MONOTONY (top severity) — any run of slides sharing an identical or near-identical
+  composition, INCLUDING a glossary or checklist run. Coherence is a shared language, never
+  a repeated layout. Flag every such run and require the author to give each slide its own
+  vantage/scale/layout. Never accept sameness as "reads as one set".
 - COLOR WORDS — any red/green/blue/etc. Flag every instance.
 - MISSING BRANDS — a slide that shows a real tool but does not name it for its logo.
 - JARGON LABELS — any in-graphic label too technical for the post's ICP.

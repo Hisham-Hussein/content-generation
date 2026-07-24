@@ -137,6 +137,16 @@ After rendering all PNGs, run `scripts/validate-carousel-slides.mjs` against the
 
 Hard fail and fix HTML if any check fails. Do not proceed to QA with a clipped layout.
 
+Record each target's `foundation_asset`, `final_asset`, and `rendered_slide` in
+`conversion-manifest.json`. After PDF assembly, record the PDF path and rerun
+`validate-raster-carousel.mjs`. It must verify this freshness chain:
+
+```text
+foundation → flattened infographic → rendered slide → PDF
+```
+
+An output older than its immediate input is stale and must be rebuilt.
+
 </post_render_validation>
 
 <pdf_export>

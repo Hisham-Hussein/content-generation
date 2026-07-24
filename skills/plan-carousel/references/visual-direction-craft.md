@@ -8,7 +8,7 @@ A `Visual:` line tells generate-carousel what a slide's diagram should **convey*
 
 ## The principles
 
-**1. A consistent visual through-line.** Give the deck a recurring motif — a left-to-right pipeline, a recurring approval gate, a consistent node style — so it reads as one system, not N unrelated diagrams. Decide the motif once and reuse it across the workflow slides. Visual coherence is what makes a deck feel designed rather than assembled.
+**1. A consistent visual language, never a repeated composition.** Give the deck a shared vocabulary (a recurring node style, a common grid, one type system, the theme's palette) so it reads as one system, not N unrelated diagrams. But coherence is a shared *language*, NOT the same picture on every slide. Every slide must earn its own composition: vary the vantage, scale, layout, and focal element from slide to slide. Reuse the language, reinvent the shot. Repeating one identical layout across a run of slides (the same three boxes 15 times) is the single fastest way to make a deck boring, and a reader swipes away. If three or more slides could be swapped without a reader noticing, that is monotony masquerading as coherence, and it is a defect, not a virtue. Even a genuinely repeated content unit (a glossary, a checklist) must change its vantage, scale, or layout each slide so no two frames read as the same shot.
 
 **2. One hero focal point per slide.** Each slide has a single dominant element. Promote the emotional payload — the transformation stat, the pivotal concept — to a hero element ("large and bold beneath the flow", "dead center, drawn larger than the nodes feeding it"), not a buried callout. A slide with five equally weighted elements has no focal point and the eye finds nothing.
 
@@ -56,7 +56,8 @@ A `Visual:` line tells generate-carousel what a slide's diagram should **convey*
 ## Quick check before handing off
 
 - Every `Visual:` line names a single focal point.
-- The deck shares a recurring motif, not N unrelated diagrams.
+- The deck shares a recurring visual language, not N unrelated diagrams.
+- No run of slides repeats an identical composition. Every slide, including any glossary or checklist run, has its own vantage/scale/layout. Sameness is a defect, not coherence.
 - Zero color words anywhere in the directions.
 - Real brands/tools named where they appear.
 - No jargon in any label a non-expert ICP would not grasp (proposed swaps confirmed).
