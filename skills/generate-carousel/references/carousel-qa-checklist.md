@@ -31,6 +31,7 @@ Validator pass is required before QA. QA does not replace programmatic validatio
 - Bar chart elements overflow their axes (y + height must equal axis y-position)
 - A connector (line or path) cuts through a shape's outline instead of terminating at its edge, or an overlay icon sits visibly off the target it should mark (e.g. an icon meant to be centered in a node drifting off-center)
 - A visual/diagram LABEL uses jargon the post's ICP would not grasp instantly (e.g. "eval pass rate", "RAG"): propose a plain-language swap for the user to confirm — pillar-calibrated, do NOT demand a technical-ICP deck be dumbed down
+- A framework/category card (bucket, pillar, step) is text-only where a standard Lucide icon was available and would aid recognition — icon-above-label is the expected treatment for payoff cards (do NOT apply this to deliberately monotonous queue/repetition motifs, where sameness is the message)
 - A NAMED real-world brand/product/tool is drawn with a generic icon instead of its real logo (when the tenant has the logo locally or it can be fetched online — see the "Brand assets outrank generic icons" principle)
 - Readable text (HTML or SVG) is dimmer than the brand's muted token at full opacity — e.g. opacity or fade stacked on an already-muted color, producing washed-out copy
 - Text inside a shape (circle, node, box, badge, pill) lacks internal margin — it touches or nearly touches the outline — even if it does not technically overflow
