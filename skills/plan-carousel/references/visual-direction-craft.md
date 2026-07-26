@@ -4,6 +4,8 @@ A `Visual:` line tells generate-carousel what a slide's diagram should **convey*
 
 **Hard constraint, repeated:** no color words. Palette and contrast come from the theme. Direct layout, icon, hierarchy, emphasis, composition, and mood only — never "red", "green", "blue", "gold", etc.
 
+**Second hard constraint:** no slide-placement words. Describe the diagram, never where it sits on the slide or how much air surrounds it — generate-carousel owns placement and spacing (principle 7).
+
 ---
 
 ## The principles
@@ -20,7 +22,15 @@ A `Visual:` line tells generate-carousel what a slide's diagram should **convey*
 
 **6. Name real brands and tools so the renderer uses their logos.** If a slide involves Slack, Google Docs, Claude, and so on, say so by name — generate-carousel maps named brands to real logo assets. "a Slack icon", "the Claude node", "a Google Docs mockup" render better than "a chat app" or "a document tool".
 
-**7. Dimension 13 on the labels.** The words *inside* the graphic — a gauge label, an axis caption, a node name — must use language the post's ICP grasps. This is the sneakiest place for jargon because the caption never contains label text, so the caption-level checks never catch it (this is where a term like "eval pass rate" slips onto a cover). Propose a plain-language swap for each too-technical label; the user confirms; pillar-calibrated.
+**7. Describe the visual, never its position in the slide.** A `Visual:` line owns what the diagram *is* — its subject, composition, vantage, scale, hierarchy, and internal cropping. It does NOT own where the diagram sits on the slide, how much air surrounds it, or how it relates to the title, the body copy, or the footer. generate-carousel places the visual and distributes the whitespace between text, diagram, and footer; a direction that also tries to place it fights the renderer and produces uneven, lopsided slides.
+
+Compose *within the frame of the visual itself*, which is the only frame a direction may refer to. "Cropped hard by the edges", "fills its frame edge to edge", "small and dead centre in a large empty field" all describe the diagram's own composition and are fine. "Bottom-anchored", "sitting low in the slide", "top two thirds of the slide left empty", "generous empty air above for the title", "the base of the slide belongs to the band alone" are slide-placement instructions: strip them.
+
+- Weak: "WIDE horizontal march, bottom-anchored, top two thirds of the frame empty. A baseline hairline runs left to right."
+- Strong: "WIDE horizontal march. A baseline hairline runs left to right, with the row of ticks standing on it low in the composition."
+- Why: the second describes the diagram's internal balance; the first tries to lay out the slide.
+
+**8. Dimension 13 on the labels.** The words *inside* the graphic — a gauge label, an axis caption, a node name — must use language the post's ICP grasps. This is the sneakiest place for jargon because the caption never contains label text, so the caption-level checks never catch it (this is where a term like "eval pass rate" slips onto a cover). Propose a plain-language swap for each too-technical label; the user confirms; pillar-calibrated.
 
 ---
 

@@ -125,7 +125,7 @@ On approval, invoke `content-generation:generate-carousel` with the slides, the 
 <success_criteria>
 
 - `slides.txt` written: one idea per slide, scannable, standalone-readable, real `•` bullets, cover = title + hero + no body.
-- Every slide has a render-ready `Visual:` direction with a clear focal point, a coherent motif across the deck, and no color words.
+- Every slide has a render-ready `Visual:` direction with a clear focal point, a coherent motif across the deck, no color words, and no slide-placement words (describe the diagram, not where it sits on the slide or the air around it — generate-carousel owns placement and spacing).
 - The visual directions were authored by the Step 5 three-agent sequence (art-director → single whole-deck author → deck-level critic + revise loop), not an inline or per-slide pass.
 - Slide text and diagram labels pass the anti-AI bar and the Dim-13 jargon pass (swaps user-confirmed).
 - `titles.txt` written: 3 titles under 58 chars (curiosity / SEO / benefit).

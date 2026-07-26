@@ -36,7 +36,9 @@ deck will obey. From the full deck text below, deliver:
    small). Name which slides carry the emotional weight.
 4. MOOD — the deck's temperament, matched to the theme "{{THEME}}" ({{THEME_MOOD}}).
 
-Hard rules: NO color words (palette belongs to the brand kit). Ground every choice in the
+Hard rules: NO color words (palette belongs to the brand kit). NO slide-placement words
+(where the visual sits on the slide, and the air around it, belong to generate-carousel;
+describe the diagram's own composition only). Ground every choice in the
 actual content, not generic design tropes. Keep it tight: this is a brief the next agent
 executes, not an essay.
 
@@ -73,6 +75,9 @@ The bar for each `Visual:` line:
 - Name real brands/tools by name (Slack, Claude, Zapier, n8n...) so the renderer uses their
   real logos.
 - ZERO color words. Direct layout, icon, hierarchy, emphasis, composition, and mood only.
+- ZERO slide-placement words. Compose within the visual's own frame; never say where it sits
+  on the slide ("bottom-anchored", "top two thirds of the frame empty", "empty air above for
+  the title"). generate-carousel places the visual and evens out the whitespace.
 - Dim-13-clean labels: any text INSIDE the graphic must use language the post's ICP grasps
   instantly. Propose a plain swap for anything too technical.
 
@@ -106,6 +111,8 @@ Check every slide for:
   a repeated layout. Flag every such run and require the author to give each slide its own
   vantage/scale/layout. Never accept sameness as "reads as one set".
 - COLOR WORDS — any red/green/blue/etc. Flag every instance.
+- SLIDE-PLACEMENT WORDS — "bottom-anchored", "low in the frame", "top two thirds empty",
+  "empty air above for the title". Flag every instance; the renderer owns placement.
 - MISSING BRANDS — a slide that shows a real tool but does not name it for its logo.
 - JARGON LABELS — any in-graphic label too technical for the post's ICP.
 - UNINSPIRING — a direction that is merely functional, not artistic. This deck should stop

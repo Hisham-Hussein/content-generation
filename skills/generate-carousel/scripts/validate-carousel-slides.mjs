@@ -7,6 +7,7 @@
  * Geometry checks:
  *   - Footer clipping (author-footer bottom within canvas)
  *   - Body→footer gap (slide-body bottom does not overlap author-footer top)
+ *   - Diagram→footer gap (.slide-viz bottom does not run under the author footer)
  *   - SVG clipping (SVG elements within viewBox and slide canvas)
  *   - Element overflow (no absolutely positioned element escapes 1080×1350)
  *   - Cross-slide layout variety (structural proxy — flags 8+ consecutive identical wrappers)
@@ -90,6 +91,7 @@ const results = await page.evaluate(({ slideWidth, slideHeight, minFooterGap }) 
     const slideNum = idx + 1;
     const slideRect = slide.getBoundingClientRect();
     const slideFindings = [];
+    let vizFooterGap = null;
 
     // --- Footer clipping ---
     const footer = slide.querySelector('.author-footer');
@@ -106,6 +108,14 @@ const results = await page.evaluate(({ slideWidth, slideHeight, minFooterGap }) 
         });
       } else {
         slideFindings.push({ check: 'footer-clipping', status: 'PASS' });
+      }
+
+      // --- Diagram (.slide-viz) → footer gap ---
+      // A diagram that outgrows the content area slides under the footer; the
+      // body→footer check below never sees it because it only inspects .slide-body.
+      const vizEl = slide.querySelector('.slide-viz');
+      if (vizEl) {
+        vizFooterGap = Math.round(footerRect.top - vizEl.getBoundingClientRect().bottom);
       }
 
       // --- Body→footer gap ---
@@ -660,7 +670,7 @@ const results = await page.evaluate(({ slideWidth, slideHeight, minFooterGap }) 
       slideFindings.push({ check: 'line-shape-penetration', status: 'PASS' });
     }
 
-    findings.push({ slide: slideNum, checks: slideFindings });
+    findings.push({ slide: slideNum, checks: slideFindings, vizFooterGap });
   });
 
   // --- Cross-slide layout variety ---
@@ -762,10 +772,24 @@ if (!results.hasBBoxScript) {
   console.log(`\ngetBBox script: PASS`);
 }
 
-// Chrome consistency: a recurring category pill/tag should be on every slide or none
-if (results.tagCount > 0 && results.tagCount < results.slideCount) {
-  hasWarnings = true;
-  console.log(`\nChrome consistency: WARN — category pill/tag on ${results.tagCount}/${results.slideCount} slides. Recurring chrome (pill, page number, footer) should be uniform across every slide unless an omission is intentional.`);
+// Diagram-panel / footer overlap: the body->footer check only inspects .slide-body,
+// so a diagram that grows past the content area slides under the footer unnoticed.
+for (const r of results.slides) {
+  if (typeof r.vizFooterGap === 'number' && r.vizFooterGap < 0) {
+    hasFailures = true;
+    console.log(`\nSlide ${r.slide}: FAIL — diagram (.slide-viz) overlaps the author footer by ${Math.abs(r.vizFooterGap)}px. Shrink the SVG viewBox height; never let the diagram run under the footer.`);
+  }
+}
+
+// Chrome consistency: the category pill/tag is mandatory chrome on EVERY slide.
+// Zero tags is a failure, not a pass — "uniformly absent" is a missing brand
+// affordance, not a consistent chrome template.
+if (results.tagCount === 0) {
+  hasFailures = true;
+  console.log(`\nChrome consistency: FAIL — category pill/tag (.c-tag) on 0/${results.slideCount} slides. The pill is mandatory chrome on every slide, alongside the page number, author footer and theme atmosphere. Omitting it from the whole deck is not a valid chrome template.`);
+} else if (results.tagCount < results.slideCount) {
+  hasFailures = true;
+  console.log(`\nChrome consistency: FAIL — category pill/tag on ${results.tagCount}/${results.slideCount} slides. Recurring chrome (pill, page number, footer) must be uniform across every slide.`);
 } else {
   console.log(`\nChrome consistency: PASS (tag on ${results.tagCount}/${results.slideCount} slides)`);
 }
