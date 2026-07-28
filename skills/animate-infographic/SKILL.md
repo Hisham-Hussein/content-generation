@@ -16,6 +16,8 @@ The core fact that defines this skill: **LinkedIn animates only native MP4 video
 
 If no infographic.html exists, stop and ask — do not regenerate the composition here.
 
+**Multi-slide carousel? Use `animate-carousel` instead.** This driver assumes ONE artboard: it binds `[data-content-block]` (carousels have none), and its bounds validator inspects only the first `.infographic`. Pointed at a `carousel.html` it binds nothing, produces a static video, and passes every format check.
+
 ## Read Before Generating
 
 1. `references/ffmpeg-preflight.md`
