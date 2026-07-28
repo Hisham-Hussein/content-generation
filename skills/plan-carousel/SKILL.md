@@ -4,7 +4,7 @@ description: "Use when a finished LinkedIn post caption needs a matching carouse
 ---
 
 <objective>
-Turn an approved post caption into a render-ready LinkedIn carousel. Decompose the caption (and its source knowledge item) into a one-idea-per-slide deck, write scannable slide text, and author a strong per-slide visual direction — then, once the user approves the deck, hand the slides to generate-carousel to produce the PNGs and PDF.
+Turn an approved post caption into a render-ready LinkedIn carousel. Decompose the caption (and its source knowledge item) into a one-idea-per-slide deck, write two to three sentences of natural, self-contained prose per slide, and author a strong per-slide visual direction — then, once the user approves the deck, hand the slides to generate-carousel to produce the PNGs and PDF.
 
 This skill owns **authoring**: deciding what each slide says and what its visual should convey. `content-generation:generate-carousel` owns **production**: turning each visual direction plus the tenant brand kit into rendered SVG, PNGs, and a PDF. The two are chained deliberately — authoring is cheap and iterative, rendering is slow and token-heavy — so the user approves the slide text *before* the render runs.
 </objective>
@@ -21,7 +21,9 @@ Minimum invocation: "Plan a carousel from this caption for tenant at `<tenant-fo
 
 **The deck must stand on its own.** Carousels get shared and screenshotted without the caption. A reader who never sees the caption must still get the *full* point. That means terms are defined in the slide text (not only in the caption or the diagram), and the slides progress logically with no seam that only the caption bridges.
 
-**Slide text is scannable in about five seconds.** The diagram does the heavy lifting and the caption holds the full detail, so slides carry short lines: ~2–3 short bullets, real `•` bullets (not the caption's `↳` plain-text hack), short titles (a long title wraps to two lines and looks broken, and on the cover it steals room from the hero). The cover is a ≤2-line title drawn from the caption's hook plus a dominant hero visual plus no body text.
+**Slide text is flowing prose, never bullets.** The visual is the prominent element on every slide and the text supports it, so a slide carries **two to three sentences, maximum**. They must read naturally, the way a page of a well-written ebook reads: complete sentences that carry the reader, not clipped fragments chopped into a list. Those two or three sentences must still deliver the slide's message on their own, so a reader who never sees the caption gets the point from the slide alone. Do NOT use `•` bullets, and do NOT use the caption's `↳` hack either. Titles stay short (a long title wraps to two lines and looks broken, and on the cover it steals room from the hero). The cover is a ≤2-line title drawn from the caption's hook plus a dominant hero visual plus no body text.
+
+**Evidence, so this is not "helpfully" reverted:** the two best-performing decks to date (the Claude Code 6-layer harness post and the legal-engineer post) are both written as free-flowing sentences with no bullets anywhere. A bullet convention was added to this skill after both shipped, and neither winner follows it. Prose is the standard; do not reinstate bullets.
 
 **The visual direction is this skill's real product, not decoration.** generate-carousel renders your `Visual:` line faithfully — its governing rule is "stay faithful to the visual direction's intent." So the quality of the rendered slide is bounded by the quality of your direction. A weak "three icons in a row" direction renders as a weak slide. Because it is the leverage point, Step 5 authors the directions as a **three-agent sequence** (art-director sets one motif → a single whole-deck author writes every `Visual:` line → a deck-level critic reviews them and loops back to revise). The craft principles live in `references/visual-direction-craft.md`.
 
@@ -29,7 +31,7 @@ Minimum invocation: "Plan a carousel from this caption for tenant at `<tenant-fo
 
 **Every slide obeys the same anti-AI-writing bar as the caption.** No em dashes, no "it's not X, it's Y" negative parallelism, no tailing negations ("no guessing", "not a blank page"), no forced rule-of-three. If a phrasing is banned in the caption, it is banned on a slide. Run the humanizer lens over slide text.
 
-**ICP jargon hides in the labels (Dimension 13).** The words a reader sees *inside* the graphic — a gauge label, an axis caption, a node name — must use language the post's ICP grasps instantly. This is the sneakiest place for jargon because the caption's own checks never see label text. Propose a plain-language swap or a ≤4-word inline definition for each too-technical term across titles, bullets, AND diagram labels; the user confirms each. Pillar-calibrated: a deck for a technical ICP legitimately keeps more terms — over-simplifying dilutes depth.
+**ICP jargon hides in the labels (Dimension 13).** The words a reader sees *inside* the graphic — a gauge label, an axis caption, a node name — must use language the post's ICP grasps instantly. This is the sneakiest place for jargon because the caption's own checks never see label text. Propose a plain-language swap or a ≤4-word inline definition for each too-technical term across titles, slide prose, AND diagram labels; the user confirms each. Pillar-calibrated: a deck for a technical ICP legitimately keeps more terms — over-simplifying dilutes depth.
 
 **Approve before you render.** Authoring is cheap; rendering (Playwright, a QA subagent, up to three retry passes per slide) is slow and expensive. Present the finished deck and get an explicit go-ahead before invoking generate-carousel. Propose, don't impose — the user steers the deck.
 
@@ -64,7 +66,7 @@ Map the arc to slides: a cover, the context or "before" state, the method or tur
 
 **Step 4: Write the slide text**
 
-Short scannable lines, ~2–3 short `•` bullets per slide. Short titles (a few words). Cover = ≤2-line title drawn from the caption's hook + a dominant hero visual + no body text. Apply the anti-AI-writing bar. Surface Dim-13 jargon swaps and let the user confirm each — never bulk-strip technical terms.
+Flowing prose, two to three sentences per slide, maximum. Complete natural sentences that read like a page of a well-written ebook, never bullets and never clipped fragments. The visual leads; the text supports it, and still delivers the slide's message standalone. Short titles (a few words). Cover = ≤2-line title drawn from the caption's hook + a dominant hero visual + no body text. Apply the anti-AI-writing bar. Surface Dim-13 jargon swaps and let the user confirm each — never bulk-strip technical terms.
 
 **Step 5: Author the visual directions — three-agent sequence**
 
@@ -95,7 +97,7 @@ Re-read the whole deck start to finish as if the caption did not exist. Fix any 
 **Step 7: Write the bundle**
 
 Write into the resolved output folder:
-- `slides.txt` — the format generate-carousel reads: `## Slide N`, a bold title, `•` bullets, then a `Visual:` line. One block per slide.
+- `slides.txt` — the format generate-carousel reads: `## Slide N`, a bold title, two to three sentences of prose (no bullet characters), then a `Visual:` line. One block per slide.
 - `titles.txt` — 3 LinkedIn document titles, each under 58 characters (count them): one curiosity-led (stops the scroll), one SEO/keyword-led (surfaces in LinkedIn search), one benefit-led (clear value exchange).
 
 **Step 8: Approval gate**
@@ -112,6 +114,7 @@ On approval, invoke `content-generation:generate-carousel` with the slides, the 
 
 - **Fixed-count decks.** Forcing every post into 8 slides. Count follows content (~6–15).
 - **Cramming two ideas onto one slide** to hit a target count. Split instead.
+- **Bulleted or fragmented slide text.** `•` bullets, the caption's `↳` hack, or sentences chopped into clipped list items. Slides carry two to three complete sentences that read naturally on their own. The deck's two best performers are both written this way.
 - **Color words in a visual direction** ("red arrow", "green badge"). Palette is the brand kit's job — direct layout, icon, hierarchy, and emphasis only.
 - **Weak or generic visual directions** ("three icons in a row"). The render is only as good as the direction; a generic direction wastes the slide.
 - **A deck that only makes sense next to the caption.** It will be screenshotted alone.
@@ -124,7 +127,7 @@ On approval, invoke `content-generation:generate-carousel` with the slides, the 
 
 <success_criteria>
 
-- `slides.txt` written: one idea per slide, scannable, standalone-readable, real `•` bullets, cover = title + hero + no body.
+- `slides.txt` written: one idea per slide, standalone-readable, two to three natural sentences of prose per slide with no bullet characters, cover = title + hero + no body.
 - Every slide has a render-ready `Visual:` direction with a clear focal point, a coherent motif across the deck, no color words, and no slide-placement words (describe the diagram, not where it sits on the slide or the air around it — generate-carousel owns placement and spacing).
 - The visual directions were authored by the Step 5 three-agent sequence (art-director → single whole-deck author → deck-level critic + revise loop), not an inline or per-slide pass.
 - Slide text and diagram labels pass the anti-AI bar and the Dim-13 jargon pass (swaps user-confirmed).
