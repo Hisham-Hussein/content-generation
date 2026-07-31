@@ -1,6 +1,8 @@
 # ffmpeg Preflight Gate
 
-Producing a LinkedIn-ready MP4 requires a **system ffmpeg built with `libx264`**, plus `ffprobe` for output validation. This is a hard gate — there is no in-tree fallback.
+Producing a LinkedIn-ready animated GIF requires a **system ffmpeg with the `gif` encoder and the `palettegen`/`paletteuse` filters**, plus `ffprobe` for output validation. This is a hard gate — there is no in-tree fallback.
+
+A default distro build (`apt-get install ffmpeg`) has all four. The gate exists to catch minimal/stripped builds and the Playwright binary.
 
 ## Why the Playwright-bundled ffmpeg cannot be used
 
@@ -9,12 +11,14 @@ Playwright vendors a binary at `~/.cache/ms-playwright/ffmpeg-*/ffmpeg-linux`, b
 - encoders: `libvpx_vp8`, `png`
 - muxers: `webm`, `image2`
 
-It has **no H.264 encoder, no mp4/mov muxer, and ships no `ffprobe` at all**. It is useless for this skill. Do not attempt to use it.
+It has **no GIF encoder or muxer, and ships no `ffprobe` at all**. It is useless for this skill. Do not attempt to use it.
 
 ## Gate (binary)
 
-1. System `ffmpeg` on PATH **with `libx264`** and a sibling `ffprobe` on PATH → proceed.
-   - `ffmpeg -hide_banner -encoders | grep -q libx264`
+1. All four present → proceed.
+   - `ffmpeg -hide_banner -encoders | grep -E '^\s*V\S*\s+gif\s'`
+   - `ffmpeg -hide_banner -filters | grep -w palettegen`
+   - `ffmpeg -hide_banner -filters | grep -w paletteuse`
    - `ffprobe -hide_banner -version`
 2. Otherwise **STOP** and tell the user:
 
@@ -22,6 +26,11 @@ It has **no H.264 encoder, no mp4/mov muxer, and ships no `ffprobe` at all**. It
    sudo apt-get update && sudo apt-get install -y ffmpeg
    ```
 
-   Never fall back to the Playwright binary or emit WebM.
+   Never fall back to the Playwright binary.
 
 `scripts/render-animation.mjs` runs this gate via its `detectFfmpeg()` export before launching Chromium, and `scripts/validate-animation-output.mjs` depends on the same PATH `ffprobe`.
+
+## Not required
+
+- **`libx264`** — no longer needed; this skill emits no H.264.
+- **`gifsicle`** — an optional external optimiser. The two-pass palette encode with `diff_mode=rectangle` already produces sizes in range (measured: 1.47MB at 1080×1350 / 256 colours / 25fps / 3.6s), so the driver does not shell out to it and must not start depending on it.

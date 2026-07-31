@@ -1,8 +1,12 @@
 /**
  * Animated-infographic render driver (Option A: deterministic seek-loop).
  *
+ * Output format is an animated GIF — LinkedIn plays uploaded GIFs inline in the
+ * feed, so a GIF needs no video-post treatment, no thumbnail selection and no
+ * tap-to-play. See references/animation-render-workflow.md.
+ *
  * Pipeline:
- *   1. ffmpeg/ffprobe preflight (system libx264 build, or stop).
+ *   1. ffmpeg/ffprobe preflight (gif encoder + palettegen/paletteuse, or stop).
  *   2. Resolve machine-level Playwright + Chromium (reuse, never auto-install).
  *   3. Load the validated static infographic.html at 1080x1350 @ DSF2.
  *   4. Self-derive layout readiness: fonts.ready + SVG rect geometry stable
@@ -11,17 +15,19 @@
  *      composition (it must still pass before we animate it).
  *   6. Inject the deterministic motion layer (buildInjectionScript) and drive
  *      window.__seek(t) per frame, screenshotting JPEG frames (supersampled).
- *   7. Export poster.png = the final settled frame (for the LinkedIn thumbnail).
- *   8. ffmpeg: lanczos-downscale frames -> 1080x1350, clone-pad the final frame
- *      for the hold, encode H.264 yuv420p +faststart.
+ *   7. Export poster.png = the final settled frame (static still / QA anchor).
+ *   8. ffmpeg two-pass palette encode (palettegen -> paletteuse), walking a
+ *      quality ladder until the GIF fits the size budget. The trailing hold is
+ *      the muxer's -final_delay, not cloned frames.
  *   9. Probe the output, write animation-manifest.yaml, clean temp frames.
  *
  * Usage:
  *   node render-animation.mjs <infographic.html> [--out <dir>] [--fast]
+ *                             [--max-mb <n>] [--width <px>]
  */
 
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, rmSync, mkdirSync, writeFileSync, existsSync, readdirSync } from 'node:fs';
+import { mkdtempSync, rmSync, mkdirSync, writeFileSync, existsSync, readdirSync, statSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -33,9 +39,44 @@ const CANVAS_WIDTH = 1080;
 const CANVAS_HEIGHT = 1350;
 const DEVICE_SCALE = 2;
 
+// GIF stores per-frame delays in CENTISECONDS, so only frame rates that divide
+// 100 evenly survive the round-trip without drift. 30fps (33.33ms) quantises to
+// 3cs and plays ~10% fast; 25 (4cs), 20 (5cs) and 12.5 (8cs) are exact.
+// TIMELINE_CONFIG.fps is therefore NOT used for capture here.
+// 20fps (5cs) rather than 25 (4cs): this choreography is slow drifting motion,
+// which does not need the extra temporal resolution, and the guide orb's halo is
+// a large changing rectangle every frame — the one thing GIF cannot compress.
+// Dropping 25->20 cut post 61 from 5.1MB to ~4MB at no visible cost.
+const GIF_FPS = 20;
+const GIF_FAST_FPS = 10;
+
+// GIF has no inter-frame motion compensation, so a full-res true-colour build is
+// far heavier than the equivalent H.264. The encoder walks this ladder (best
+// first) until the file fits the size budget. Every fps must divide 100.
+const GIF_LADDER = [
+  { width: 1080, colors: 256, fps: 20 },
+  { width: 1080, colors: 160, fps: 20 },
+  { width: 900, colors: 128, fps: 20 },
+  { width: 800, colors: 128, fps: 12.5 },
+  { width: 720, colors: 96, fps: 12.5 },
+];
+
+// Guardrail, not a documented LinkedIn limit — re-check LinkedIn's current image
+// upload limits before publishing for a new tenant. Override with --max-mb.
+const DEFAULT_MAX_MB = 8;
+
+// Ordered dither pattern: quiet on flat brand fills and it compresses far better
+// than error-diffusion (sierra2_4a), which sprays per-frame noise into LZW.
+const GIF_DITHER = 'bayer:bayer_scale=3';
+
+function gifHeight(width) {
+  return Math.round((width * CANVAS_HEIGHT) / CANVAS_WIDTH);
+}
+
 // ---------------------------------------------------------------------------
-// ffmpeg / ffprobe preflight — system libx264 build is mandatory (the Playwright
-// bundled binary is VP8/WebM-only and ships no ffprobe). Stop, never fall back.
+// ffmpeg / ffprobe preflight — a system ffmpeg with the gif muxer and the
+// palettegen/paletteuse filters is mandatory (the Playwright bundled binary is
+// VP8/WebM-only, has no gif muxer and ships no ffprobe). Stop, never fall back.
 // ---------------------------------------------------------------------------
 export function detectFfmpeg() {
   let encoders;
@@ -44,11 +85,22 @@ export function detectFfmpeg() {
   } catch (e) {
     throw new Error(
       'ffmpeg not found on PATH. Install it: sudo apt-get install -y ffmpeg\n' +
-      '(The Playwright-bundled ffmpeg is VP8/WebM-only and cannot produce LinkedIn H.264.)',
+      '(The Playwright-bundled ffmpeg is VP8/WebM-only, has no GIF muxer and ships no ffprobe.)',
     );
   }
-  if (!/\blibx264\b/.test(encoders)) {
-    throw new Error('ffmpeg on PATH lacks libx264. Install a full build: sudo apt-get install -y ffmpeg');
+  if (!/^\s*V\S*\s+gif\s/m.test(encoders)) {
+    throw new Error('ffmpeg on PATH lacks the gif encoder. Install a full build: sudo apt-get install -y ffmpeg');
+  }
+  let filters;
+  try {
+    filters = execFileSync('ffmpeg', ['-hide_banner', '-filters'], { encoding: 'utf8' });
+  } catch (e) {
+    throw new Error('ffmpeg -filters failed; install a full build: sudo apt-get install -y ffmpeg');
+  }
+  for (const f of ['palettegen', 'paletteuse']) {
+    if (!new RegExp(`\\b${f}\\b`).test(filters)) {
+      throw new Error(`ffmpeg on PATH lacks the ${f} filter (needed for the two-pass GIF palette). Install: sudo apt-get install -y ffmpeg`);
+    }
   }
   try {
     execFileSync('ffprobe', ['-hide_banner', '-version'], { encoding: 'utf8' });
@@ -56,6 +108,37 @@ export function detectFfmpeg() {
     throw new Error('ffprobe not found on PATH (needed for output validation). Install: sudo apt-get install -y ffmpeg');
   }
   return { ffmpeg: 'ffmpeg', ffprobe: 'ffprobe' };
+}
+
+/**
+ * Two-pass palette GIF encode for one ladder step. Returns the byte size.
+ *
+ * Pass 1 builds an optimal palette (stats_mode=diff weights the moving regions,
+ * which is what a build-on animation actually needs). Pass 2 maps frames onto it
+ * with diff_mode=rectangle so only the changed rectangle of each frame is
+ * stored. The hold is `-final_delay` on the last frame — cloning frames for it
+ * would cost real bytes and buy nothing.
+ */
+function encodeGifStep({ framesDir, captureFps, step, gifPath, palettePath, holdMs }) {
+  const height = gifHeight(step.width);
+  const decimate = step.fps < captureFps ? `fps=${step.fps},` : '';
+  const chain = `${decimate}scale=${step.width}:${height}:flags=lanczos`;
+  const framePattern = path.join(framesDir, 'f-%05d.jpg');
+
+  execFileSync('ffmpeg', [
+    '-y', '-framerate', String(captureFps), '-i', framePattern,
+    '-vf', `${chain},palettegen=stats_mode=diff:max_colors=${step.colors}`,
+    '-update', '1', palettePath,
+  ], { stdio: 'pipe' });
+
+  execFileSync('ffmpeg', [
+    '-y', '-framerate', String(captureFps), '-i', framePattern, '-i', palettePath,
+    '-lavfi', `${chain}[s];[s][1:v]paletteuse=dither=${GIF_DITHER}:diff_mode=rectangle`,
+    '-loop', '0', '-final_delay', String(Math.round(holdMs / 10)),
+    gifPath,
+  ], { stdio: 'pipe' });
+
+  return { width: step.width, height, bytes: statSync(gifPath).size };
 }
 
 async function resolvePlaywright() {
@@ -117,9 +200,19 @@ function frameName(i) {
 
 async function renderAnimation(htmlPath, opts = {}) {
   const fast = !!opts.fast;
-  const fps = fast ? 24 : TIMELINE_CONFIG.fps;
+  const fps = fast ? GIF_FAST_FPS : GIF_FPS;
   const scale = fast ? 1 : DEVICE_SCALE;
   const outDir = opts.outDir || path.dirname(path.resolve(htmlPath));
+  const maxBytes = Math.round((opts.maxMb || DEFAULT_MAX_MB) * 1024 * 1024);
+
+  // Ladder steps can never out-run the captured frame rate, and --width pins the
+  // top step so the ladder only ever steps DOWN from what the caller asked for.
+  const ladder = GIF_LADDER
+    .filter((s) => !opts.width || s.width <= opts.width)
+    .map((s) => ({ ...s, fps: Math.min(s.fps, fps) }));
+  if (opts.width && ladder.length === 0) {
+    throw new Error(`--width ${opts.width} is below the smallest ladder step (${GIF_LADDER[GIF_LADDER.length - 1].width}px).`);
+  }
 
   const { ffprobe } = detectFfmpeg();
   const playwright = await resolvePlaywright();
@@ -163,41 +256,58 @@ async function renderAnimation(htmlPath, opts = {}) {
       await page.screenshot({ path: path.join(framesDir, frameName(i)), clip, type: 'jpeg', quality: 100, animations: 'disabled' });
     }
 
-    // Poster = final settled frame (PNG, for the thumbnail).
+    // Poster = final settled frame (PNG). Static still + QA anchor; a GIF has no
+    // separately-uploadable thumbnail, so this is not a LinkedIn upload asset.
     await page.evaluate((tt) => window.__seek(tt), ready.lastEndMs);
     const posterPath = path.join(outDir, 'poster.png');
     await page.screenshot({ path: posterPath, clip, type: 'png', animations: 'disabled' });
 
     await browser.close();
 
-    // Stitch: lanczos downscale -> hold-pad -> H.264 yuv420p +faststart.
-    const holdSec = (ready.holdMs / 1000).toFixed(3);
-    const mp4Path = path.join(outDir, 'animation.mp4');
-    const vf = `scale=${CANVAS_WIDTH}:${CANVAS_HEIGHT}:flags=lanczos,tpad=stop_mode=clone:stop_duration=${holdSec}`;
-    execFileSync('ffmpeg', [
-      '-y', '-framerate', String(fps), '-i', path.join(framesDir, 'f-%05d.jpg'),
-      '-vf', vf, '-c:v', 'libx264', '-preset', fast ? 'medium' : 'slow', '-crf', '18',
-      '-pix_fmt', 'yuv420p', '-movflags', '+faststart', '-r', String(fps), mp4Path,
-    ], { stdio: 'pipe' });
+    // Encode: walk the quality ladder until the GIF fits the size budget.
+    const gifPath = path.join(outDir, 'animation.gif');
+    const palettePath = path.join(framesDir, 'palette.png');
+    let chosen = null;
+    const attempts = [];
+    for (const step of ladder) {
+      const res = encodeGifStep({ framesDir, captureFps: fps, step, gifPath, palettePath, holdMs: ready.holdMs });
+      attempts.push({ ...step, bytes: res.bytes });
+      if (res.bytes <= maxBytes) { chosen = { ...step, ...res }; break; }
+    }
+    if (!chosen) {
+      const last = attempts[attempts.length - 1];
+      throw new Error(
+        `GIF is still ${(last.bytes / 1024 / 1024).toFixed(1)}MB at the smallest ladder step ` +
+        `(${last.width}px / ${last.colors} colors / ${last.fps}fps), over the ${(maxBytes / 1024 / 1024).toFixed(1)}MB budget.\n` +
+        'Shorten the build in TIMELINE_CONFIG (fewer staggered tracks / shorter reveals), or raise the budget with --max-mb.',
+      );
+    }
 
+    // Probe the actual file — frame count and duration are counted, not assumed.
     const probe = JSON.parse(execFileSync(ffprobe, [
-      '-v', 'error', '-select_streams', 'v:0',
-      '-show_entries', 'stream=codec_name,width,height,pix_fmt:format=duration',
-      '-of', 'json', mp4Path,
+      '-v', 'error', '-select_streams', 'v:0', '-count_frames',
+      '-show_entries', 'stream=codec_name,width,height,pix_fmt,nb_read_frames:format=duration,size',
+      '-of', 'json', gifPath,
     ], { encoding: 'utf8' }));
     const stream = probe.streams[0];
     const duration = parseFloat(probe.format.duration);
 
     manifest = {
       source_html: path.resolve(htmlPath),
-      outputs: { mp4: mp4Path, poster: posterPath },
+      outputs: { gif: gifPath, poster: posterPath },
       render_method: 'playwright-chromium-seek-loop',
-      fps, supersample: scale, frame_count: frameCount,
+      capture_fps: fps, supersample: scale, captured_frames: frameCount,
       capture_end_ms: ready.lastEndMs, hold_ms: ready.holdMs,
-      codec: stream.codec_name, pix_fmt: stream.pix_fmt,
+      codec: stream.codec_name,
+      gif_fps: chosen.fps, max_colors: chosen.colors, dither: GIF_DITHER,
+      ladder_steps_tried: attempts.length,
       width: stream.width, height: stream.height,
+      gif_frames: Number(stream.nb_read_frames),
       duration_sec: Number(duration.toFixed(3)),
-      faststart: true,
+      size_bytes: chosen.bytes,
+      size_mb: Number((chosen.bytes / 1024 / 1024).toFixed(2)),
+      size_budget_mb: Number((maxBytes / 1024 / 1024).toFixed(2)),
+      loop: 'infinite',
       motion: ['block-reveal', 'svg-fill-reveal', 'svg-stroke-draw-on', 'accent-emphasis'],
       post_render_revalidated: postRender.status,
     };
@@ -226,13 +336,23 @@ function toYaml(obj, indent = 0) {
 
 async function main() {
   const args = process.argv.slice(2);
-  const htmlPath = args.find((a) => !a.startsWith('--'));
+  const flagValue = (name) => {
+    const i = args.indexOf(name);
+    return i >= 0 ? args[i + 1] : undefined;
+  };
+  // A flag's value is not a positional arg.
+  const flagValues = new Set(['--out', '--max-mb', '--width'].map(flagValue).filter(Boolean));
+  const htmlPath = args.find((a) => !a.startsWith('--') && !flagValues.has(a));
   if (!htmlPath || !existsSync(htmlPath)) {
-    console.error('Usage: node render-animation.mjs <infographic.html> [--out <dir>] [--fast]');
+    console.error('Usage: node render-animation.mjs <infographic.html> [--out <dir>] [--fast] [--max-mb <n>] [--width <px>]');
     process.exit(1);
   }
-  const outIdx = args.indexOf('--out');
-  const opts = { fast: args.includes('--fast'), outDir: outIdx >= 0 ? args[outIdx + 1] : undefined };
+  const opts = {
+    fast: args.includes('--fast'),
+    outDir: flagValue('--out'),
+    maxMb: flagValue('--max-mb') ? Number(flagValue('--max-mb')) : undefined,
+    width: flagValue('--width') ? Number(flagValue('--width')) : undefined,
+  };
   if (opts.outDir) mkdirSync(opts.outDir, { recursive: true });
   const manifest = await renderAnimation(htmlPath, opts);
   console.log(JSON.stringify(manifest, null, 2));
