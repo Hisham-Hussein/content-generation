@@ -99,20 +99,52 @@ Applying a device without its precondition produces noise, not richness — a
 watermark behind dense text reads as smudge, and a callout pointing at occupied
 space reads as a collision.
 
-## E. Anti-Scaffold
+## E. One Text Unit, One Colour
+
+**A sentence, headline, label, or paragraph takes exactly one colour. Never
+recolour part of it, and never apply a gradient to text.**
+
+Recolouring a phrase inside a sentence — or fading a few words into a second hue —
+is one of the loudest tells of machine-generated design. It reads as decoration
+applied to language rather than as meaning, and readers who have seen a hundred
+AI-made graphics recognise it instantly.
+
+| Allowed | Not allowed |
+|---|---|
+| a section label entirely in the accent colour | a headline whose second sentence switches colour |
+| a figure entirely in the ink colour | two words of a phrase carrying a gradient |
+| an accent-coloured label beside an ink-coloured one | any single sentence containing two colours |
+
+**Different units may take different colours** — that is how hierarchy is built.
+An accent-coloured section label above an ink headline is correct. The accent
+*inside* the headline is not.
+
+A headline of two sentences is still **one unit**. A line break does not make its
+parts separable.
+
+**This governs TEXT only. Shapes may use gradients freely** — bar fills, orbs,
+card surfaces, connectors, icon containers. That is often where depth comes from,
+particularly in monochrome or flat layouts. The tell is gradient applied to
+language, not to geometry.
+
+Emphasis in text comes from size, weight, position, or an inverted container.
+
+## F. Anti-Scaffold
 
 Generic editorial scaffolding is not artwork. Avoid:
 
 - numbered section markers (`01 / 02 / 03`) when the labels already carry identity
 - an eyebrow chip on every section
 - a bordered card around every line item
+- **a thick coloured border on one edge of a card** (the "side-tab" accent) — a
+  widely recognised AI-interface tell
 - decorative gradients or glows doing work that hierarchy should do
 - icons chosen for decoration rather than meaning
 
 If a scaffold element carries no information the reader could not get from the
 text beside it, remove it and spend the space on something that does.
 
-## F. Hard Rejects
+## G. Hard Rejects
 
 Reject and rebuild — not tweak — when:
 

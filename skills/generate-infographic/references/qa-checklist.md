@@ -58,6 +58,8 @@ Reject before final output if any of these are true:
 - a device was borrowed from a reference without the precondition that makes it work
 - the output's structure matches a supplied reference block-for-block
 - corresponding elements across columns fail to share a baseline, or a final word is orphaned on its own line
+- a sentence, headline, or label uses more than one colour, or any text carries a gradient
+- a card uses a thick coloured border on one edge (the "side-tab" accent tell)
 
 Note: `stat_poster` layout is exempt from the SVG diagram requirement — the hero number is the visual.
 
