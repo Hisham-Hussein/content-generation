@@ -87,7 +87,14 @@ export async function validatePostRenderOnPage(page) {
       const currentRect = children[i].getBoundingClientRect();
       const nextRect = children[i + 1].getBoundingClientRect();
       const gap = nextRect.top - currentRect.bottom;
-      if (gap < minGap) {
+      // A full-bleed band abutting a differently-coloured section is separated by
+      // colour, not by space — that is a legitimate pattern (dark masthead against
+      // a light body). Only require spacing when the two share a backdrop.
+      const bgA = getComputedStyle(children[i]).backgroundColor;
+      const bgB = getComputedStyle(children[i + 1]).backgroundColor;
+      const opaque = (c) => { const m = c && c.match(/rgba?\([^)]*?(?:,\s*([\d.]+))?\)$/); return !m || m[1] === undefined || parseFloat(m[1]) > 0.9; };
+      const colourSeparated = bgA !== bgB && (opaque(bgA) || opaque(bgB));
+      if (gap < minGap && !colourSeparated) {
         const currentId = children[i].className || children[i].tagName;
         const nextId = children[i + 1].className || children[i + 1].tagName;
         errors.push(
@@ -318,7 +325,32 @@ export async function validatePostRenderOnPage(page) {
         fg = { r: parseInt(x.slice(0, 2), 16), g: parseInt(x.slice(2, 4), 16), b: parseInt(x.slice(4, 6), 16), a: 1 };
       }
       if (!fg) return;
-      const bd = resolveBackdrop(t.parentElement);
+      // SVG text is usually painted on top of a shape, not on the HTML surface.
+      // Look for an underlying rect before falling back to the ancestor chain,
+      // or every light-on-dark label inside a light-page SVG false-fails.
+      let bd = null;
+      try {
+        const tb = t.getBBox();
+        const cx = tb.x + tb.width / 2, cy = tb.y + tb.height / 2;
+        let prev = t.previousElementSibling;
+        for (let i = 0; i < 15 && prev && !bd; i++) {
+          if (prev.tagName === 'rect') {
+            const rb = prev.getBBox();
+            if (cx >= rb.x && cx <= rb.x + rb.width && cy >= rb.y && cy <= rb.y + rb.height) {
+              const rf = prev.getAttribute('fill') || '';
+              let shape = parseColor(rf);
+              if (!shape && /^#[0-9a-f]{3,8}$/i.test(rf.trim())) {
+                const h = rf.trim().replace('#', '');
+                const x = h.length === 3 ? h.split('').map((c) => c + c).join('') : h.slice(0, 6);
+                shape = { r: parseInt(x.slice(0, 2), 16), g: parseInt(x.slice(2, 4), 16), b: parseInt(x.slice(4, 6), 16), a: 1 };
+              }
+              if (shape && shape.a >= 0.9) bd = shape;
+            }
+          }
+          prev = prev.previousElementSibling;
+        }
+      } catch (e) { /* getBBox may fail on hidden nodes */ }
+      if (!bd) bd = resolveBackdrop(t.parentElement);
       const ratio = contrast(over(fg, bd), bd);
       const label = (t.textContent || '').trim().substring(0, 34);
       if (ratio < 3.0) {
