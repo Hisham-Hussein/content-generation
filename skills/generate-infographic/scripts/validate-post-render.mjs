@@ -235,6 +235,99 @@ export async function validatePostRenderOnPage(page) {
       }
     }
 
+    // --- CONTRAST CHECKS ---
+    // Opacity is a proxy for legibility, not a measure of it: a fully opaque
+    // colour can still be illegible on its backdrop. This computes the real
+    // WCAG 2.x ratio against the resolved background.
+
+    function parseColor(str) {
+      if (!str) return null;
+      const m = str.match(/rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)\s*(?:[,/]\s*([\d.]+))?\s*\)/);
+      if (!m) return null;
+      return { r: +m[1], g: +m[2], b: +m[3], a: m[4] !== undefined ? +m[4] : 1 };
+    }
+    function over(fg, bg) { // composite fg over opaque bg
+      const a = fg.a;
+      return { r: fg.r * a + bg.r * (1 - a), g: fg.g * a + bg.g * (1 - a), b: fg.b * a + bg.b * (1 - a), a: 1 };
+    }
+    function relLum(c) {
+      const f = (v) => { v /= 255; return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
+      return 0.2126 * f(c.r) + 0.7152 * f(c.g) + 0.0722 * f(c.b);
+    }
+    function contrast(a, b) {
+      const la = relLum(a), lb = relLum(b);
+      const hi = Math.max(la, lb), lo = Math.min(la, lb);
+      return (hi + 0.05) / (lo + 0.05);
+    }
+    // Walk ancestors compositing background-colors until fully opaque.
+    function resolveBackdrop(el) {
+      let acc = null;
+      let node = el;
+      while (node && node !== document.documentElement) {
+        const bg = parseColor(getComputedStyle(node).backgroundColor);
+        if (bg && bg.a > 0) {
+          acc = acc === null ? bg : over(acc, bg);
+          if (acc.a >= 0.999) return acc;
+        }
+        node = node.parentElement;
+      }
+      if (acc && acc.a >= 0.999) return acc;
+      const pageBg = parseColor(getComputedStyle(document.body).backgroundColor);
+      const base = pageBg && pageBg.a >= 0.999 ? pageBg : { r: 255, g: 255, b: 255, a: 1 };
+      return acc ? over(acc, base) : base;
+    }
+
+    // HTML text nodes
+    const textEls = Array.from(canvas.querySelectorAll('*')).filter((el) => {
+      if (!el.childNodes.length) return false;
+      const own = Array.from(el.childNodes)
+        .filter((n) => n.nodeType === 3).map((n) => n.textContent.trim()).join('');
+      if (!own) return false;
+      const s = getComputedStyle(el);
+      if (s.display === 'none' || s.visibility === 'hidden' || parseFloat(s.opacity) === 0) return false;
+      if (s.webkitTextFillColor === 'rgba(0, 0, 0, 0)' || s.color === 'rgba(0, 0, 0, 0)') return false; // gradient-clipped text
+      return el.getBoundingClientRect().width > 0;
+    });
+
+    for (const el of textEls) {
+      const s = getComputedStyle(el);
+      const fg = parseColor(s.color);
+      if (!fg) continue;
+      const elOpacity = parseFloat(s.opacity);
+      const eff = { ...fg, a: fg.a * (isNaN(elOpacity) ? 1 : elOpacity) };
+      // Start at the element itself: its own background is painted behind its
+      // own text. Starting at the parent misreads every inverse surface, marker
+      // highlight, and filled container as text on the page field.
+      const bd = resolveBackdrop(el);
+      const ratio = contrast(over(eff, bd), bd);
+      const label = (el.textContent || '').trim().substring(0, 34);
+      if (ratio < 3.0) {
+        errors.push(`Text "${label}" contrast ${ratio.toFixed(2)}:1 against its backdrop (minimum 3.0:1).`);
+      } else if (ratio < 4.5) {
+        warnings.push(`Text "${label}" contrast ${ratio.toFixed(2)}:1 — below 4.5:1; acceptable only for large display type.`);
+      }
+    }
+
+    // SVG text against its plate (nearest ancestor background)
+    canvas.querySelectorAll('svg text').forEach((t) => {
+      const fill = t.getAttribute('fill') || getComputedStyle(t).fill;
+      let fg = parseColor(fill);
+      if (!fg && /^#[0-9a-f]{3,8}$/i.test((fill || '').trim())) {
+        const h = fill.trim().replace('#', '');
+        const x = h.length === 3 ? h.split('').map((c) => c + c).join('') : h.substring(0, 6);
+        fg = { r: parseInt(x.slice(0, 2), 16), g: parseInt(x.slice(2, 4), 16), b: parseInt(x.slice(4, 6), 16), a: 1 };
+      }
+      if (!fg) return;
+      const bd = resolveBackdrop(t.parentElement);
+      const ratio = contrast(over(fg, bd), bd);
+      const label = (t.textContent || '').trim().substring(0, 34);
+      if (ratio < 3.0) {
+        errors.push(`SVG text "${label}" contrast ${ratio.toFixed(2)}:1 against its plate (minimum 3.0:1).`);
+      } else if (ratio < 4.5) {
+        warnings.push(`SVG text "${label}" contrast ${ratio.toFixed(2)}:1 — below 4.5:1.`);
+      }
+    });
+
     const status = errors.length > 0 ? 'fail' : warnings.length > 0 ? 'warn' : 'pass';
     return { status, errors, warnings };
   }, { canvasH: CANVAS_HEIGHT, minGap: MIN_SECTION_GAP });

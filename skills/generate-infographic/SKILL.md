@@ -30,6 +30,8 @@ Orientation map only — do not read from this table:
 | `references/infographic-brief-contract.md` | Phase 2 — brief |
 | `references/svg-content-diagram-rules.md` | Phase 2 — brief |
 | `../../references/shared-art-direction-principles.md` | Phase 2 — brief |
+| `references/visual-richness-requirements.md` | Phase 2 — brief |
+| `references/reference-benchmarking.md` | Phase 2 — brief, only when a liked reference was supplied |
 | `references/linkedin-mobile-optimization.md` | Phase 3 — artboard |
 | `scripts/validate-mobile-linkedin-infographic.mjs` | Phase 4 — pre-render validation |
 | `references/render-environment-preflight.md` | Phase 5 — render |
@@ -90,6 +92,8 @@ Prior output is not a quality floor. The tenant's declared approved examples are
 - `../../references/shared-art-direction-principles.md`
 - `references/infographic-brief-contract.md`
 - `references/svg-content-diagram-rules.md`
+- `references/visual-richness-requirements.md`
+- `references/reference-benchmarking.md` — only when the user supplied an asset they like as a quality benchmark
 
 6. Apply `../../references/shared-art-direction-principles.md` as the generic visual quality floor for the run.
 7. Check for a template catalog in the tenant folder:
@@ -101,6 +105,7 @@ Prior output is not a quality floor. The tenant's declared approved examples are
    - if no template catalog exists, omit these fields and the agent generates the layout freehand
    - the template recommendation is a suggestion, not a constraint — the user may override it at brief review
    - match the source content's structure against the content-to-diagram selection heuristic in `references/svg-content-diagram-rules.md` and add the recommended `diagram_type` (or `"none"` for CSS-native visual arguments) and a one-sentence `diagram_description` to the brief
+8a. Fill the brief's density and richness fields before surfacing it — `concrete_specifics` for every supporting point, `visual_registers` (two minimum, three preferred, a repeated register counts once), and `micro_visuals` per content block. These decide whether the asset will be substantial or a slogan, so they belong at the approval gate, not after a render.
 9. Surface the brief to the user for explicit review and approval before generation proceeds:
    - when a template recommendation is present, show it as part of the brief so the user approves both the content plan and the structural skeleton in one gate
    - the user may accept the recommended template, request a different one from the catalog, or say "no template" to generate freehand
@@ -194,6 +199,13 @@ Prior output is not a quality floor. The tenant's declared approved examples are
 
 ## Do Not
 
+- ship an asset that is boxes and connector lines only, or one whose every block uses the same visual register
+- carry only the source's labels into the asset while leaving its concrete specifics behind
+- transplant caption-native characters (`↳`, `✅`, `1️⃣`, emoji markers) into the artwork
+- render a URL, short link, or QR code into the image
+- hand-draw a third-party brand mark instead of embedding the real logo asset, or hand-author an icon the tenant's icon library already ships
+- reproduce a supplied reference's layout with new text, or carry over a device whose precondition the source cannot meet
+- treat a passing validator as evidence the diagram asserts the right thing — read it as a sentence first
 - bulk-read the reference set up front instead of reading each file at its phase gate
 - skip a phase gate because the phase "looks obvious" or the file was read in an earlier run
 - read anything on the `## Never Read` list, or any file the workflow never asks for

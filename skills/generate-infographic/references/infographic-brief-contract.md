@@ -14,11 +14,35 @@ Minimum fields:
 - `target_audience`
 - `core_message`
 - `key_supporting_points`
+- `concrete_specifics`
 - `proof_points`
 - `claim_guardrails`
 - `visual_angle`
+- `visual_registers`
+- `micro_visuals`
 - `source_attribution_requirements`
 - `layout_profile`
+
+Density and richness fields:
+
+- `concrete_specifics` — for each entry in `key_supporting_points`, the actual
+  options, mechanisms, examples, or consequences drawn from the source. A point
+  with no specifics is a label, and an asset of labels fails the density floor in
+  `linkedin-mobile-optimization.md`. If a point genuinely has no specifics in the
+  source, say so explicitly rather than leaving it empty.
+- `visual_registers` — the distinct visual modes the asset will use, named. Two
+  minimum, three preferred. The same register repeated across a grid counts once;
+  listing "three cards" is one register, not three.
+- `micro_visuals` — what graphic token each content block carries and what it
+  encodes. `"none"` for a block is a flag to reconsider, not a valid default.
+
+These three exist so richness and density are agreed at the review gate rather
+than discovered after a render. See `visual-richness-requirements.md`.
+
+When a liked reference asset has been supplied, also include:
+
+- `reference_devices` — devices extracted from it, and any device rejected for a
+  failed precondition plus what replaced it. See `reference-benchmarking.md`.
 
 Optional fields (present only when a template catalog exists in the tenant folder):
 

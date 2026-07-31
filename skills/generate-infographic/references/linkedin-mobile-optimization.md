@@ -46,6 +46,32 @@ Use square only when the design is simple or desktop consistency matters more th
   - one takeaway
 - Use one dominant visual system, not multiple competing structures.
 
+## Density Floor
+
+The rules above are ceilings. They are not permission to publish a slogan.
+
+"One idea" constrains the **number of arguments**, not the amount of substance
+behind them. An infographic is an information artifact: the reader should leave
+knowing things, not just having read a headline.
+
+**The floor:** every supporting point must carry its **concrete specifics** from
+the source — the options, mechanisms, examples, or consequences that make it
+actionable — not merely its label.
+
+- "Trigger" is a label. "On a clock / once and never again / called by another
+  system" are the specifics.
+- "Context" is a label. The actual surfaces it can reach are the specifics.
+
+**The test:** could this asset be reconstructed from the source's headings alone?
+If yes, it is under-built — it is an outline, not an infographic.
+
+**The opposite failure** is equally real: transcribing the caption verbatim. The
+floor asks for *specifics per point*, not for total word count. Compress each
+specific to its shortest faithful form, then keep it.
+
+When density and the block ceiling conflict, reduce the **number of points** and
+keep their specifics. Three fully-supported points beat five bare labels.
+
 ## Readability Rules
 
 - Headline should read instantly on mobile.
@@ -89,6 +115,38 @@ These do not count as content blocks:
 - CTA container
 - signature or logo treatment
 - footer attribution
+
+## Medium-Native Formatting
+
+The source is usually a caption. Captions are written for a plain-text field that
+strips formatting, so they simulate structure with characters: `↳` for sub-points,
+`→` for flow, `✅` for list items, `1️⃣` for numbering, emoji as section markers.
+
+**An infographic has real typography. Do not transplant those characters.**
+
+| Caption device | Infographic equivalent |
+|---|---|
+| `↳` sub-item marker | hairline rule between rows, or a hanging indent |
+| `✅` / `•` list marker | separated rows, a grid, or a real check glyph from the icon set |
+| `1️⃣ 2️⃣ 3️⃣` | position in the layout, or an icon set — not numerals, if labels already identify |
+| `→` inline arrow | an actual drawn connector, or adjacency |
+| emoji section markers | icons from the tenant's icon library |
+| ALL-CAPS for emphasis | type scale, weight, or an inverse container |
+
+Taking the caption's **information** is required (see Density Floor). Taking the
+caption's **punctuation** is a defect.
+
+Emoji belong in an infographic only when the tenant's brand materials explicitly
+allow them.
+
+## No Links In The Asset
+
+Do not render URLs, short links, or QR codes into the image. They are not
+clickable, they age badly, and they consume space that content needs. Source
+attribution belongs in the caption or post body.
+
+A small textual source credit ("Source: <publication>") is acceptable when the
+tenant requires attribution — the ban is on rendered URLs, not on credit.
 
 ## Design For Scanning, Not Reading
 
