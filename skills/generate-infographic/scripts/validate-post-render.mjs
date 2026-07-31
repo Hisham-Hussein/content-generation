@@ -328,30 +328,48 @@ export async function validatePostRenderOnPage(page) {
       // SVG text is usually painted on top of a shape, not on the HTML surface.
       // Look for an underlying rect before falling back to the ancestor chain,
       // or every light-on-dark label inside a light-page SVG false-fails.
-      let bd = null;
+      const toRgb = (v) => {
+        if (!v) return null;
+        const c = parseColor(v);
+        if (c) return c;
+        const str = v.trim();
+        if (/^#[0-9a-f]{3,8}$/i.test(str)) {
+          const h = str.replace('#', '');
+          const x = h.length === 3 ? h.split('').map((ch) => ch + ch).join('') : h.slice(0, 6);
+          return { r: parseInt(x.slice(0, 2), 16), g: parseInt(x.slice(2, 4), 16), b: parseInt(x.slice(4, 6), 16), a: 1 };
+        }
+        return null;
+      };
+      // A gradient-filled shape has no single backdrop colour. Collect every stop
+      // and score against the worst of them, so a label cannot pass by sitting on
+      // the favourable end of a gradient.
+      const fillBackdrops = (fillStr) => {
+        const url = /^url\(["']?#([^)"']+)["']?\)$/.exec((fillStr || '').trim());
+        if (!url) { const c = toRgb(fillStr); return c && c.a >= 0.9 ? [c] : []; }
+        const grad = document.getElementById(url[1]);
+        if (!grad) return [];
+        return Array.from(grad.querySelectorAll('stop'))
+          .map((st) => toRgb(st.getAttribute('stop-color') || getComputedStyle(st).stopColor))
+          .filter((c) => c && c.a >= 0.9);
+      };
+
+      let backdrops = [];
       try {
         const tb = t.getBBox();
         const cx = tb.x + tb.width / 2, cy = tb.y + tb.height / 2;
         let prev = t.previousElementSibling;
-        for (let i = 0; i < 15 && prev && !bd; i++) {
+        for (let i = 0; i < 15 && prev && !backdrops.length; i++) {
           if (prev.tagName === 'rect') {
             const rb = prev.getBBox();
             if (cx >= rb.x && cx <= rb.x + rb.width && cy >= rb.y && cy <= rb.y + rb.height) {
-              const rf = prev.getAttribute('fill') || '';
-              let shape = parseColor(rf);
-              if (!shape && /^#[0-9a-f]{3,8}$/i.test(rf.trim())) {
-                const h = rf.trim().replace('#', '');
-                const x = h.length === 3 ? h.split('').map((c) => c + c).join('') : h.slice(0, 6);
-                shape = { r: parseInt(x.slice(0, 2), 16), g: parseInt(x.slice(2, 4), 16), b: parseInt(x.slice(4, 6), 16), a: 1 };
-              }
-              if (shape && shape.a >= 0.9) bd = shape;
+              backdrops = fillBackdrops(prev.getAttribute('fill'));
             }
           }
           prev = prev.previousElementSibling;
         }
       } catch (e) { /* getBBox may fail on hidden nodes */ }
-      if (!bd) bd = resolveBackdrop(t.parentElement);
-      const ratio = contrast(over(fg, bd), bd);
+      if (!backdrops.length) backdrops = [resolveBackdrop(t.parentElement)];
+      const ratio = Math.min(...backdrops.map((bd) => contrast(over(fg, bd), bd)));
       const label = (t.textContent || '').trim().substring(0, 34);
       if (ratio < 3.0) {
         errors.push(`SVG text "${label}" contrast ${ratio.toFixed(2)}:1 against its plate (minimum 3.0:1).`);
