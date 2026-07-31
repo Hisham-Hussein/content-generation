@@ -16,21 +16,53 @@ Use it for LinkedIn-first single-page infographic generation only.
 
 If the user does not provide a tenant folder, stop and ask for it. Do not infer hidden defaults.
 
-## Read Before Generating
+## Reading Rule
 
-1. `../../references/shared-art-direction-principles.md`
-2. `references/brand-material-intake.md`
-3. `references/infographic-brief-contract.md`
-4. `references/asset-manifest-contract.md`
-5. `references/qa-checklist.md`
-6. `references/production-render-workflow.md`
-7. `references/linkedin-mobile-optimization.md`
-8. `references/render-environment-preflight.md`
-9. `references/svg-content-diagram-rules.md`
-10. `scripts/validate-mobile-linkedin-infographic.mjs`
-11. `scripts/validate-post-render.mjs`
+Do not bulk-read the reference set before starting. Each phase below opens with a **READ NOW** gate naming exactly the files that phase consumes. Read those files at that gate — not earlier.
+
+The gate controls *when*, not *whether*. Every gate is mandatory when its phase is reached. Skipping a gate is a hard failure, not an optimization. Read each file once; it stays in context for later phases.
+
+Orientation map only — do not read from this table:
+
+| File | Gate |
+|------|------|
+| `references/brand-material-intake.md` | Phase 1 — source and brand intake |
+| `references/infographic-brief-contract.md` | Phase 2 — brief |
+| `references/svg-content-diagram-rules.md` | Phase 2 — brief |
+| `../../references/shared-art-direction-principles.md` | Phase 2 — brief |
+| `references/linkedin-mobile-optimization.md` | Phase 3 — artboard |
+| `scripts/validate-mobile-linkedin-infographic.mjs` | Phase 4 — pre-render validation |
+| `references/render-environment-preflight.md` | Phase 5 — render |
+| `references/production-render-workflow.md` | Phase 5 — render |
+| `scripts/validate-post-render.mjs` | Phase 6 — post-render validation |
+| `references/qa-checklist.md` | Phase 6 — QA |
+| `references/asset-manifest-contract.md` | Phase 7 — bundle |
+
+Two further reads are conditional and live inside the tenant folder, not this skill:
+
+| File | Gate | Condition |
+|------|------|-----------|
+| tenant `ui_kits/*infographic*templates*/README.md` | Phase 2 — step 7 | only if that directory exists |
+| tenant approved/rejected example assets | Phase 3 — step 12 | only if the tenant materials point to them |
+
+## Never Read
+
+This is a closed list. Reading anything on it is a hard failure, no matter how useful it seems for calibration, style-matching, or "seeing how it was done last time."
+
+- any `generated/` folder — including the run's own output folder and every prior infographic bundle in it
+- prior `infographic.html`, `infographic.png`, or `manifest.yaml` from earlier runs
+- any other tenant's folder
+- template catalogs other than the one active tenant's catalog found in Phase 2 step 7
+- carousel, post, or caption assets — they are a different workflow
+- reference files from sibling skills in this plugin
+
+Prior output is not a quality floor. The tenant's declared approved examples are the quality floor, and Phase 3 step 12 is the only gate that opens them.
 
 ## Workflow
+
+### Phase 1 — Source and brand intake
+
+**READ NOW:** `references/brand-material-intake.md`
 
 1. Resolve the source into a lightweight normalized source package:
    - resolved text
@@ -44,11 +76,21 @@ If the user does not provide a tenant folder, stop and ask for it. Do not infer 
    - tenant `SKILL.md` when present
    - HTML, CSS, token, or brand-kit files when present
    - required local assets and approved examples when present
+
+   Scope boundary: brand-definition files only. Do not descend into `generated/`, output folders, or prior asset bundles at this step — see `## Never Read`. If a brand fact is not in the tenant's brand materials, ask the user; do not reverse-engineer it from past output.
 4. Use the original tenant brand materials as the canonical brand source for the run. Do not flatten them into a required normalized profile.
 5. Stop only on genuine brand blockers:
    - conflicting active brands or personas
    - missing essential render assets explicitly required by the tenant materials
    - ambiguity that prevents choosing a usable active publishing brand
+
+### Phase 2 — Brief derivation and approval
+
+**READ NOW:**
+- `../../references/shared-art-direction-principles.md`
+- `references/infographic-brief-contract.md`
+- `references/svg-content-diagram-rules.md`
+
 6. Apply `../../references/shared-art-direction-principles.md` as the generic visual quality floor for the run.
 7. Check for a template catalog in the tenant folder:
    - look for `ui_kits/linkedin_infographic_templates/` (or a similar `*infographic*templates*` directory) inside the tenant folder
@@ -63,6 +105,11 @@ If the user does not provide a tenant folder, stop and ask for it. Do not infer 
    - when a template recommendation is present, show it as part of the brief so the user approves both the content plan and the structural skeleton in one gate
    - the user may accept the recommended template, request a different one from the catalog, or say "no template" to generate freehand
 10. If the brief has unresolved gaps, stop at brief review instead of pretending the brief is complete.
+
+### Phase 3 — Artboard construction
+
+**READ NOW:** `references/linkedin-mobile-optimization.md`
+
 11. Translate the approved brief into a single-image infographic job:
    - one main idea
    - one dominant visual system
@@ -86,16 +133,35 @@ If the user does not provide a tenant folder, stop and ask for it. Do not infer 
    - fewer words before smaller type
    - restrained branding
    - safe padding and clean section separation
+
+### Phase 4 — Pre-render validation
+
+**READ NOW:** `scripts/validate-mobile-linkedin-infographic.mjs`
+
 16. Run `scripts/validate-mobile-linkedin-infographic.mjs` against the HTML before any render:
    - hard fail on mobile contract violations by default
    - use override only when the user explicitly provided the exact token `OVERRIDE_MOBILE_RULES`
    - the CLI flag `--override-mobile-rules` may only be used when that exact user token is present
+
+### Phase 5 — Render
+
+**READ NOW:**
+- `references/render-environment-preflight.md`
+- `references/production-render-workflow.md`
+
 17. Run render-environment preflight before rendering:
    - detect an existing Playwright runtime first
    - detect an existing Chromium runtime first
    - reuse a machine-level install when available
    - install only if the required render runtime is genuinely missing
 18. Render PNG from the HTML artboard with Playwright + Chromium.
+
+### Phase 6 — Post-render validation and QA
+
+**READ NOW:**
+- `scripts/validate-post-render.mjs`
+- `references/qa-checklist.md`
+
 19. Run `scripts/validate-post-render.mjs` against the loaded page inside the Playwright session, before taking the screenshot:
    - hard fail if the footer is clipped or invisible
    - hard fail if any content block overflows the canvas
@@ -106,6 +172,11 @@ If the user does not provide a tenant folder, stop and ask for it. Do not infer 
 21. If the output is clearly fixable, revise the HTML and re-render within a small bounded loop.
 22. If the PNG is technically valid but still crowded, muddy, generic, template-like, caption-decorative, weak on first glance, or poor on mobile, treat it as `revise-and-retry`, not `pass`.
 23. If hard QA still fails after bounded retries, stop and escalate instead of presenting the output as accepted.
+
+### Phase 7 — Export and bundle
+
+**READ NOW:** `references/asset-manifest-contract.md`
+
 24. Export PDF from the verified PNG.
 25. Rasterize the PDF back to an image and verify it matches closely enough for production sanity.
 26. Write the final asset bundle into the target asset folder:
@@ -123,6 +194,9 @@ If the user does not provide a tenant folder, stop and ask for it. Do not infer 
 
 ## Do Not
 
+- bulk-read the reference set up front instead of reading each file at its phase gate
+- skip a phase gate because the phase "looks obvious" or the file was read in an earlier run
+- read anything on the `## Never Read` list, or any file the workflow never asks for
 - treat Playwright or browser render success as QA success
 - treat a technically valid render as acceptable if it fails mobile readability or composition quality
 - treat the shared art-direction principles as optional guidance
