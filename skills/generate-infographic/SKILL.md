@@ -116,10 +116,10 @@ Prior output is not a quality floor. The tenant's declared approved examples are
 **READ NOW:** `references/linkedin-mobile-optimization.md`
 
 11. Translate the approved brief into a single-image infographic job:
-   - one main idea
+   - one main argument, carried by as much supporting evidence as stays legible
    - one dominant visual system
    - one memorable structural motif only if it improves the message
-   - a bounded number of content blocks
+   - a block count bounded by legibility, not by a fixed number
    - visual structure
    - proof treatment
    - attribution requirements

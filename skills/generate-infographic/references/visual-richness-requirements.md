@@ -1,8 +1,8 @@
 # Visual Richness Requirements
 
-The rest of this skill is written as ceilings — do not exceed 5 blocks, do not go
-below 24px, remove copy before shrinking type. Ceilings prevent a bad asset. They
-do not produce a good one.
+The rest of this skill is written as ceilings — do not go below the type floor,
+remove copy before shrinking type. Ceilings prevent a bad asset. They do not
+produce a good one.
 
 This file is the floor. An asset that clears every ceiling and fails this file is
 **not** publishable.

@@ -36,15 +36,22 @@ Best for:
 
 Use square only when the design is simple or desktop consistency matters more than vertical mobile impact.
 
-## One Infographic = One Idea
+## One Argument, Fully Supported
 
-- Do not cram a whole article or LinkedIn caption into one image.
-- Default to:
-  - one big headline
-  - 3 to 5 supporting points
-  - one visual system
-  - one takeaway
-- Use one dominant visual system, not multiple competing structures.
+An infographic carries **one argument** — not one fact. The constraint is on how many
+*separate arguments* compete for the reader, not on how much evidence stands behind
+the one you chose.
+
+- Use one dominant visual system rather than several competing structures. Two
+  unrelated metaphors in one frame is the failure this rule exists to prevent.
+- Carry as many supporting points as stay **legible at the type floor with real
+  spacing**. That is the only ceiling. Do not stop at an arbitrary count.
+- A reader who saves the asset wants to come back to something. Sparse assets do not
+  get saved, and they do not get shared — density is why reference graphics travel.
+
+**How to know you have too much:** render it and look. If the type has dropped below
+the floor, if blocks are touching, or if you cannot find the entry point in three
+seconds, cut. Those are observable failures. "It has seven blocks" is not.
 
 ## Density Floor
 
@@ -93,14 +100,16 @@ keep their specifics. Three fully-supported points beat five bare labels.
 - `section_px >= 34`
 - `body_px >= 24`
 - `caption_px >= 24`
-- content block count must not exceed `5`
+- content blocks are **not capped**. Density is bound by legibility, which the
+  post-render checks already enforce: type floors, section gaps, canvas bounds. A
+  block count that renders legibly is a valid block count
 - the HTML must include:
   - a `mobile-linkedin-compliance` JSON block
   - `data-content-block` markers for counted content blocks
 
 ## Content Block Taxonomy
 
-For validator counting, only these count toward the `5`-block maximum:
+Blocks are counted for reporting, not for enforcement. These are the countable kinds:
 
 - `hero`
 - `support`
@@ -234,7 +243,7 @@ For AI and systems content, prioritize:
 - dark background
 - `40 to 100 px` safe padding
 - big hook at the top
-- 3 to 5 content blocks
+- as many content blocks as stay legible at the type floor
 - one visual system or metaphor
 - short final takeaway
 - small CTA or diagnostic question at the bottom when needed
@@ -244,7 +253,6 @@ For AI and systems content, prioritize:
 
 ## Reject If
 
-- the infographic feels like a compressed article
 - the layout needs zooming to understand
 - the main idea is not clear on first glance
 - branding is stronger than the educational message

@@ -22,14 +22,13 @@ Reject before final output if any of these are true:
 - important text is too small for comfortable mobile reading
 - important text uses the wrong contrast tier
 - content is clipped, hidden, or pushed outside the intended frame
-- the page reads like a compressed article or caption recap instead of a visual argument
+- the page is a caption recap with no visual argument — text poured into a frame
 - more than one dominant visual system is competing for attention
 - there is no clear structural motif or the motif is decorative rather than useful
 - structural motifs are overused to the point of clutter
 - borders or cards visually collide or merge
 - hierarchy is weak or confusing on first glance
 - the layout feels crowded, muddy, or overloaded for a single-image infographic
-- there are too many blocks or too much copy for a clean LinkedIn mobile asset
 - the output looks generic, templated, or interchangeable with low-context social graphics
 - branding, logos, CTA treatment, or proof annotations overpower the educational message
 - safe padding is weak and the layout sits too close to edges

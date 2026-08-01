@@ -9,7 +9,10 @@ const HARD_LIMITS = {
     bodyMin: 24,
     captionMin: 24,
   },
-  contentBlockMax: 5,
+  // No cap. Density is bound by legibility, which the post-render checks enforce
+  // (type floors, section gaps, canvas bounds). A block count that renders legibly
+  // is a valid block count.
+  contentBlockMax: Infinity,
 };
 
 const ALLOWED_LAYOUT_PROFILES = new Set([
@@ -114,11 +117,6 @@ export function validateInfographicHtml(
     errors.push(`font_scale.caption_px must be at least ${HARD_LIMITS.fontScale.captionMin}px.`);
   }
 
-  if ((contract.content_block_count ?? 0) > HARD_LIMITS.contentBlockMax) {
-    errors.push(
-      `content_block_count cannot exceed ${HARD_LIMITS.contentBlockMax}.`,
-    );
-  }
 
   const markedBlockCount = countMarkedBlocks(html);
   if (markedBlockCount !== contract.content_block_count) {

@@ -9,7 +9,11 @@ Use this reference for any visual workflow that generates branded marketing, edu
 ## Core Model
 
 - Translate the post argument into a visual diagnostic, not a decorative recap of the full caption.
-- One asset should carry one main job and one main idea.
+- One asset should carry one main job and one main argument. "One argument" bounds
+  how many *separate claims* compete for the reader — it does not bound the evidence
+  behind the claim you chose. Dense, fully-supported assets are what get saved and
+  re-shared; sparse ones read as filler.
+  (For carousels this applies per slide: one argument per slide, fully supported.)
 - The HTML/CSS artboard is the editable design source.
 - The PNG is the primary publishing asset.
 - The PDF is a derivative export from the verified PNG.
@@ -30,7 +34,10 @@ Use this reference for any visual workflow that generates branded marketing, edu
   - radial system
   - annotated strip
 - Do not mix multiple competing systems in one image.
-- Keep supporting content bounded. If the idea needs more than one image to stay clear, the single-image composition is wrong.
+- Bound supporting content by **legibility**, not by a fixed count: as much as holds
+  at the type floor with real spacing and visible section boundaries. If the argument
+  genuinely needs a second image to stay clear, the single-image composition is wrong
+  — but "it looks full" is not that test.
 - Proof should support the message, not take over the composition.
 
 ## Visual Argument Requirement
@@ -62,7 +69,7 @@ Use this reference for any visual workflow that generates branded marketing, edu
 
 ## Negative Patterns To Reject
 
-- compressed-article layouts
+- caption poured into a frame with no visual argument
 - caption decoration instead of visual argument
 - repeated bordered cards around every line item
 - multiple competing motifs or metaphors
