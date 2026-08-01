@@ -25,7 +25,7 @@ Provide a LinkedIn post (paste or screenshot). Specify if it's your own post or 
 
 6. **The author is CEO of an AI agency with a team.** Never frame as a solopreneur. Can reference client work but don't lead every comment with "we built/we do/we hire." Add value from perspective, not resume.
 
-7. **Acknowledge briefly, then add value.** For others' posts, start with a short acknowledgment then add your value. Keep acknowledgment to a few words, never sycophantic ("Great post!", "Spot on!", "This is amazing!"). **Vary the acknowledgment every time** — don't repeat "good framework" / "solid breakdown" / "good list" across comments. Sometimes skip the explicit acknowledgment and just engage directly with a specific point from the post.
+7. **Always acknowledge the author first, then add value.** For others' posts, ALWAYS start with a brief acknowledgment before sharing any experience or insight. Jumping straight to "we do X" or "we found Y" without acknowledging the author sounds like self-promotion. Keep acknowledgment to a few words, never sycophantic ("Great post!", "Spot on!", "This is amazing!"). **Vary the acknowledgment every time** — don't repeat "good framework" / "solid breakdown" / "good list" across comments. Use varied forms: reference a specific point they made, use "well put", "fair point", "this resonates", etc.
 
 8. **Vary sentence openers.** Never start every comment with the same word. Never habitually start with "the." Never default to "good/solid/interesting + noun" as a crutch.
 
