@@ -1,0 +1,46 @@
+{
+  "skill_name": "convert-design-to-theme",
+  "evals": [
+    {
+      "id": 0,
+      "name": "airtable-source-with-pill-conflict",
+      "prompt": "I've got a design system spec for Airtable's marketing site at references/design-systems/DESIGN-airtable.md inside the tenant folder. Add it as a new theme for my iSemantics content so I can use it for LinkedIn infographics.",
+      "expected_output": "New THEMES.md section covering all 14 catalog elements, family chrome added (tag pill, watermark, body field, author footer, Lucide, 24px floor), the pill-radius conflict resolved and logged as a documented deviation, registered in the comparison table + usage rules + README, and a rendered reference asset that passes validation.",
+      "files": [],
+      "assertions": [
+        "New theme section in THEMES.md defines all 14 catalog elements (page/canvas, atmosphere, tags/pills, headline, feature cards, hero card, info grid, icons, stat bars, stat numbers, takeaway, step/timeline, SVG illustrations, footer)",
+        "Tag pill is specified as a pill (radius 9999px or 50px), positioned as first child top-left",
+        "Background watermark type is specified with a colour and opacity",
+        "Author footer is specified (photo, name, role, logo, domain)",
+        "No type size below 24px appears in the theme spec",
+        "Registered in all four places: THEMES.md section, quick comparison table column, usage rules, README theme list",
+        "Source DESIGN-*.md left byte-identical to the original",
+        "A reference asset PNG exists on disk",
+        "Reference asset passes both the pre-render and post-render validators",
+        "Conflicts between the source's rules and tenant chrome are logged under a Documented deviations heading",
+        "Pill-radius conflict (source reserves pill for pricing) is explicitly addressed"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "figma-source-with-viewport-rule",
+      "prompt": "Same exercise with this one: references/design-systems/DESIGN-figma.md in the tenant folder. Convert it into a theme I can use.",
+      "expected_output": "New THEMES.md section covering all 14 elements, the one-colour-block-per-viewport rule recognised and translated for a fixed 1080x1350 canvas, magenta's sub-4.5:1 contrast measured and written in as a rule, family chrome added, fully registered, reference asset rendered and validated.",
+      "files": [],
+      "assertions": [
+        "New theme section in THEMES.md defines all 14 catalog elements (page/canvas, atmosphere, tags/pills, headline, feature cards, hero card, info grid, icons, stat bars, stat numbers, takeaway, step/timeline, SVG illustrations, footer)",
+        "Tag pill is specified as a pill (radius 9999px or 50px), positioned as first child top-left",
+        "Background watermark type is specified with a colour and opacity",
+        "Author footer is specified (photo, name, role, logo, domain)",
+        "No type size below 24px appears in the theme spec",
+        "Registered in all four places: THEMES.md section, quick comparison table column, usage rules, README theme list",
+        "Source DESIGN-*.md left byte-identical to the original",
+        "A reference asset PNG exists on disk",
+        "Reference asset passes both the pre-render and post-render validators",
+        "Conflicts between the source's rules and tenant chrome are logged under a Documented deviations heading",
+        "The one-colour-block-per-viewport rule is recognised and translated for a fixed 1080x1350 canvas",
+        "Magenta's sub-4.5:1 contrast is stated with a measured number and a usage limit"
+      ]
+    }
+  ]
+}
