@@ -14,6 +14,7 @@ Given a PDF path, read it, extract knowledge, and create the Airtable record:
 2. Apply the extraction categories to produce summary + key insights
 3. Ask the user to confirm pillar alignment and priority
 4. Create the Airtable record via MCP
+5. Attach the source file and upload a cover-page thumbnail via the REST API (Step 8)
 
 **Invocation:** `/content-generation:ingest-knowledge-item [path to PDF]`
 </quick_start>
@@ -120,13 +121,56 @@ Use `mcp__airtable__create_records_for_table` with the field IDs from the mappin
 
 Pass `fieldIds` array to include Title, Type, Priority, and Origin in the response for verification.
 
-**Step 8: Report**
+**Step 8: Attach the source file and a cover thumbnail**
+
+Attach the source itself to `Attachment` (`fldWpVH5vctPxDwqo`), and a cover image to
+`Thumbnail` (`fld6kerPMGH6nLtdS`). Do NOT hand this back to the user as a manual drag —
+the API does both. Pick the endpoint by file size and whether a public URL exists.
+
+**Files with a public URL (any size) — PATCH the records API:**
+```bash
+set -a && source .env && set +a          # AIRTABLE_API_KEY
+curl -s -X PATCH "https://api.airtable.com/v0/appXFk4T8KyNf4odQ/tblDBOtvJlto1L6ST/<recId>" \
+  -H "Authorization: Bearer $AIRTABLE_API_KEY" -H "Content-Type: application/json" \
+  --data '{"fields":{"fldWpVH5vctPxDwqo":[{"url":"<public url>","filename":"<name>.pdf"}]}}'
+```
+Airtable fetches and stores the bytes itself, so this has no 5MB ceiling. Strip tracking
+params (`?mkt_tok=`, `?utm=`) from the URL first, then `curl -sI` it to confirm a 200 and
+note the `content-length` — the stored `size` must match it.
+
+**Local files with no public URL (≤5MB) — POST base64 to the upload endpoint:**
+```bash
+python3 - <<'EOF' > /tmp/att.json
+import base64, json
+p = '<path to file>'
+print(json.dumps({"contentType": "application/pdf",   # or image/png
+                  "filename": "<name>.pdf",
+                  "file": base64.b64encode(open(p,'rb').read()).decode()}))
+EOF
+curl -s -X POST \
+  "https://content.airtable.com/v0/appXFk4T8KyNf4odQ/<recId>/<fieldId>/uploadAttachment" \
+  -H "Authorization: Bearer $AIRTABLE_API_KEY" -H "Content-Type: application/json" \
+  --data @/tmp/att.json
+```
+Each call APPENDS to the field. Over 5MB, use the URL path above or compress.
+
+**The thumbnail** is page 1 of the PDF rendered to PNG:
+```bash
+pdftoppm -f 1 -l 1 -r 150 -png <source>.pdf cover     # writes cover-01.png
+```
+Read the PNG before uploading to confirm it rendered (a blank or garbled page means the
+PDF needs a different renderer). Upload it via the base64 endpoint — a local render has no
+public URL.
+
+**Step 9: Report**
 
 Confirm the record was created. Include:
 - Record ID
 - Title
 - Pillar alignment chosen
-- Reminder that PDF attachment must be dragged manually in Airtable (API limitation — requires public URL, cannot accept local files)
+- Attachment and thumbnail confirmed by reading the record back: filename, stored `size`
+  (must match the source bytes), type, and the thumbnail's width x height. Never claim an
+  attachment landed from the POST/PATCH response alone.
 
 </process>
 
@@ -149,6 +193,7 @@ Confirm the record was created. Include:
 - Extracted summary is 2-4 paragraphs, orients a scanner
 - Key insights cover all applicable categories with specific details
 - Airtable record created with correct field mappings
-- User informed of the record ID and the attachment limitation
+- Source file attached and cover thumbnail uploaded, both verified by reading the record back
+- User informed of the record ID
 - A post writer reading ONLY the summary + key insights (not the original PDF) could write a substantive LinkedIn post
 </success_criteria>
