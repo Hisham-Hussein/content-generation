@@ -229,6 +229,46 @@ test('planUnitTimeline: no dead air anywhere in the build', () => {
   }
 });
 
+test('planUnitTimeline: time follows travel down the page, not unit count', () => {
+  // The defect: a uniform per-unit step hands the timeline to whichever region
+  // decomposes into the most targets. A diagram whose SVG resolved into 12 parts
+  // spanning 30px took 4.1s of a 7.2s build, while the 800px of cards below it
+  // (4 units) got 0.95s — the guide dwelt where there was nothing to read and
+  // raced through everything there was.
+  const row = Array.from({ length: 12 }, (_, i) => r(`d${i}`, 40 + i * 70, 300, 60, 20));
+  const below = Array.from({ length: 4 }, (_, i) => r(`c${i}`, 60, 520 + i * 200, 900, 160));
+  const units = assignReadingOrder([...row, ...below], CFG)
+    .map((t) => ({ members: [t], rect: t.rect, order: t.order, band: t.band }));
+
+  const timed = planUnitTimeline(units, CFG);
+  const at = (id) => timed.find((u) => u.members[0].id === id).startMs;
+
+  // The 12-part row shares one band, so it costs the per-beat minimum and reads
+  // as one quick left-to-right sweep.
+  const rowSpan = at('d11') - at('d0');
+  // The four cards below span 600px of page and must not be crushed into the tail.
+  const belowSpan = timed[timed.length - 1].startMs - at('c0');
+
+  assert.ok(
+    belowSpan > rowSpan,
+    `600px of cards (${Math.round(belowSpan)}ms) must outlast a same-row run of 12 parts (${Math.round(rowSpan)}ms)`,
+  );
+});
+
+test('planUnitTimeline: same-row beats cost less than a row change', () => {
+  const sameRow = assignReadingOrder([r('a', 40, 300, 100, 40), r('b', 200, 300, 100, 40)], CFG)
+    .map((t) => ({ members: [t], rect: t.rect, order: t.order, band: t.band }));
+  const nextRow = assignReadingOrder([r('a', 40, 300, 100, 40), r('b', 40, 900, 100, 40)], CFG)
+    .map((t) => ({ members: [t], rect: t.rect, order: t.order, band: t.band }));
+
+  const flat = planUnitTimeline(sameRow, CFG);
+  const deep = planUnitTimeline(nextRow, CFG);
+  assert.ok(
+    deep[1].startMs > flat[1].startMs,
+    'descending 600px must cost more than stepping sideways within a row',
+  );
+});
+
 test('planUnitTimeline: build fits the duration budget', () => {
   const timed = planUnitTimeline(column(10), CFG);
   const lastEnd = Math.max(...timed.map((u) => u.endMs));

@@ -38,6 +38,20 @@ export const READING_ORDER_CONFIG = {
   overlapRatio: 0.35,
   maxBuildMs: 4500,         // clarity over speed, but not unbounded
 
+  // Time is allocated by how far the READING HEAD travels down the artboard, not
+  // by unit count. A uniform per-unit step silently hands the timeline to whichever
+  // region happens to decompose into the most targets: a diagram whose SVG resolves
+  // into 14 strokes and polygons spanning 30px took 4.1s, while the 800px of cards
+  // below it — 4 units — got 0.95s. The guide then fails its one job, because it
+  // dwells where there is little to read and races where there is much.
+  //
+  // Cost of moving from one beat to the next = minStepMs + advanceMsPerPx x the
+  // downward travel. Beats sharing a row cost the minimum, so a left-to-right run
+  // (a 3-step diagram, a chip row) still reads as one quick sweep; descending to a
+  // new row costs in proportion to the distance the eye actually moves.
+  minStepMs: 150,
+  advanceMsPerPx: 2.4,
+
   // --- craft --------------------------------------------------------------
   risePx: 10,               // everything settles upward: the premium convention
   driftPx: 6,               // horizontal drift, in the reading direction
@@ -193,9 +207,22 @@ export function planUnitTimeline(units, cfg = READING_ORDER_CONFIG) {
   });
   if (!(heroFont > 0)) heroIdx = 0;
 
+  // Start times accumulate travel cost rather than a fixed step, so the build's
+  // tempo tracks the reader's eye down the page. `step` remains the fallback for
+  // callers that pass a cfg predating minStepMs/advanceMsPerPx.
+  const minStep = cfg.minStepMs >= 0 ? cfg.minStepMs : step;
+  const perPx = cfg.advanceMsPerPx >= 0 ? cfg.advanceMsPerPx : 0;
+  const centreY = (u) => u.rect.y + u.rect.height / 2;
+  const starts = [];
+  for (let i = 0; i < units.length; i++) {
+    if (i === 0) { starts.push(0); continue; }
+    const drop = Math.max(0, centreY(units[i]) - centreY(units[i - 1]));
+    starts.push(starts[i - 1] + minStep + perPx * drop);
+  }
+
   let planned = units.map((u, i) => {
     const reveal = u.isConnector ? cfg.connectorRevealMs : cfg.unitRevealMs;
-    const startMs = i * step;
+    const startMs = starts[i];
     const isHero = i === heroIdx;
     return {
       ...u,

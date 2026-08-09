@@ -63,6 +63,13 @@ export const TIMELINE_CONFIG = {
   // Ignore decorative slivers when walking for HTML content boxes.
   minTargetAreaPx: 300,
 
+  // Ceiling on how much of the artboard one beat may cover. A container taller
+  // than this is a region, not a beat, and the walk descends into it instead of
+  // binding it whole. Without this, a plain wrapper around three stacked cards
+  // reveals all three as a single flash while an adjacent diagram is exploded
+  // into a beat per stroke.
+  maxBlockCanvasFraction: 0.22,
+
   // Trailing freeze on the full composition. Longer than the old 1s because the
   // GIF loops forever: the eye needs to rest on the finished artboard before the
   // restart, or the loop reads as a stutter.
@@ -264,6 +271,17 @@ function scanAndBind(CFG, REMOVE, planUnits, tracksFromUnits, seekValue, orbWayp
       let r;
       try { r = child.getBoundingClientRect(); } catch (e) { continue; }
       if (r.width * r.height < CFG.minTargetAreaPx) continue;
+      // A beat must be a readable chunk, not a third of the artboard. Binding on
+      // "contains no <svg>" alone means a plain wrapper of three stacked cards
+      // animates as ONE flash, while a sibling region that happens to hold a
+      // diagram is descended into and yields a beat per stroke. Same page, two
+      // opposite granularities, decided by whether an <svg> is present rather
+      // than by how much the reader has to take in. Descend when the candidate is
+      // an oversized container that has real children to descend to.
+      if (r.height > rootRect.height * CFG.maxBlockCanvasFraction && child.children.length >= 2) {
+        walk(child);
+        continue;
+      }
       blocks.push(child);
       add(child, 'block');
       const t = targets[targets.length - 1];
@@ -376,6 +394,17 @@ function scanAndBind(CFG, REMOVE, planUnits, tracksFromUnits, seekValue, orbWayp
     }
   };
   window.__animDebug = { root: !!root, blocks: blocks.length, svgs: svgs.length, targets: targets.length, tracks: tracks.length };
+  // Exposed so the QA loop can see how the build's time is DISTRIBUTED, not just
+  // how long it is. Every unit gets an identical step, so a region that resolves
+  // into many units silently eats a proportional share of the timeline — the
+  // failure this makes visible is a dense diagram consuming most of the build
+  // while the rest of the artboard flashes past.
+  window.__animUnits = units.map((u) => ({
+    startMs: Math.round(u.startMs), endMs: Math.round(u.endMs), band: u.band,
+    x: Math.round(u.rect.x), y: Math.round(u.rect.y),
+    w: Math.round(u.rect.width), h: Math.round(u.rect.height),
+    members: u.members.length, connector: !!u.isConnector, hero: !!u.isHero,
+  }));
   // Exposed for validate-motion-coverage.mjs: which elements the layer actually
   // bound. Without this there is no way to tell an animated composition from a
   // mostly-static one that merely encoded successfully.
