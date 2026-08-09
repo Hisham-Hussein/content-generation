@@ -17,7 +17,9 @@ Provide a LinkedIn post (paste or screenshot). Specify if it's your own post or 
 
 2. **Add genuine expert value.** Say something the post didn't already say. A specific insight, a concrete experience, a useful reframe. Never regurgitate the post back at the author.
 
-3. **Sound like a real human typing a quick thought.** Casual, lowercase, imperfect punctuation. Skip periods sometimes. No thesis statements. No polished structure.
+3. **Sound like a real human typing a quick thought.** Casual and conversational. No thesis statements, no polished essay structure.
+
+3a. **Capitalize and punctuate normally.** Start sentences with a capital letter and use commas, periods and apostrophes the way a literate person does. All-lowercase comments are their own AI tell: they read as someone straining to look casual. "Imperfect punctuation" means the occasional missing period, a comma splice, a sentence fragment. It does not mean abandoning capitalization.
 
 4. **Never fabricate.** No invented stats, client industries, team sizes, or experiences. If you don't have a real example, add value through perspective instead.
 
@@ -87,7 +89,8 @@ These patterns have been flagged repeatedly as AI tells. Using any of them will 
 
 **Tone bans:**
 - Em dashes
-- Clean/proper punctuation (too polished = AI)
+- Essay-grade polish (perfectly balanced clauses, semicolons, formal transitions)
+- All-lowercase text, or dropping capital letters to seem casual
 - Robotic structure or thesis statements
 - Sycophantic openers ("Great question!", "Spot on!", "This is amazing!")
 - Generic positive conclusions
@@ -105,7 +108,7 @@ Own post, others' post, reply thread, Arabic? Default to others' post.
 Identify one specific point where you can add genuine expert insight the post doesn't already cover. Don't just agree with it louder.
 
 **Step 3: Draft the comment.**
-- 1-3 sentences, casual, lowercase
+- 1-3 sentences, casual, normal capitalization
 - Brief acknowledgment first, then the value-add
 - Don't regurgitate what the post says
 - Don't contradict the author
@@ -147,6 +150,7 @@ Run the final comment through the humanizer skill. Apply its output as the deliv
 - [ ] Adds value the post didn't already cover
 - [ ] No banned patterns survived
 - [ ] Sounds like a human typed it quickly
+- [ ] Normal capitalization, not all-lowercase
 - [ ] No fabricated claims
 - [ ] Passed through humanizer skill
 - [ ] Appropriate language (Egyptian Arabic for Arabic posts)
