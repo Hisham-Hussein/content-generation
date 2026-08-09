@@ -68,18 +68,46 @@ under `artwork.icons`. Redrawing an icon the library already ships produces a
 slightly-wrong, slightly-inconsistent shape for no gain.
 
 **Third-party brand marks must be the real asset file.** When the source names a
-product (Slack, Notion, GitHub, a cloud vendor), embed the actual logo file from
-the tenant's brand-logo assets. **Never approximate a brand mark by hand in SVG
-paths, and never substitute a generic library icon for a named product.** A
-redrawn logo is wrong at a glance to anyone who knows the brand, and it misstates
+product (Slack, Notion, GitHub, Webflow, a cloud vendor), embed the actual logo
+file from the tenant's brand-logo assets. **Never approximate a brand mark by hand
+in SVG paths, never substitute a generic library icon for a named product, and
+never fall back to setting the product's name in type when a mark is obtainable.**
+A redrawn logo is wrong at a glance to anyone who knows the brand, and it misstates
 a real company's identity.
 
-If the tenant has no asset for a named brand, follow the tenant's own sourcing
-rules if it has them; otherwise ask rather than approximate.
+This is not optional enrichment. **If the source names a product, the asset shows
+that product's mark.** A named product rendered as bare text is a hard reject on
+the same footing as a hand-drawn logo.
 
-Brand marks keep their own colour — they are chrome, not part of the tenant
-palette. Everything else in the icon system follows the tenant's icon treatment
-(container shape, size, stroke, colour).
+**Sourcing order when the tenant has no asset for a named brand.** Follow the
+tenant's own sourcing rules first if it has them. Otherwise work down this list and
+only ask the user after all of it fails:
+
+1. the tenant's existing `brand-logos/` (or equivalent) directory
+2. Simple Icons — `https://cdn.simpleicons.org/{brand}` (3000+ marks, single-path SVG in brand colour)
+3. LobeHub Icons — best coverage for AI-product marks
+4. the product's own site favicon at the largest available size
+5. `https://www.google.com/s2/favicons?domain={domain}&sz=128` — verify visually that it
+   returned the real mark and not a generic-globe fallback before using it
+
+Save whatever you source into the tenant's brand-logo directory so the next run
+does not re-fetch it.
+
+**Brand marks keep their own colour, in every theme, without exception.** They are
+chrome, not part of the tenant palette. A monochrome theme, a one-colour-block
+theme, or any palette-restricting rule in the tenant's theme spec **does not apply
+to a third-party mark and is not grounds for dropping it, greying it, or replacing
+it with type.** The theme's colour budget governs the tenant's own design language;
+a vendor's logo is quoted material.
+
+**Container treatment is where the mark rejoins the theme.** Seat each logo in a
+neutral chip built from the tenant's own card recipe — its surface, its border or
+hairline, its radius — and pair it with a label in the tenant's label typeface.
+The chip belongs to the theme; the mark inside it does not. This is what keeps a
+full-colour logo from reading as a colour intrusion on a restricted palette.
+
+Everything else in the icon system follows the tenant's icon treatment (container
+shape, size, stroke, colour).
 
 ## D. Device Preconditions
 
@@ -154,6 +182,8 @@ Reject and rebuild — not tweak — when:
 - every content block uses the same register
 - no block carries a micro-visual
 - a brand mark was hand-drawn instead of using the real asset
+- a product named in the source appears as bare text while an obtainable mark exists
+- a brand mark was dropped, greyed, or recoloured to satisfy a theme's palette rule
 - an icon was hand-drawn while the tenant's icon library ships that concept
 - a device was applied without its precondition
 - the visual layer could be deleted and the asset would lose no meaning
