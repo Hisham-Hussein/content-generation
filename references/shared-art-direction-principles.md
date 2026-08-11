@@ -98,6 +98,7 @@ Use this reference for any visual workflow that generates branded marketing, edu
 
 - Every visual generation skill in this plugin should read this file before generating.
 - Clarity outranks beauty, and beauty outranks variety. A visual the reader must work out is a defect no amount of craft redeems.
+- **The motif guidance above is per-image, never per-deck.** One structural motif inside a single infographic is good composition. Imposing one motif, one metaphor world, or a fixed kit of shapes across every slide of a multi-slide deck is not — a deck's coherence already comes from the brand kit (typeface, weight scale, stroke weight, icon treatment, palette, pill, footer), so repeating shapes on top of it only buys monotony. Each slide takes the clearest form for its own content.
 - If tenant approved examples exist, treat them as a quality floor.
 - If tenant rejected examples exist, treat them as an active blacklist.
 - If the render is technically valid but visually generic, crowded, muddy, or weak, revise it.

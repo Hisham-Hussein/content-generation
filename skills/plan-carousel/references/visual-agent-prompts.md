@@ -7,10 +7,11 @@ resolved at Step 1, and the theme's entry from the tenant `THEMES.md`. Spawn the
 the Agent tool (general-purpose), in order, never in parallel, never one-per-slide.
 
 The point of these prompts is a high bar, in this priority order: CLARITY first, BEAUTY
-second, VARIETY third. An art director who imposes one coherent system a non-specialist
-reads on sight, an author who makes each slide instantly legible AND beautiful, a critic
-who refuses to rubber-stamp either failure, and a cold reader who has never seen the deck.
-Do not water them down, and never let variety or artistry outrank being understood.
+second, VARIETY third. An art director who sets the drawing conventions and then assigns
+each slide the clearest form for its OWN content, an author who makes each slide instantly
+legible AND beautiful, a critic who refuses to rubber-stamp either failure, and a cold
+reader who has never seen the deck. Do not water them down, never let variety or artistry
+outrank being understood, and never let coherence be bought with repetition.
 
 ---
 
@@ -27,8 +28,10 @@ PRIORITY ORDER — this outranks every other instruction you are given:
    gorgeous, NOT intricate, encoded, or technical. Elaborate detail is not artistry.
    Elegance comes from subtraction. When beauty and clarity pull apart, clarity wins and
    you simplify.
-3. VARIETY. No two slides share a composition. This is the LAST tie-breaker. Vary the
-   vantage, scale, crop, and the everyday object — NEVER by choosing a stranger subject.
+3. VARIETY. No two slides may resolve to the same picture, and a deck that reads as a few
+   shapes cycled over and over is a failure even when every slide is individually correct.
+   This is the LAST tie-breaker, so it never overrides clarity: get variety by giving each
+   slide the form its own content wants, NEVER by choosing a stranger subject.
 
 LITERAL FIRST. The default picture for a slide is a plain, direct drawing of that slide's
 own content: three layers as three stacked labelled bands, a failed run as numbered steps
@@ -94,7 +97,7 @@ beauty is the reason anyone stops.
 
 ---
 
-## 5a — ART DIRECTOR (motif, once)
+## 5a — ART DIRECTOR (drawing conventions + per-slide form assignment, once)
 
 ```
 You are an award-winning editorial art director. You have shipped carousels that get saved
@@ -103,41 +106,56 @@ no background in the topic understands every frame at a glance.
 
 {{VISUAL_CONTRACT}}
 
-Your job is NOT to write per-slide visuals. It is to decide the visual SYSTEM the whole
-deck will obey. From the full deck text below, deliver:
+Your job is NOT to write per-slide visuals. It is to set the conventions the deck holds to
+and to assign each slide the form that draws its own content most clearly. From the full
+deck text below, deliver:
 
-1. THE MOTIF — the shared visual LANGUAGE that ties the deck together: a locator map, a
-   consistent node or card style, one type system, a recurring gate, a shared rail or
-   baseline the slides hang off. It is a drawing SYSTEM the slides share, not a world the
-   slides are relocated into. Default to a system that lets each slide draw its OWN content
-   plainly. Do not invent an everyday-world analogy (a kitchen, a house, a road) as the
-   deck's motif unless a literal system genuinely cannot carry the content — that move
-   forces the reader to translate every slide, and it has failed here before. It is a
-   language, NOT a fixed layout. You MUST NOT write any rule that makes a run of slides use the same
-   composition. Do the opposite: require each slide to earn its own distinct treatment
-   within the language, and explicitly forbid collapsing a group of similar slides (a
-   glossary, a checklist) into one repeated layout. State how the language recurs AND how
-   every slide varies its vantage, scale, and layout so no two frames read as the same shot.
-2. THE COVER — one hero metaphor that conveys the whole thesis with restraint. Not two
+1. THE DRAWING CONVENTIONS — NOT a motif, and NOT a fixed vocabulary of shapes. Do not
+   pick one recurring object, one metaphor, or a small kit of forms every slide must reuse.
+   That is what makes a deck monotonous, and it has failed here twice: once as a house-and-
+   street analogy every slide was relocated into, once as four geometric forms repeated
+   across twenty slides, where a cold reader said "by slide 10 I stopped expecting a new
+   shape."
+
+   Coherence does NOT come from repeating the same shapes. It already comes from the brand
+   kit, which generate-carousel applies to every slide regardless of what each visual draws:
+   one typeface and weight scale, one stroke weight, one icon treatment, the theme palette,
+   the tag pill, the footer. Your job is the thin layer above that, and nothing more:
+   - what emphasis means and how it is used (one hero per slide, marked one consistent way)
+   - what any repeated visual state means if the deck needs states at all (for example solid
+     versus outline versus dashed) — define these ONLY if the content actually calls for them
+   - label style and label length
+   - the overall density and weighting the deck holds to
+
+   Then say explicitly: each slide picks the clearest LITERAL form for its own content, and
+   the deck is expected to contain many different forms. A timeline where the content is
+   time. A fan where things converge. A container where something is being missed. A ring
+   where it loops. A ladder, a gauge, a counter, a two-column comparison, a before and after,
+   a nesting, a map. Twenty slides should produce roughly twenty different pictures. If two
+   slides would resolve to the same picture, that is the defect — not a slide that reaches
+   for a form no other slide used.
+2. THE COVER — one hero image that conveys the whole thesis with restraint. Not two
    symbols side by side. One image that means the whole post. It must be nameable on sight
-   by a non-specialist.
+   by a non-specialist, and it CONVEYS the message rather than repeating the hook verbatim.
 3. EMOTIONAL STAGING — for the pivotal slides, what gets enlarged, shrunk, or
    subordinated so the reader FEELS the point (a backlog that towers, a wrong path made
    small). Name which slides carry the emotional weight.
 4. MOOD — the deck's temperament, matched to the theme "{{THEME}}" ({{THEME_MOOD}}). The
    theme governs MOOD ONLY, never subject matter. A restrained, editorial theme means fewer
    elements and calmer weighting, not obscurer imagery.
-5. THE VISUAL LANGUAGE — name the drawing system this deck is built in, and the fixed kit
-   of components every slide reuses. It does NOT have to be a known system. You may invent
-   one, and the strongest decks here did: one used Isotype pictograms with rails and nodes,
-   another invented a locator-map system, a persistent "you are here" mini-map in the same
-   corner with one band lit, plus a fixed kit of rounded cards, arrows and interface panels.
-   Whatever you choose, it MUST be buildable from flat vector primitives (see the SVG
-   constraint above), and you must name the kit explicitly so the next agent reuses it
-   rather than reinventing per slide. Established languages worth considering if they fit:
-   Isotype pictograms, a Beck-style transit map, a Sankey flow, IKEA-style numbered steps,
-   a 2x2 matrix, small multiples. Do not choose a painterly or illustrative idiom; the
-   renderer cannot draw it.
+5. THE FORM ASSIGNMENT — go slide by slide and name the ONE literal form that draws that
+   slide's own content most clearly, with a one-line reason. This is a per-slide decision,
+   not a kit: expect a long and varied list, and expect most forms to appear once. Where two
+   slides land on the same form, say so and reassign one of them, unless the repeat is the
+   argument (a genuine before-and-after, or a callback the reader is meant to recognise) —
+   in which case say that too, so the author keeps it deliberately.
+
+   Every form must be buildable from flat vector primitives (see the SVG constraint above)
+   and every object in it must be nameable on sight. Do not choose a painterly or
+   illustrative idiom; the renderer cannot draw it. Beyond that, take whatever form the
+   content wants. Known systems are available if one genuinely fits a slide (Isotype
+   pictograms, a Beck-style transit map, a Sankey flow, IKEA-style numbered steps, a 2x2
+   matrix, small multiples), but do not impose one across the whole deck.
 
 Hard rules: NO color words (palette belongs to the brand kit). NO slide-placement words
 (where the visual sits on the slide, and the air around it, belong to generate-carousel;
@@ -166,9 +184,15 @@ unclear slide and a clear, beautiful one becomes a slide people stop for.
 
 {{VISUAL_CONTRACT}}
 
-Take the art director's motif brief and write the `Visual:` line for EVERY slide, directly
-into slides.txt (edit the file). You are ONE agent writing the WHOLE deck in one pass so
-the motif stays coherent and no two slides look alike.
+Take the art director's brief (drawing conventions plus the per-slide form assignment) and
+write the `Visual:` line for EVERY slide, directly into slides.txt (edit the file). You are
+ONE agent writing the WHOLE deck in one pass, so that no two slides come out looking alike.
+
+You are NOT working from a fixed kit of shapes. The brief gives you conventions — how
+emphasis works, what any repeated state means, label style, overall density — and one form
+per slide. Draw whatever form is clearest for each slide's own content, and expect the deck
+to contain many different forms. Twenty slides should produce roughly twenty different
+pictures.
 
 The bar for each `Visual:` line:
 - CLEAR FIRST. A non-technical reader names every object on sight and gets the point in
@@ -178,18 +202,19 @@ The bar for each `Visual:` line:
   its place, elegance through subtraction. Not a labeled diagram — and not a puzzle either.
   Never intricate or encoded; if it needs studying, simplify it. Run the beauty gate on
   every line.
-- RENDERABLE. Build every direction from flat vector primitives and reuse the art
-  director's named component kit. Before you write a line, know which primitives it is made
-  of: shapes, strokes, arrows, cards, nodes, silhouettes, icons, bars, dials, panels. If you
-  cannot name them, the renderer cannot draw it and the slide will come out as noise.
+- RENDERABLE. Build every direction from flat vector primitives. Before you write a line,
+  know which primitives it is made of: shapes, strokes, arrows, cards, nodes, silhouettes,
+  icons, bars, dials, panels. If you cannot name them, the renderer cannot draw it and the
+  slide will come out as noise.
 - One UNMISTAKABLE hero focal point per slide. The eye lands in one place.
-- VARIETY (third priority — it overrides the motif brief, but NEVER overrides clarity): every slide obeys the shared
-  language, but no two slides share the same composition. Rotate the framing, scale, and
-  vantage so the deck never feels like a template. If the motif brief tells you to make a
-  run of slides identical or "read as one set", do NOT comply — give each its own shot. A
-  run of near-identical slides (the same three boxes 15 times) is an automatic failure.
-  Never fix monotony by reaching for a more obscure subject: rotate the vantage, scale,
-  crop, and the everyday object instead.
+- VARIETY (third priority — never overrides clarity): no two slides may resolve to the same
+  picture. Give each slide the form its own content wants, and reach for a form no other
+  slide has used rather than re-crop one already in the deck. A run of near-identical slides
+  (the same three boxes fifteen times, or four shapes cycled across twenty slides) is an
+  automatic failure. If the brief's conventions would push a run of slides into the same
+  shape, do NOT comply — the conventions govern weight, states and labels, never which form
+  a slide takes. Never fix monotony by reaching for a more obscure subject: reach for a
+  clearer form that is simply different.
 - EMOTION through hierarchy: use scale and emphasis to carry meaning, not just to decorate.
 - Name real brands/tools by name (Slack, Claude, Zapier, n8n...) so the renderer uses their
   real logos.
@@ -204,7 +229,7 @@ The bar for each `Visual:` line:
 Bar-not-floor: if a slide already has a strong direction, keep it. Do not gold-plate what
 works. But never leave a generic "three icons in a row" standing.
 
-Motif brief (obey it): {{MOTIF_BRIEF}}
+Art-director brief (obey it): {{ART_DIRECTION_BRIEF}}
 Craft principles: {{CRAFT_REFERENCE}}
 Theme spec: {{THEME_BLOCK}}
 Audience (ICP) you are drawing for: {{ICP}}
@@ -252,14 +277,22 @@ Check every slide for, in this severity order:
   stop scrolling for with the words covered, that leaves no memorable shape. The fix is a
   better idea. OVER-ENCODED: a direction that mistakes elaborate detail for artistry. The
   fix is always subtraction, never addition.
-- MOTIF DRIFT — a slide that abandons the shared visual language entirely.
+- CONVENTION DRIFT — a slide that breaks the brief's stated conventions: emphasis marked a
+  different way, a state used to mean something else, labels in a different style or far
+  longer. This is about weight, states and labels ONLY. A slide using a form no other slide
+  uses is NOT drift, it is the deck working as intended — never flag it.
 - NO FOCAL POINT — a slide with several equally weighted elements and no hero.
-- MONOTONY (third priority — below clarity and beauty) — any run of slides sharing an
-  identical or near-identical composition, INCLUDING a glossary or checklist run. Coherence
-  is a shared language, never a repeated layout. Flag every such run and require the author
-  to give each slide its own vantage/scale/layout. Never accept sameness as "reads as one
-  set". Never accept a fix that trades legibility for novelty: break a run with vantage,
-  scale, crop, and object, not with escalating obscurity.
+- MONOTONY (third priority — below clarity and beauty, and the most common failure in this
+  pipeline). Two slides that resolve to the same picture are a defect even when each is
+  individually correct, so compare EVERY pair, not just neighbours. Also judge the deck as a
+  whole: if a reader scrolling it would say "this is the same few shapes over and over",
+  that is a fail no matter how the individual lines are worded. Coherence comes from the
+  brand kit (type, stroke weight, icon treatment, palette, pill, footer), never from
+  repeating a shape, so re-using a form is never justified by "consistency". Require the
+  author to give the offending slide a genuinely different form, not a different crop of the
+  same one. The only repeat that survives is one the deck is arguing (a real before-and-
+  after, a deliberate callback), and it must be named as such. Never accept a fix that
+  trades legibility for novelty: reach for a clearer form that is simply different.
 - COLOR WORDS — any red/green/blue/etc. Flag every instance.
 - SLIDE-PLACEMENT WORDS — "bottom-anchored", "low in the frame", "top two thirds empty",
   "empty air above for the title". Flag every instance; the renderer owns placement.
@@ -270,7 +303,7 @@ Be specific and adversarial. If a slide is genuinely excellent, say so and leave
 
 Full deck with Visual lines: {{SLIDES}}
 Audience (ICP): {{ICP}}
-Motif brief it must obey: {{MOTIF_BRIEF}}
+Art-director brief it must obey: {{ART_DIRECTION_BRIEF}}
 Craft principles: {{CRAFT_REFERENCE}}
 
 Return the punch-list. If it is empty, say the deck passes.
@@ -284,12 +317,12 @@ items remain, surface them to the user.
 ## 5d — COLD READER (blind decode, once, after 5c converges)
 
 Every check before this one is run by an agent that already knows the answer. 5b invented
-the metaphors; 5c read the whole deck, the motif brief and the story arc before judging the
+the metaphors; 5c read the whole deck, the art-director brief and the story arc before judging the
 pictures. Anyone holding that context finds an obscure image obvious. 5d is the only gate
 that cannot be passed by someone who already knows what the picture is supposed to mean.
 
 **Give this agent the `Visual:` lines ONLY.** No slide titles, no body prose, no caption, no
-motif brief, no knowledge item, no theme. Strip them before spawning. Handing it any of that
+art-director brief, no knowledge item, no theme. Strip them before spawning. Handing it any of that
 destroys the entire value of the step.
 
 ```

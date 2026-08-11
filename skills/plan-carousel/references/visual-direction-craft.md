@@ -16,7 +16,7 @@ A `Visual:` line tells generate-carousel what a slide's illustration should **co
 
 **2 — Beauty.** Beautiful means visually captivating and elegant. In craft terms: one confident silhouette you could recognise in outline, strong negative space, a memorable shape that survives an hour after the swipe, few elements each earning its place, one surprising but instantly legible juxtaposition, a sense of light and depth even in flat art. Beautiful does NOT mean intricate, encoded, technical, or clever. Elaborate detail is not artistry, it is noise. Elegance comes from subtraction, so the fix for a dull frame is a better idea, never more machinery. When beauty and clarity pull apart, clarity wins and you simplify.
 
-**3 — Variety.** No two slides share a composition (principle 1). But variety is the LAST tie-breaker, never a reason to reach for a stranger subject. Vary the vantage, scale, crop, and which element leads — never by getting more obscure, and never by trading a literal drawing for an invented one.
+**3 — Variety.** No two slides may resolve to the same picture, and a deck that reads as a few shapes cycled over and over is a failure even when every slide is individually correct (principle 1). Variety is the LAST tie-breaker and never a reason to reach for a stranger subject: get it by giving each slide the form its own content wants, never by getting more obscure and never by trading a literal drawing for an invented one.
 
 **Constraint 1: draw the thing the slide is actually about. Literal first, analogy only if it beats literal.** The default illustration for a slide is a plain, direct picture of its own content: three layers drawn as three stacked bands, a failed run drawn as a row of numbered steps with one marked, three lifespans drawn as three bars of different length. Literal is not boring, it is the fastest thing a reader can decode, and it needs no bridge because the slide text already names everything in it.
 
@@ -57,7 +57,11 @@ A slide that passes decodability and fails this is not finished. Clarity is the 
 
 ## The principles
 
-**1. A consistent visual language, never a repeated composition.** Give the deck a shared vocabulary (a recurring node style, a common grid, one type system, the theme's palette) so it reads as one system, not N unrelated pictures. But coherence is a shared *language*, NOT the same picture on every slide. Every slide must earn its own composition: vary the vantage, scale, layout, and focal element from slide to slide. Reuse the language, reinvent the shot. Repeating one identical layout across a run of slides (the same three boxes 15 times) is the single fastest way to make a deck boring, and a reader swipes away. If three or more slides could be swapped without a reader noticing, that is monotony masquerading as coherence, and it is a defect, not a virtue. Even a genuinely repeated content unit (a glossary, a checklist) must change its vantage, scale, or layout each slide so no two frames read as the same shot. Variety ranks BELOW clarity and beauty: break up a run by changing the vantage, scale, crop, or the everyday object — never by choosing a subject the reader has to decode.
+**1. Consistent conventions, twenty different pictures.** Coherence does NOT come from repeating shapes. It comes from the brand kit, which generate-carousel applies to every slide whatever each visual draws: one typeface and weight scale, one stroke weight, one icon treatment, the theme palette, the tag pill, the footer. On top of that the deck holds to a thin set of conventions — how emphasis is marked, what any repeated visual state means, label style and length, overall density — and nothing more.
+
+Do NOT give a deck one recurring motif, one metaphor world, or a small kit of forms every slide reuses. Both failures on record came from that instruction: a deck relocated into a house-and-street analogy, and a deck built from four geometric forms cycled across twenty slides, where a blind reader said "by slide 10 I stopped expecting a new shape." Each slide takes the clearest literal form for its OWN content — a timeline where the content is time, a fan where things converge, a container where something is being missed, a ring where it loops, a ladder, a gauge, a counter, a two-column comparison, a before and after, a nesting, a map.
+
+The defect to hunt is two slides resolving to the same picture, judged across every pair and not just neighbours, plus the whole-deck read: if a reader scrolling it would say "the same few shapes over and over", it fails however each line is worded. Fix it by giving the slide a genuinely different form, never a different crop of the same one. The only repeat that survives is one the deck is arguing (a real before-and-after, a deliberate callback), and it is stated as deliberate. Variety still ranks BELOW clarity: reach for a clearer form that is simply different, never a subject the reader has to decode.
 
 **2. One hero focal point per slide.** Each slide has a single dominant element. Promote the emotional payload — the transformation stat, the pivotal concept — to a hero element ("large and bold beneath the flow", "dead center, drawn larger than the nodes feeding it"), not a buried callout. A slide with five equally weighted elements has no focal point and the eye finds nothing.
 
@@ -99,10 +103,10 @@ Compose *within the frame of the visual itself*, which is the only frame a direc
 - Strong: "Five clean numbered rows, each with one distinct icon and a few-word label, evenly spaced with generous whitespace. Designed to scan in seconds and be screenshot-worthy as a standalone checklist."
 - Why: names the intent (a saveable reference) and the composition (whitespace, even weighting).
 
-**The pivotal slide — hero focal point + motif**
+**The pivotal slide — hero focal point**
 - Weak: "A pipeline with AI outputs and a human check."
 - Strong: "The hero frame of the deck. Several AI outputs flow along a single track toward the exit, but every one must pass through a prominent human approval gate positioned dead center and drawn larger than the AI nodes feeding it. Nothing bypasses the gate. The gate is unmistakably the focal point."
-- Why: gives the slide a clear hero (the gate), reinforces the deck's motif (the recurring gate), and stages hierarchy (gate larger than nodes).
+- Why: gives the slide a clear hero (the gate) and stages hierarchy (gate larger than nodes). Note this form belongs to this slide alone; the next slide takes whatever form its own content wants.
 
 **Emotional staging**
 - Weak: "A stamp and some files."
@@ -123,8 +127,8 @@ Compose *within the frame of the visual itself*, which is the only frame a direc
 - Every slide either draws its own content literally, or its analogy was chosen because it beat the literal drawing on clarity, and the deck text names what the picture shows.
 - No object in any direction is one the ICP could not name on sight.
 - Every `Visual:` line names a single focal point.
-- The deck shares a recurring visual language, not N unrelated pictures.
-- No run of slides repeats an identical composition. Every slide, including any glossary or checklist run, has its own vantage/scale/layout. Sameness is a defect, not coherence.
+- No two slides resolve to the same picture, and the deck does not read as a few shapes cycled. Coherence is carried by the brand kit and the stated conventions, never by repeating a form.
+- No run of slides repeats an identical composition. Every slide, including any glossary or checklist run, has its own form. Sameness is a defect, not coherence.
 - Zero color words anywhere in the directions.
 - Real brands/tools named where they appear.
 - No jargon in any label a non-expert ICP would not grasp (proposed swaps confirmed).
