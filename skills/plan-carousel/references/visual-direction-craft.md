@@ -14,7 +14,9 @@ A `Visual:` line tells generate-carousel what a slide's illustration should **co
 
 **1 — Clarity.** The picture must be self-explanatory to the deck's ICP in about three seconds, with no thinking required, before a single label is read. If the reader has to decode the picture before they can decode the idea, the visual failed. A visually premium slide is still a failure when the argument is hard to grasp in the first three seconds.
 
-**2 — Beauty.** Beautiful means visually captivating and elegant. In craft terms: one confident silhouette you could recognise in outline, strong negative space, a memorable shape that survives an hour after the swipe, few elements each earning its place, one surprising but instantly legible juxtaposition, a sense of light and depth even in flat art. Beautiful does NOT mean intricate, encoded, technical, or clever. Elaborate detail is not artistry, it is noise. Elegance comes from subtraction, so the fix for a dull frame is a better idea, never more machinery. When beauty and clarity pull apart, clarity wins and you simplify.
+**2 — Beauty.** Beautiful means visually rich, crafted, and worth screenshotting. **Brief the idea; let generate-carousel design the artwork.** That skill reads the tenant brand kit, knows its components, icons and logos, and has free rein inside the brand to make something with real presence. A `Visual:` line that dictates geometry — stroke weights, fills, a shape-by-shape construction — becomes a ceiling on that, and the renderer will draw exactly the bare shapes it was given. Information density is a virtue, not a risk: a slide can carry a great deal and still read in three seconds when the hierarchy is right.
+
+**Never answer a dull frame by removing things.** A dull frame is under-built, not over-built: it needs a better idea, richer components, and more visual interest. Reaching for subtraction is the reflex that produced a twenty-slide deck of grey boxes. When beauty and clarity genuinely pull apart, clarity wins — but the fix is a clearer arrangement, never a barer one.
 
 **3 — Variety.** No two slides may resolve to the same picture, and a deck that reads as a few shapes cycled over and over is a failure even when every slide is individually correct (principle 1). Variety is the LAST tie-breaker and never a reason to reach for a stranger subject: get it by giving each slide the form its own content wants, never by getting more obscure and never by trading a literal drawing for an invented one.
 
@@ -26,12 +28,9 @@ An analogy is a substitution — it asks the reader to map one world onto anothe
 
 **Constraint 2: it must be SVG-renderable.** generate-carousel builds every visual as flat vector. A direction the renderer cannot draw comes out as meaningless shapes no matter how good the idea was. This killed a deck once: "a block of ice half melted on a worn stone counter, hand-cut contours, one plane of light and one of shadow" rendered as a blue box with a semicircle stuck to it.
 
-You may invent any visual language you like — it does not have to be a known system, and the best decks here invented their own. It only has to be **buildable from flat vector primitives**:
+**Free rein.** There is no approved list of shapes, forms, systems or components, and no menu to pick from. Any visual idea is in scope as long as it is instantly clear to this ICP and it follows the tenant brand. Invent freely.
 
-- **Available:** geometric shapes, flat fills, strokes and hairlines, arrows, rounded cards, labelled nodes, silhouettes, simple icons, bars, dials, sliders, gauges, grids, panels, interface mockups, isometric and cutaway construction, charts, connectors. Depth comes from overlap, scale and hierarchy.
-- **Not available:** texture, grain, painterly light and shadow modelling, hand-inked or irregular organic contours, still-life realism, anything whose meaning depends on material rendering.
-
-Test: name the primitives the direction is built from. If you cannot list them, the renderer cannot draw it. This is a constraint on the MEDIUM, not on ambition. Flat vector is what every strong editorial infographic already uses, and it has no quality ceiling.
+The only thing to avoid briefing is a picture whose meaning depends on **material rendering** — texture, grain, painterly light and shadow, hand-inked irregular contours, still-life realism — because the artwork is vector and that comes out as noise. That is a note about what not to ask for, never a vocabulary you are restricted to.
 
 **The decodability gate — a hard gate, not advice.** Before a `Visual:` line is final, answer all five. Any failure means changing the concept, not rewording it.
 
@@ -49,7 +48,7 @@ Novelty does not compensate for semantic weakness, and a visually dramatic metap
 2. Is there one shape here they would still remember an hour later?
 3. Does it look composed, or assembled from parts?
 4. Would someone screenshot this for how it *looks*, independent of what it says?
-5. Is anything in the frame doing nothing? If yes, remove it.
+5. Does this read as a designed slide or as a wireframe? Bare rectangles, lone hairlines and unstyled boxes mean it is under-built; name the brand-kit components it should be made of instead.
 
 A slide that passes decodability and fails this is not finished. Clarity is the floor; beauty is the reason anyone stops.
 
@@ -57,7 +56,7 @@ A slide that passes decodability and fails this is not finished. Clarity is the 
 
 ## The principles
 
-**1. Consistent conventions, twenty different pictures.** Coherence does NOT come from repeating shapes. It comes from the brand kit, which generate-carousel applies to every slide whatever each visual draws: one typeface and weight scale, one stroke weight, one icon treatment, the theme palette, the tag pill, the footer. On top of that the deck holds to a thin set of conventions — how emphasis is marked, what any repeated visual state means, label style and length, overall density — and nothing more.
+**1. One coherent deck, twenty different pictures.** Coherence does NOT come from repeating shapes, and it is not the direction's job to manufacture. It comes from the brand kit, which generate-carousel applies to every slide whatever each visual draws: one typeface and weight scale, one stroke weight, one icon treatment, the theme palette, the tag pill, the footer.
 
 Do NOT give a deck one recurring motif, one metaphor world, or a small kit of forms every slide reuses. Both failures on record came from that instruction: a deck relocated into a house-and-street analogy, and a deck built from four geometric forms cycled across twenty slides, where a blind reader said "by slide 10 I stopped expecting a new shape." Each slide takes the clearest literal form for its OWN content — a timeline where the content is time, a fan where things converge, a container where something is being missed, a ring where it loops, a ladder, a gauge, a counter, a two-column comparison, a before and after, a nesting, a map.
 
@@ -67,7 +66,7 @@ The defect to hunt is two slides resolving to the same picture, judged across ev
 
 **3. Hierarchical and emotional staging.** Use scale and emphasis to *carry meaning*, not just to decorate. Dwarf a backlog with a small human figure so the reader *feels* the weight. Subordinate the "wrong path" or secondary elements ("lower emphasis", "small and de-emphasized in a corner"). Let the layout argue the point: a "pain first, tech second" slide should visually shrink the technology.
 
-**4. The cover is a single strong hero metaphor.** A ≤2-line title (drawn from the caption's hook) plus one dominant image that conveys the whole thesis with restraint, plus no body text. Stay in the theme's temperament — restraint, not a busy collage (you never name colors, but you do direct simplicity). A long cover title wraps and steals room from the hero.
+**4. The cover is a single strong hero image.** A ≤2-line title (drawn from the caption's hook) plus one dominant image that conveys the whole thesis, plus no body text. One hero rather than a collage of competing symbols — that is about focus, not about drawing less: the hero itself should be built richly enough to stop a scroll. A long cover title wraps and steals room from the hero.
 
 **5. Screenshot-worthy reference slides — and the enumeration trap.** Recap or checklist slides get generous whitespace and even weighting so a reader can save the single slide standalone and still have the whole takeaway.
 

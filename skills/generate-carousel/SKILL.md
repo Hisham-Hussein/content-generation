@@ -50,8 +50,8 @@ Separate each slide's *chrome* — the recurring fixed affordances every slide s
 
 **Connectors touch outlines, never cross them.** Any connector (SVG `<line>` or `<path>`) must start at the EDGE of its source shape and end at the EDGE of its target — compute the rim/edge endpoints (e.g. a point on a circle's radius, or a rect's border), never the shape's center. A line drawn from one shape's center to another's center slices through both outlines and reads as broken. The Step 5 validator hard-fails on `<line>`/`<path>` endpoints that land more than 6px inside a shape they don't originate from (opt out with `data-allow-penetration` only for deliberate illustration paths).
 
-**Stay faithful to the visual direction's intent.**
-Creative embellishment that reinforces the message is fine. Adding unrelated elements that confuse the message is not.
+**The visual direction is a brief, not a blueprint. You own the design.**
+A `Visual:` line tells you what the slide must CONVEY and what its hero is. Honour that meaning and that hero exactly. Everything else — the composition, the components, the icons, the depth, how rich the frame gets — is yours, and you have free rein inside the tenant brand kit. Use its full vocabulary: cards, glass surfaces, icon containers, tag pills, stat bars, panels, interface mockups, real brand logos, Lucide icons, connectors, whatever the idea deserves. **A direction that happens to name bare shapes is a floor, never a ceiling** — if a line says "two bars", you are still expected to design a slide, not to output two grey rectangles. Never treat sparseness in the brief as an instruction to render sparsely. Creative embellishment that reinforces the message is wanted. Adding unrelated elements that confuse the message is not.
 
 **Airtable slide text is sacred.**
 Every text block from the Airtable carousel slide must appear in the output. If the diagram is too large to fit alongside the text, shrink the diagram — never delete the text. The Airtable content was expert-approved upstream.

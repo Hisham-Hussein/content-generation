@@ -21,13 +21,13 @@ outrank being understood, and never let coherence be bought with repetition.
 PRIORITY ORDER — this outranks every other instruction you are given:
 1. CLARITY. The picture is understood on sight by {{ICP}} — non-specialists — in about
    three seconds, with no thinking required, before any label is read.
-2. BEAUTY. Visually captivating and elegant. In craft terms: one confident silhouette you
-   could recognise in outline, strong negative space, a memorable shape that survives an
-   hour after the swipe, few elements each earning its place, one surprising but instantly
-   legible juxtaposition, a sense of light and depth even in flat art. Beautiful means
-   gorgeous, NOT intricate, encoded, or technical. Elaborate detail is not artistry.
-   Elegance comes from subtraction. When beauty and clarity pull apart, clarity wins and
-   you simplify.
+2. BEAUTY. Visually rich, crafted and worth screenshotting. Brief slides that deserve real
+   artwork: something with presence, depth and craft, that a stranger would stop for and
+   screenshot. Density is a virtue when the hierarchy is right — a slide can carry a great
+   deal and still read instantly. NEVER answer a dull frame by removing things. A dull frame
+   is under-briefed, and it needs a better idea and more visual interest, not less. When
+   beauty and clarity genuinely pull apart, clarity wins, but the fix is a clearer idea,
+   never a barer one.
 3. VARIETY. No two slides may resolve to the same picture, and a deck that reads as a few
    shapes cycled over and over is a failure even when every slide is individually correct.
    This is the LAST tie-breaker, so it never overrides clarity: get variety by giving each
@@ -56,19 +56,22 @@ plain shapes is not a defect; it is the clearest thing available. Test every obj
 a non-technical founder say its name out loud on sight? If not, replace it, and prefer the
 plainest replacement over the most inventive one.
 
-MUST BE SVG-RENDERABLE. Every visual is built as flat vector. A direction the renderer
-cannot draw comes out as meaningless shapes however good the idea was. You may INVENT any
-visual language you like, it does not have to be a known system, but it must be buildable
-from flat vector primitives.
-AVAILABLE: geometric shapes, flat fills, strokes and hairlines, arrows, rounded cards,
-labelled nodes, silhouettes, simple icons, bars, dials, sliders, gauges, grids, panels,
-interface mockups, isometric and cutaway construction, charts, connectors. Depth comes
-from overlap, scale and hierarchy.
-NOT AVAILABLE: texture, grain, painterly light and shadow modelling, hand-inked or
-irregular organic contours, still-life realism, anything whose meaning depends on material
-rendering.
-TEST: name the primitives each direction is built from. If you cannot list them, the
-renderer cannot draw it. This bounds the MEDIUM, not the ambition.
+YOU BRIEF THE IDEA. THE RENDERER DESIGNS IT. This is the most important line here, because
+getting it wrong is what has ruined every failed run of this pipeline. A `Visual:` line says
+what the slide must CONVEY, what the hero is, and what the reader should feel. It does NOT
+specify shapes, stroke weights, fills, component names, or a shape-by-shape construction.
+generate-carousel is the agent that reads the tenant brand kit, knows its components, icons
+and logos, and it designs the actual artwork — it is free to be as rich, dense, layered and
+beautiful as the brand allows. A direction that dictates geometry becomes a CEILING on that:
+say "three rectangles at full-weight stroke" and you get three rectangles when you could have
+had a designed slide. Brief it, do not draw it.
+
+FREE REIN. There is no approved list of shapes, forms, systems or components, and no menu to
+pick from. Any visual idea is in scope as long as it is instantly clear to this ICP and it
+follows the tenant brand. Invent freely. The one thing to avoid is a direction whose meaning
+depends on material rendering — texture, grain, painterly light and shadow, hand-inked
+irregular contours, still-life realism — because the artwork is vector and that comes out as
+noise. That is a note about what to brief, not a vocabulary you are restricted to.
 
 DECODABILITY GATE — a hard gate on every slide, not advice. For each `Visual:` line:
 1. Is a direct, literal drawing of this slide's own content clearer than what you have?
@@ -90,7 +93,7 @@ BEAUTY GATE — the second objective, same weight as the first. For each `Visual
 2. Is there one shape here they would still remember an hour later?
 3. Does it look composed, or assembled from parts?
 4. Would someone screenshot this for how it LOOKS, independent of what it says?
-5. Is anything in the frame doing nothing? If yes, remove it.
+5. Does it look like a designed slide or like a wireframe? Bare rectangles and lone hairlines mean you have under-built it; reach for the brand kit's components.
 A slide that passes decodability and fails this is not finished. Clarity is the floor;
 beauty is the reason anyone stops.
 ````
@@ -110,58 +113,52 @@ Your job is NOT to write per-slide visuals. It is to set the conventions the dec
 and to assign each slide the form that draws its own content most clearly. From the full
 deck text below, deliver:
 
-1. THE DRAWING CONVENTIONS — NOT a motif, and NOT a fixed vocabulary of shapes. Do not
-   pick one recurring object, one metaphor, or a small kit of forms every slide must reuse.
-   That is what makes a deck monotonous, and it has failed here twice: once as a house-and-
-   street analogy every slide was relocated into, once as four geometric forms repeated
-   across twenty slides, where a cold reader said "by slide 10 I stopped expecting a new
-   shape."
+1. THE THROUGH-LINE — what the deck is arguing, beat by beat, and the ONE thing each slide
+   has to land. Do NOT invent a motif, a metaphor world, or a vocabulary of shapes every
+   slide reuses. That has failed here twice: once as a house-and-street analogy every slide
+   was relocated into, once as four geometric forms cycled across twenty slides, where a cold
+   reader said "by slide 10 I stopped expecting a new shape."
 
-   Coherence does NOT come from repeating the same shapes. It already comes from the brand
-   kit, which generate-carousel applies to every slide regardless of what each visual draws:
-   one typeface and weight scale, one stroke weight, one icon treatment, the theme palette,
-   the tag pill, the footer. Your job is the thin layer above that, and nothing more:
-   - what emphasis means and how it is used (one hero per slide, marked one consistent way)
-   - what any repeated visual state means if the deck needs states at all (for example solid
-     versus outline versus dashed) — define these ONLY if the content actually calls for them
-   - label style and label length
-   - the overall density and weighting the deck holds to
+   Coherence is NOT your job to manufacture. generate-carousel applies the tenant brand kit
+   to every slide already, and that is what makes a deck feel like one artifact. You do not
+   define shapes, stroke weights, fills, states or components — the renderer designs the
+   artwork and it has free rein within the brand.
 
-   Then say explicitly: each slide picks the clearest LITERAL form for its own content, and
-   the deck is expected to contain many different forms. A timeline where the content is
-   time. A fan where things converge. A container where something is being missed. A ring
-   where it loops. A ladder, a gauge, a counter, a two-column comparison, a before and after,
-   a nesting, a map. Twenty slides should produce roughly twenty different pictures. If two
-   slides would resolve to the same picture, that is the defect — not a slide that reaches
-   for a form no other slide used.
-2. THE COVER — one hero image that conveys the whole thesis with restraint. Not two
-   symbols side by side. One image that means the whole post. It must be nameable on sight
-   by a non-specialist, and it CONVEYS the message rather than repeating the hook verbatim.
+   What you DO decide: the idea each slide must convey, the hero of each slide, and how the
+   deck's emotional weight is distributed across it. Say explicitly that every slide gets the
+   picture its own content wants and the deck should end up with as many different pictures as
+   it has slides. Two slides landing on the same picture is the defect; a slide reaching for
+   something no other slide did is the system working.
+2. THE COVER — one hero image that conveys the whole thesis. Not two symbols side by side.
+   One image that means the whole post, built richly enough to stop a scroll. It must be
+   nameable on sight by a non-specialist, and it CONVEYS the message rather than repeating
+   the hook verbatim.
 3. EMOTIONAL STAGING — for the pivotal slides, what gets enlarged, shrunk, or
    subordinated so the reader FEELS the point (a backlog that towers, a wrong path made
    small). Name which slides carry the emotional weight.
 4. MOOD — the deck's temperament, matched to the theme "{{THEME}}" ({{THEME_MOOD}}). The
-   theme governs MOOD ONLY, never subject matter. A restrained, editorial theme means fewer
-   elements and calmer weighting, not obscurer imagery.
-5. THE FORM ASSIGNMENT — go slide by slide and name the ONE literal form that draws that
-   slide's own content most clearly, with a one-line reason. This is a per-slide decision,
-   not a kit: expect a long and varied list, and expect most forms to appear once. Where two
-   slides land on the same form, say so and reassign one of them, unless the repeat is the
-   argument (a genuine before-and-after, or a callback the reader is meant to recognise) —
-   in which case say that too, so the author keeps it deliberately.
-
-   Every form must be buildable from flat vector primitives (see the SVG constraint above)
-   and every object in it must be nameable on sight. Do not choose a painterly or
-   illustrative idiom; the renderer cannot draw it. Beyond that, take whatever form the
-   content wants. Known systems are available if one genuinely fits a slide (Isotype
-   pictograms, a Beck-style transit map, a Sankey flow, IKEA-style numbered steps, a 2x2
-   matrix, small multiples), but do not impose one across the whole deck.
+   theme governs MOOD ONLY: palette temperature, contrast, how loud the emphasis runs. It
+   NEVER governs subject matter, richness, or how much a slide may contain. A theme
+   described as calm or editorial does not license bare frames or plainer pictures — it is
+   the same rich artwork handled with a quieter hand. Never translate a mood word into an
+   instruction to make less.
+5. THE PICTURE PER SLIDE — go slide by slide and name, in one sentence, the IDEA the picture
+   must land and what the hero is. An idea, not a construction: "the cost of the small fix
+   against the cost of the big one, and the gap between them is the whole point", not "two
+   bars on a baseline". Expect a long and varied list and expect the deck to end up with as
+   many different pictures as it has slides. Where two slides would land on the same picture,
+   say so and change one, unless the repeat is the argument (a genuine before-and-after, or a
+   callback the reader is meant to recognise) — in which case say that too, so it is kept
+   deliberately. Every object in a picture must be nameable on sight by this ICP. Beyond
+   that, free rein: any idea is in scope, and the renderer designs it richly inside the
+   brand.
 
 Hard rules: NO color words (palette belongs to the brand kit). NO slide-placement words
-(where the visual sits on the slide, and the air around it, belong to generate-carousel;
-describe the illustration's own composition only). NO object the ICP cannot name on sight.
-Ground every choice in the actual content, not generic design tropes. Keep
-it tight: this is a brief the next agent executes, not an essay.
+(where the visual sits on the slide, and the air around it, belong to generate-carousel).
+NO object the ICP cannot name on sight. NO geometry: do not specify shapes, stroke weights,
+fills or component names — you brief ideas, the renderer designs them. Ground every choice
+in the actual content, not generic design tropes. Keep it tight: this is a brief the next
+agent executes, not an essay.
 
 Theme spec: {{THEME_BLOCK}}
 Audience (ICP) you are designing for: {{ICP}}
@@ -188,33 +185,30 @@ Take the art director's brief (drawing conventions plus the per-slide form assig
 write the `Visual:` line for EVERY slide, directly into slides.txt (edit the file). You are
 ONE agent writing the WHOLE deck in one pass, so that no two slides come out looking alike.
 
-You are NOT working from a fixed kit of shapes. The brief gives you conventions — how
-emphasis works, what any repeated state means, label style, overall density — and one form
-per slide. Draw whatever form is clearest for each slide's own content, and expect the deck
-to contain many different forms. Twenty slides should produce roughly twenty different
-pictures.
+You are NOT working from a kit of shapes, and you are NOT drawing the slide. You are
+BRIEFING it. Say what each slide must convey, what its hero is, and what the reader should
+feel. generate-carousel reads the tenant brand kit and designs the artwork with free rein
+inside it, so leave it that room: the moment a line dictates geometry, it becomes a ceiling
+on what the renderer is allowed to make. Expect the deck to end up with as many different
+pictures as it has slides.
 
 The bar for each `Visual:` line:
 - CLEAR FIRST. A non-technical reader names every object on sight and gets the point in
   three seconds with the labels covered. Run the decodability gate on every line.
-- BEAUTIFUL SECOND. Compose it like an illustrator, not like an engineer: one confident
-  silhouette, strong negative space, a shape worth remembering, few elements each earning
-  its place, elegance through subtraction. Not a labeled diagram — and not a puzzle either.
-  Never intricate or encoded; if it needs studying, simplify it. Run the beauty gate on
-  every line.
-- RENDERABLE. Build every direction from flat vector primitives. Before you write a line,
-  know which primitives it is made of: shapes, strokes, arrows, cards, nodes, silhouettes,
-  icons, bars, dials, panels. If you cannot name them, the renderer cannot draw it and the
-  slide will come out as noise.
+- BEAUTIFUL SECOND. Brief a slide that deserves real artwork: presence, depth, craft,
+  something a stranger would stop for and screenshot. Density is welcome when the hierarchy
+  is right. If a frame would be dull, the fix is a better idea and more visual interest,
+  never stripping it back. Run the beauty gate on every line.
+- BRIEF, DO NOT DRAW. No stroke weights, no fills, no "a rectangle at full-weight stroke",
+  no shape-by-shape construction, no component names. Those turn the direction into a
+  ceiling and the renderer obediently draws exactly that much and no more. Say what the
+  picture MEANS and what dominates it; let the renderer design it richly inside the brand.
 - One UNMISTAKABLE hero focal point per slide. The eye lands in one place.
 - VARIETY (third priority — never overrides clarity): no two slides may resolve to the same
-  picture. Give each slide the form its own content wants, and reach for a form no other
-  slide has used rather than re-crop one already in the deck. A run of near-identical slides
-  (the same three boxes fifteen times, or four shapes cycled across twenty slides) is an
-  automatic failure. If the brief's conventions would push a run of slides into the same
-  shape, do NOT comply — the conventions govern weight, states and labels, never which form
-  a slide takes. Never fix monotony by reaching for a more obscure subject: reach for a
-  clearer form that is simply different.
+  picture. Give each slide the idea its own content wants rather than re-crop one already in
+  the deck. A run of near-identical slides (the same three boxes fifteen times, or a handful
+  of shapes cycled across the deck) is an automatic failure. Never fix monotony by reaching
+  for a more obscure subject: reach for a clearer idea that is simply different.
 - EMOTION through hierarchy: use scale and emphasis to carry meaning, not just to decorate.
 - Name real brands/tools by name (Slack, Claude, Zapier, n8n...) so the renderer uses their
   real logos.
@@ -256,12 +250,14 @@ Check every slide for, in this severity order:
   picture a non-technical member of {{ICP}} could not read in three seconds with the labels
   covered. Cover the labels and actually try it. If you have to reason it out, fail it and
   name the everyday-object replacement.
-- NOT SVG-RENDERABLE (HIGHEST SEVERITY). Any direction that cannot be built from flat
-  vector primitives. Name the primitives each slide is made of; if you cannot, fail it.
-  Flag every instance of texture, grain, painterly light and shadow, hand-inked or organic
-  irregular contours, still-life realism, or any element whose meaning depends on material
-  rendering. These come out of the renderer as meaningless shapes. Propose the flat-vector
-  construction that carries the same idea.
+- OVER-SPECIFIED (HIGHEST SEVERITY). Any direction that draws the slide instead of briefing
+  it: stroke weights, fills, shape-by-shape construction, component names, "a rectangle at
+  full-weight stroke". The renderer treats the direction as a ceiling, so a line made of
+  geometry produces a wireframe when the brand kit could have produced a designed slide.
+  Rewrite it as what the picture MEANS and what dominates it. Separately, flag any direction
+  whose meaning depends on material rendering (texture, grain, painterly light and shadow,
+  hand-inked irregular contours, still-life realism) — the artwork is vector and that comes
+  out as noise.
 - UNEARNED ANALOGY (HIGHEST SEVERITY). Any slide whose picture makes the reader translate
   between two worlds when a literal drawing of the slide's own content would have been
   clearer. For each such slide, write the literal version in one line and compare: if the
@@ -275,12 +271,12 @@ Check every slide for, in this severity order:
 - BEAUTY FAILURE, BOTH DIRECTIONS (SECOND SEVERITY, above monotony). Two ways to fail.
   UNINSPIRING: a direction that is merely functional and flat, that a stranger would not
   stop scrolling for with the words covered, that leaves no memorable shape. The fix is a
-  better idea. OVER-ENCODED: a direction that mistakes elaborate detail for artistry. The
-  fix is always subtraction, never addition.
-- CONVENTION DRIFT — a slide that breaks the brief's stated conventions: emphasis marked a
-  different way, a state used to mean something else, labels in a different style or far
-  longer. This is about weight, states and labels ONLY. A slide using a form no other slide
-  uses is NOT drift, it is the deck working as intended — never flag it.
+  better idea and more visual interest, never removal. Never treat richness or density as a
+  defect in itself, and never propose subtraction as the fix for a weak frame. Only flag a
+  frame as over-loaded when it is genuinely unreadable.
+- OFF-BRIEF — a slide whose picture does not land the idea the art director assigned it, or
+  that drops the deck's emotional staging. A slide using a picture no other slide uses is NOT
+  drift, it is the deck working as intended — never flag it.
 - NO FOCAL POINT — a slide with several equally weighted elements and no hero.
 - MONOTONY (third priority — below clarity and beauty, and the most common failure in this
   pipeline). Two slides that resolve to the same picture are a defect even when each is
