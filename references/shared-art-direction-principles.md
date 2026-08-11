@@ -61,6 +61,8 @@ Use this reference for any visual workflow that generates branded marketing, edu
 
 ## Readability Principles
 
+- Two different failures live here. **Legibility**: can the eye resolve the glyph. **Interpretability**: can the mind read the picture. Type size and contrast fix only the first.
+- The imagery itself must be interpretable by a non-specialist in about three seconds — the reader should be able to name every object on sight, before reading a single label.
 - Mobile scan speed outranks mood.
 - Important text must read clearly without zooming.
 - Dark editorial styling never justifies low-contrast reading copy.
@@ -74,6 +76,9 @@ Use this reference for any visual workflow that generates branded marketing, edu
 - repeated bordered cards around every line item
 - multiple competing motifs or metaphors
 - generic robot imagery, hype visuals, or magic-wand AI symbolism
+- objects a non-specialist cannot name on sight (schematics, gauges, calipers, core sections, weld studies, title blocks, rating plates). The defect is the unnameable object, not the technical subject: a plain labelled drawing of the subject itself is the clearest option available
+- an analogy chosen over a literal drawing of the content, when the literal one would read faster. A substitution costs the reader a translation, so it has to earn that cost, and what it shows must already be named in the words
+- intricacy or elaborate encoding standing in for artistry
 - decorative gradients or glow doing more work than hierarchy
 - branding, CTA, or proof treatment overpowering the educational message
 - technically correct but compositionally weak outputs
@@ -92,6 +97,7 @@ Use this reference for any visual workflow that generates branded marketing, edu
 ## Skill Obligations
 
 - Every visual generation skill in this plugin should read this file before generating.
+- Clarity outranks beauty, and beauty outranks variety. A visual the reader must work out is a defect no amount of craft redeems.
 - If tenant approved examples exist, treat them as a quality floor.
 - If tenant rejected examples exist, treat them as an active blacklist.
 - If the render is technically valid but visually generic, crowded, muddy, or weak, revise it.

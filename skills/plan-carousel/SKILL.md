@@ -21,17 +21,38 @@ Minimum invocation: "Plan a carousel from this caption for tenant at `<tenant-fo
 
 **The deck must stand on its own.** Carousels get shared and screenshotted without the caption. A reader who never sees the caption must still get the *full* point. That means terms are defined in the slide text (not only in the caption or the diagram), and the slides progress logically with no seam that only the caption bridges.
 
-**Slide text is flowing prose, never bullets.** The visual is the prominent element on every slide and the text supports it, so a slide carries **two to three sentences, maximum**. They must read naturally, the way a page of a well-written ebook reads: complete sentences that carry the reader, not clipped fragments chopped into a list. Those two or three sentences must still deliver the slide's message on their own, so a reader who never sees the caption gets the point from the slide alone. Do NOT use `•` bullets, and do NOT use the caption's `↳` hack either. Titles stay short (a long title wraps to two lines and looks broken, and on the cover it steals room from the hero). The cover is a ≤2-line title drawn from the caption's hook plus a dominant hero visual plus no body text.
+**Slide text is flowing prose, never bullets.** The visual is the prominent element on every slide and the text supports it, so a slide carries **two to three sentences, maximum**.
+
+**Body-text length: aim for 150 characters, hard ceiling 200.** The sentence count alone does not protect the slide, because two long sentences still render as a wall on a phone, and these decks are read on mobile. Measure it, never eyeball it. Target ~150 characters of body text per slide and only spend up to 200 when the slide genuinely needs the room. **When a slide will not fit, split it into two slides rather than cramming it** — adding slides is free and always the right trade, and a deck of short slides outperforms a shorter deck of dense ones. This is the rule that makes the ~6–15 count a guideline rather than a limit: at a 150-character target, content-rich posts legitimately land at 20+ slides. Do NOT respond to this rule by making slides cryptic — every slide still carries complete natural sentences that deliver its message standalone. Shorter per slide, more slides, same total substance. Check with:
+
+```bash
+python3 - <<'PY'
+import re
+t=open('slides.txt',encoding='utf-8').read()
+for blk in t.split('## Slide ')[1:]:
+    n=blk.split('\n',1)[0].strip()
+    lines=[l for l in blk.split('\n') if l.strip()]
+    body=' '.join(l for l in lines[1:] if not l.startswith('**') and not l.startswith('Visual:')).strip()
+    if not body: print(f"S{n}  cover"); continue
+    f='  OVER 200' if len(body)>200 else ('  over target' if len(body)>150 else '')
+    print(f"S{n}  {len(body)}{f}")
+PY
+```
+ They must read naturally, the way a page of a well-written ebook reads: complete sentences that carry the reader, not clipped fragments chopped into a list. Those two or three sentences must still deliver the slide's message on their own, so a reader who never sees the caption gets the point from the slide alone. Do NOT use `•` bullets, and do NOT use the caption's `↳` hack either. Titles stay short (a long title wraps to two lines and looks broken, and on the cover it steals room from the hero). The cover is a ≤2-line title drawn from the caption's hook plus a dominant hero visual plus no body text.
 
 **Evidence, so this is not "helpfully" reverted:** the two best-performing decks to date (the Claude Code 6-layer harness post and the legal-engineer post) are both written as free-flowing sentences with no bullets anywhere. A bullet convention was added to this skill after both shipped, and neither winner follows it. Prose is the standard; do not reinstate bullets.
 
-**The visual direction is this skill's real product, not decoration.** generate-carousel renders your `Visual:` line faithfully — its governing rule is "stay faithful to the visual direction's intent." So the quality of the rendered slide is bounded by the quality of your direction. A weak "three icons in a row" direction renders as a weak slide. Because it is the leverage point, Step 5 authors the directions as a **three-agent sequence** (art-director sets one motif → a single whole-deck author writes every `Visual:` line → a deck-level critic reviews them and loops back to revise). The craft principles live in `references/visual-direction-craft.md`.
+**The visual direction is this skill's real product, not decoration.** generate-carousel renders your `Visual:` line faithfully — its governing rule is "stay faithful to the visual direction's intent." So the quality of the rendered slide is bounded by the quality of your direction. A weak "three icons in a row" direction renders as a weak slide. Because it is the leverage point, Step 5 authors the directions as a **four-agent sequence** (art-director sets one motif → a single whole-deck author writes every `Visual:` line → a deck-level critic reviews them and loops back to revise → a cold reader who has seen nothing but the `Visual:` lines says what each picture actually communicates). The craft principles live in `references/visual-direction-craft.md`.
+
+**Two hard constraints on every visual: decodable, and SVG-renderable.** The first is that a non-specialist reads it in about three seconds. The second is that generate-carousel builds it as flat vector, so a direction it cannot draw comes out as meaningless shapes however good the idea was ("a block of ice half melted on a stone counter, hand-cut contours, one plane of light and shadow" rendered as a blue box with a semicircle). Within those two, the visual language is free — it does not have to be a known system, and the strongest decks invented their own. Available: shapes, strokes, arrows, cards, nodes, silhouettes, icons, bars, dials, panels, interface mockups, isometric and cutaway construction, charts. Not available: texture, painterly light, organic irregular contours, still-life realism.
+
+**Clarity first, beauty second, variety third.** A visual must be immediately obvious to the deck's ICP — a non-specialist reads it in about three seconds, before any label. Beauty means captivating and elegant (one confident silhouette, strong negative space, a shape worth remembering), never intricate or encoded; the fix for a dull frame is a better idea, never more machinery. Variety is the last tie-breaker and never a licence to get obscure. **Literal first:** the default picture for a slide is a plain, direct drawing of that slide's own content — three layers as three stacked labelled bands, a failed run as numbered steps with one marked. An analogy asks the reader to translate between two worlds in two seconds using a mapping the caption never taught them, so it must be chosen only when it genuinely beats the literal drawing, and what it shows must already be named in the deck text. What the anti-jargon rule actually forbids is an object nobody can name on sight (a caliper, a core log, a title block), not a plain drawing of the subject itself. The full priority order, the literal-first rule, the object rule, the decodability gate and the beauty gate live in `references/visual-direction-craft.md` and are pasted verbatim into all four Step 5 agent prompts.
 
 **No color words in a visual direction — the brand kit owns the palette.** This is the handoff contract with generate-carousel. A `Visual:` line directs layout, icon, hierarchy, and emphasis intent only ("lower emphasis", "hero element", "dead center", "dwarfed by"), never color ("red arrow", "green badge"). Color and contrast come from the theme; naming them here fights the brand system and produces off-theme renders.
 
 **Every slide obeys the same anti-AI-writing bar as the caption.** No em dashes, no "it's not X, it's Y" negative parallelism, no tailing negations ("no guessing", "not a blank page"), no forced rule-of-three. If a phrasing is banned in the caption, it is banned on a slide. Run the humanizer lens over slide text.
 
-**ICP jargon hides in the labels (Dimension 13).** The words a reader sees *inside* the graphic — a gauge label, an axis caption, a node name — must use language the post's ICP grasps instantly. This is the sneakiest place for jargon because the caption's own checks never see label text. Propose a plain-language swap or a ≤4-word inline definition for each too-technical term across titles, slide prose, AND diagram labels; the user confirms each. Pillar-calibrated: a deck for a technical ICP legitimately keeps more terms — over-simplifying dilutes depth.
+**ICP jargon hides in the labels (Dimension 13).** The words a reader sees *inside* the graphic — a word on a signpost, a caption under an object, a name on a label — must use language the post's ICP grasps instantly. This is the sneakiest place for jargon because the caption's own checks never see label text. Propose a plain-language swap or a ≤4-word inline definition for each too-technical term across titles, slide prose, AND picture labels; the user confirms each. Pillar-calibrated: a deck for a technical ICP legitimately keeps more terms — over-simplifying dilutes depth. Labels are the last mile of clarity, not the first — a picture that only makes sense once its labels are read has already failed the decodability gate.
 
 **Approve before you render.** Authoring is cheap; rendering (Playwright, a QA subagent, up to three retry passes per slide) is slow and expensive. Present the finished deck and get an explicit go-ahead before invoking generate-carousel. Propose, don't impose — the user steers the deck.
 
@@ -46,6 +67,7 @@ Require:
 - The source Knowledge Item (its summary + key insights) if one is linked — the carousel needs the same source depth the caption drew on.
 - The tenant folder path (local filesystem) — needed for the render handoff.
 - The theme name (e.g., `quiet-aurora`) — must match a theme generate-carousel can render.
+- The ICP — one or two sentences naming who reads this deck (roles, seniority, how technical they are). Resolve in this order: (1) if the caption came from an Airtable Posts record, read the linked persona's Strategy row (Target Job Titles `fld0sBcM7jpIE3KAi`, Target Industries `fldTrSRD8MUN7BP7p`) and condense it, then calibrate the technical register from the post's **Pillar** — a Claude Code deck legitimately tolerates more technical imagery than an Awareness deck, the same pillar-calibration Dim 13 already uses; (2) an ICP or strategy note in the tenant folder; (3) ask the user. Write the resolved sentence down verbatim — it fills the `{{ICP}}` slot in all four Step 5 agent prompts and is the yardstick for the decodability gate, the beauty gate and the Dim-13 pass. Do NOT keep a static ICP sentence in the tenant folder as the primary source: it duplicates a fact Airtable already owns and freezes the pillar calibration.
 
 If any is missing, stop and ask. Do not infer defaults.
 
@@ -70,25 +92,28 @@ Flowing prose, two to three sentences per slide, maximum. Complete natural sente
 
 **Step 5: Author the visual directions — three-agent sequence**
 
-The visual direction is this skill's real product and the render is bounded by it, so the designer pass runs as **three specialist agents in strict sequence**, not an inline pass. Spawn each with the Agent tool (general-purpose), in order, feeding each the prior agent's output. Do NOT fan out one agent per slide — a single author that sees the whole deck at once is what keeps the motif coherent; per-slide isolation produces locally-clever but globally-inconsistent directions, and a per-slide critic cannot see cross-slide drift.
+The visual direction is this skill's real product and the render is bounded by it, so the designer pass runs as **four specialist agents in strict sequence**, not an inline pass. Spawn each with the Agent tool (general-purpose), in order, feeding each the prior agent's output. Do NOT fan out one agent per slide — a single author that sees the whole deck at once is what keeps the motif coherent; per-slide isolation produces locally-clever but globally-inconsistent directions, and a per-slide critic cannot see cross-slide drift.
 
-**GUARDRAIL — this step MUST run as three spawned agents. It is not optional and you do not do it yourself.**
-- First action of Step 5: create three todos (5a art-director, 5b visual author, 5c critic) with TodoWrite. This makes the spawn commitment visible and trackable.
-- Spawn each agent with the Agent tool using the ready-made role prompt in `references/visual-agent-prompts.md` (fill its `{{...}}` slots) — do not improvise a thin prompt; the prompts are calibrated to force art-director-grade, artistic, varied, scroll-stopping output.
-- You MUST NOT write or hand-edit any `Visual:` line yourself. That is agent 5b's job exclusively. If you catch yourself composing a Visual line directly, stop — you are violating the process. The orchestrator's only jobs here are: prep inputs, spawn the three agents in order, run the 5b↔5c revise loop, and relay results.
-- Skipping an agent, merging two into one, or inlining the authoring is a process violation. Three agents, in sequence, every time.
+**GUARDRAIL — this step MUST run as four spawned agents. It is not optional and you do not do it yourself.**
+- First action of Step 5: create four todos (5a art-director, 5b visual author, 5c critic, 5d cold reader) with TodoWrite. This makes the spawn commitment visible and trackable.
+- Spawn each agent with the Agent tool using the ready-made role prompt in `references/visual-agent-prompts.md` (fill its `{{...}}` slots) — do not improvise a thin prompt; the prompts are calibrated to force clear-first, beautiful-second, varied output.
+- You MUST NOT write or hand-edit any `Visual:` line yourself. That is agent 5b's job exclusively. If you catch yourself composing a Visual line directly, stop — you are violating the process. The orchestrator's only jobs here are: prep inputs, spawn the four agents in order, run the 5b↔5c revise loop, run the 5d blind read, and relay results.
+- Skipping an agent, merging two into one, or inlining the authoring is a process violation. Four agents, in sequence, every time.
 
-Before spawning, write the current deck (the Step 4 slide text, with any draft `Visual:` lines) to `slides.txt` so each agent reads and edits the file directly. Read both `references/visual-direction-craft.md` and `references/visual-agent-prompts.md` yourself, and pass the craft reference to every agent, along with: the theme name and its temperament (from the tenant `THEMES.md`), and the caption + knowledge-item arc.
+Before spawning, write the current deck (the Step 4 slide text, with any draft `Visual:` lines) to `slides.txt` so each agent reads and edits the file directly. Read both `references/visual-direction-craft.md` and `references/visual-agent-prompts.md` yourself, and pass the craft reference to every agent, along with: the theme name and its temperament (from the tenant `THEMES.md`), the ICP sentence resolved in Step 1, and the caption + knowledge-item arc. Fill the `{{ICP}}` slot in all four prompts with that sentence, and paste the visual contract from `references/visual-agent-prompts.md` verbatim into each prompt's `{{VISUAL_CONTRACT}}` slot — clarity first, beauty second, variety third is stated identically to all four agents or it does not hold.
 
 <read_before>
-- `references/visual-direction-craft.md` — the designer-pass principles and worked before/after examples (read it yourself, and hand it to every agent)
+- `references/visual-direction-craft.md` — the visual contract, the designer-pass principles and worked before/after examples (read it yourself, and hand it to every agent)
+- `../../references/shared-art-direction-principles.md` — the plugin art-direction floor (three-second grasp, the negative-pattern blacklist). Read it yourself; its load-bearing clarity lines are folded into the craft reference the agents receive.
 </read_before>
 
-- **5a — Art-director (motif, runs once).** One agent. Input: the whole deck's slide text, the theme, the story arc. Output: a short deck-wide visual system — the ONE recurring motif (a pipeline, a locator map, a consistent node style), the cover's single hero metaphor, and the emotional-staging plan (which slides enlarge or shrink what, to carry meaning). It writes no per-slide `Visual:` lines. This is the coherence anchor: decided once, obeyed by every slide.
+- **5a — Art-director (motif, runs once).** One agent. Input: the whole deck's slide text, the theme, the ICP, the story arc. Output: a short deck-wide visual system — the ONE recurring motif (a locator map, a consistent node or card style, one type system, a shared rail the slides hang off), chosen so each slide can draw its OWN content plainly rather than relocating the deck into an invented world, plus the cover's single hero metaphor, the emotional-staging plan, and the named component kit every slide reuses. It writes no per-slide `Visual:` lines. This is the coherence anchor: decided once, obeyed by every slide.
 
-- **5b — Visual author (all slides, runs once).** ONE agent, never one per slide. Input: 5a's motif spec, every slide's text, the craft reference. It writes the `Visual:` line for every slide directly into `slides.txt`, each obeying the 5a motif, each with a single hero focal point, real brand/tool names (so the renderer uses their logos), zero color words, and Dim-13-clean labels. Seeing the whole deck in one pass is what enforces motif consistency and stops two slides sharing a composition. Bar-not-floor: a direction that is already strong passes through unchanged.
+- **5b — Visual author (all slides, runs once).** ONE agent, never one per slide. Input: 5a's motif spec, every slide's text, the ICP, the craft reference. It writes the `Visual:` line for every slide directly into `slides.txt`, each obeying the 5a motif, each passing the decodability gate and the beauty gate for the Step 1 ICP, each with a single hero focal point, real brand/tool names (so the renderer uses their logos), zero color words, and Dim-13-clean labels. Seeing the whole deck in one pass is what enforces motif consistency and stops two slides sharing a composition. Bar-not-floor: a direction that is already strong passes through unchanged.
 
-- **5c — Visual critic (deck-level, runs once) + revise loop.** One agent reviews ALL directions together — the only vantage from which coherence defects are visible. It returns a punch-list: motif consistency across every slide, one clear focal point per slide, no two slides with the same composition, zero color words, real brands named, and Dim-13 label jargon. Route the findings back to the 5b author for a revise pass, then re-critique. Bound the loop to 2 rounds; if items remain after round 2, surface them to the user rather than looping forever. A per-slide critic is explicitly wrong here — coherence is a whole-deck property.
+- **5c — Visual critic (deck-level, runs once) + revise loop.** One agent reviews ALL directions together — the only vantage from which coherence defects are visible. It returns a punch-list in severity order: undecodable imagery, unearned analogies and unnameable objects first (all top severity), then beauty failures (flat, or over-encoded), then motif consistency, focal point, monotony, color words, slide-placement words, real brands named, and Dim-13 label jargon. Route the findings back to the 5b author for a revise pass, then re-critique. Bound the loop to 2 rounds; if items remain after round 2, surface them to the user rather than looping forever. A per-slide critic is explicitly wrong here — coherence is a whole-deck property.
+
+- **5d — Cold reader (blind decode, runs once after 5c converges).** Every check above is run by an agent that already knows the answer: 5b invented the metaphors, and 5c read the whole deck before judging the pictures. Anyone holding that context finds an obscure image obvious, which is how a deck of engineering imagery once cleared two adversarial critique rounds intact. **Give 5d the `Visual:` lines ONLY** — strip the slide titles, body prose, caption, motif brief, theme and knowledge item before spawning; handing it any of them destroys the step. It answers two questions per line: what idea does this picture convey, and with no words on it would you stop scrolling and what shape would you remember. Compare the first answer against the slide's actual claim: a mismatch, a hedge or "I cannot tell" is a failed slide, routed back to 5b as a concept change. The second answer is the only cold read on beauty in the pipeline.
 
 **Step 6: Standalone-readability gate**
 
@@ -119,7 +144,14 @@ On approval, invoke `content-generation:generate-carousel` with the slides, the 
 - **Weak or generic visual directions** ("three icons in a row"). The render is only as good as the direction; a generic direction wastes the slide.
 - **A deck that only makes sense next to the caption.** It will be screenshotted alone.
 - **Rendering before the user has approved the slide text.** The render is the expensive step; approve first.
-- **Jargon on a diagram label** the caption never had to explain. Label text is where technical terms hide from the caption's checks.
+- **Jargon on a picture's label** the caption never had to explain. Label text is where technical terms hide from the caption's checks.
+- **Directions the renderer cannot draw.** Texture, grain, painterly light and shadow, hand-inked contours, still-life realism. generate-carousel builds flat vector; anything else renders as noise. Name the primitives or do not write the line.
+- **A painterly or illustrative aesthetic register.** Invent any visual language you like, but it must be constructible from flat vector primitives. A cookbook-plate or picture-book idiom is not.
+- **Cryptic visual directions.** A caliper, a core log, a weld section, a title block, a rating plate. Imagery that needs domain literacy to decode. Clever is worthless if the reader cannot read it in three seconds.
+- **Relocating the deck into an invented world.** Turning "execution, context, compute" into a staircase, a hire cabin and a hanging lamp. The reader has to learn a mapping the caption never taught them, on a two-second scroll. Draw the slide's own content unless an analogy clearly beats it.
+- **Objects nobody can name on sight.** A caliper, a core log, a weld section, a title block. This, not technical subject matter, is what makes a visual cryptic.
+- **Reading "artistic" as "intricate".** Beauty here is elegance and a strong silhouette, not elaborate encoding. The fix for a dull slide is a better idea, never more machinery.
+- **Handing the cold reader (5d) any context.** Slide text, the caption, the motif brief — any of them turns the blind decode into another informed opinion, which is the one thing the pipeline already has too many of.
 - **Em dashes, "it's not X, it's Y", or tailing negations on slides.** Same anti-AI bar as the caption.
 - **Fanning out one visual agent per slide.** The Step 5 author (5b) and critic (5c) are BOTH deck-level. Per-slide isolation breaks the shared motif and hides cross-slide drift — the very defects the step exists to prevent.
 
@@ -128,9 +160,10 @@ On approval, invoke `content-generation:generate-carousel` with the slides, the 
 <success_criteria>
 
 - `slides.txt` written: one idea per slide, standalone-readable, two to three natural sentences of prose per slide with no bullet characters, cover = title + hero + no body.
-- Every slide has a render-ready `Visual:` direction with a clear focal point, a coherent motif across the deck, no color words, and no slide-placement words (describe the diagram, not where it sits on the slide or the air around it — generate-carousel owns placement and spacing).
-- The visual directions were authored by the Step 5 three-agent sequence (art-director → single whole-deck author → deck-level critic + revise loop), not an inline or per-slide pass.
-- Slide text and diagram labels pass the anti-AI bar and the Dim-13 jargon pass (swaps user-confirmed).
+- Every slide has a render-ready `Visual:` direction a non-technical ICP reader decodes in about three seconds: a clear focal point, imagery drawn from everyday life rather than the post's own domain, a coherent motif across the deck, no color words, and no slide-placement words (describe the illustration, not where it sits on the slide or the air around it — generate-carousel owns placement and spacing).
+- The visual directions were authored by the Step 5 four-agent sequence (art-director → single whole-deck author → deck-level critic + revise loop → cold reader), not an inline or per-slide pass.
+- The visual contract (clarity → beauty → variety, literal-first, the object rule, decodability gate, beauty gate) was pasted into all four agent prompts; 5c reported no undecodable slides, no unearned analogies and no unnameable objects; and 5d, seeing only the `Visual:` lines, named the right idea for every slide and found a shape worth stopping for.
+- Slide text and picture labels pass the anti-AI bar and the Dim-13 jargon pass (swaps user-confirmed).
 - `titles.txt` written: 3 titles under 58 chars (curiosity / SEO / benefit).
 - The user approved the deck BEFORE rendering.
 - generate-carousel invoked on approval; PNGs, PDF, and manifest land in the bundle folder.
@@ -138,8 +171,8 @@ On approval, invoke `content-generation:generate-carousel` with the slides, the 
 </success_criteria>
 
 <reference_index>
-**Step 5 agent role prompts (ready to paste):** references/visual-agent-prompts.md
-**Designer pass (visual direction craft):** references/visual-direction-craft.md
+**Step 5 agent role prompts + the visual contract (ready to paste):** references/visual-agent-prompts.md
+**Designer pass (visual contract + direction craft):** references/visual-direction-craft.md
 **Sibling render skill:** content-generation:generate-carousel
-**Plugin art-direction floor:** ../../references/shared-art-direction-principles.md
+**Plugin art-direction floor (read at Step 5):** ../../references/shared-art-direction-principles.md
 </reference_index>

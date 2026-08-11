@@ -25,12 +25,13 @@ Validator pass is required before QA. QA does not replace programmatic validatio
 - The slide has no SVG diagram despite having a visual direction
 - The SVG diagram does not match the slide's visual direction
 - Important text is hard to read at phone screen size
-- The slide looks like a generic social card instead of a content diagram
+- The slide looks like a generic social card instead of a content diagram (and its inverse: a slide so elaborately encoded that the picture must be studied is equally a fail — the target is clear and beautiful, not busy)
 - Safe padding is weak — content sits too close to slide edges
 - Theme atmosphere elements (as specified in brand kit README) are missing
 - Bar chart elements overflow their axes (y + height must equal axis y-position)
 - A connector (line or path) cuts through a shape's outline instead of terminating at its edge, or an overlay icon sits visibly off the target it should mark (e.g. an icon meant to be centered in a node drifting off-center)
 - A visual/diagram LABEL uses jargon the post's ICP would not grasp instantly (e.g. "eval pass rate", "RAG"): propose a plain-language swap for the user to confirm — pillar-calibrated, do NOT demand a technical-ICP deck be dumbed down
+- The diagram contains an object a non-technical reader cannot name on sight (calipers, gauges, schematics, core or weld sections, title blocks, rating plates), or it is an analogy the slide text never names, so the mapping has to be learned cold. A plain labelled drawing of the slide's own content is never a defect. Report it as an upstream visual-direction defect for the user; do not silently redraw away from the approved direction
 - A framework/category card (bucket, pillar, step) is text-only where a standard Lucide icon was available and would aid recognition — icon-above-label is the expected treatment for payoff cards (do NOT apply this to deliberately monotonous queue/repetition motifs, where sameness is the message)
 - A NAMED real-world brand/product/tool is drawn with a generic icon instead of its real logo (when the tenant has the logo locally or it can be fetched online — see the "Brand assets outrank generic icons" principle)
 - Readable text (HTML or SVG) is dimmer than the brand's muted token at full opacity — e.g. opacity or fade stacked on an already-muted color, producing washed-out copy
@@ -39,6 +40,7 @@ Validator pass is required before QA. QA does not replace programmatic validatio
 **First-glance quality — assess within 3 seconds:**
 
 - Is the slide's main point clear immediately?
+- Could a non-technical reader name every object in the picture on sight, without reading a label?
 - Does the SVG diagram reinforce the text, not just decorate?
 - Is hierarchy clear — title, then diagram, then body text?
 - Does the slide feel designed, not merely filled?

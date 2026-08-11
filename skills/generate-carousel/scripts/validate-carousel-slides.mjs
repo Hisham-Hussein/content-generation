@@ -92,6 +92,7 @@ const results = await page.evaluate(({ slideWidth, slideHeight, minFooterGap }) 
     const slideRect = slide.getBoundingClientRect();
     const slideFindings = [];
     let vizFooterGap = null;
+    let footerTopRel = null;
 
     // --- Footer clipping ---
     const footer = slide.querySelector('.author-footer');
@@ -100,6 +101,7 @@ const results = await page.evaluate(({ slideWidth, slideHeight, minFooterGap }) 
     } else {
       const footerRect = footer.getBoundingClientRect();
       const footerBottom = footerRect.bottom - slideRect.top;
+      footerTopRel = footerRect.top - slideRect.top;
       if (footerBottom > slideHeight) {
         slideFindings.push({
           check: 'footer-clipping',
@@ -181,6 +183,82 @@ const results = await page.evaluate(({ slideWidth, slideHeight, minFooterGap }) 
     });
     if (!overflowFound) {
       slideFindings.push({ check: 'element-overflow', status: 'PASS' });
+    }
+
+    // --- Check: SVG viewBox height band (brand kit "SVG sizing rules": 340–480px) ---
+    // A viz sized to its drawing rather than to the slide is the root cause of a
+    // deck that crams everything into the top half. Enforce the documented band.
+    const VB_MIN = 340, VB_MAX = 480;
+    let vbFailed = false, vbChecked = 0;
+    slide.querySelectorAll('.slide-viz svg').forEach((svg) => {
+      const vb = svg.getAttribute('viewBox');
+      if (!vb) return;
+      const parts = vb.trim().split(/[\s,]+/).map(Number);
+      if (parts.length < 4 || !isFinite(parts[3])) return;
+      const h = parts[3];
+      vbChecked++;
+      if (h < VB_MIN) {
+        vbFailed = true;
+        slideFindings.push({
+          check: 'viz-viewbox-height',
+          status: 'FAIL',
+          detail: `viewBox height ${h} is below the ${VB_MIN}px floor. Scale the diagram up to fill the slide; do not size the viewBox to the drawing.`,
+        });
+      } else if (h > VB_MAX) {
+        slideFindings.push({
+          check: 'viz-viewbox-height',
+          status: 'WARN',
+          detail: `viewBox height ${h} exceeds the ${VB_MAX}px guideline. Confirm the copy still has room.`,
+        });
+      }
+    });
+    if (vbChecked > 0 && !vbFailed) {
+      slideFindings.push({ check: 'viz-viewbox-height', status: 'PASS' });
+    }
+
+    // --- Check: vertical fill (no dead half-slide under the content) ---
+    // Measures the real bottom of the content column against the footer. Catches
+    // the failure the overflow checks structurally cannot see: everything correct,
+    // everything in bounds, and the lower third of the slide empty.
+    const contentEl = slide.querySelector('.slide-content');
+    const centeredEl = slide.querySelector('.slide-content-center');
+    if (centeredEl && !contentEl) {
+      slideFindings.push({
+        check: 'vertical-fill',
+        status: 'INFO',
+        detail: 'Centered layout — slack is distributed by design, not checked.',
+      });
+    } else if (contentEl && footerTopRel !== null) {
+      const contentTop = contentEl.getBoundingClientRect().top - slideRect.top;
+      let contentBottom = contentTop;
+      Array.from(contentEl.children).forEach((child) => {
+        const r = child.getBoundingClientRect();
+        if (r.height === 0) return;
+        contentBottom = Math.max(contentBottom, r.bottom - slideRect.top);
+      });
+      const available = footerTopRel - contentTop;
+      const used = contentBottom - contentTop;
+      const ratio = available > 0 ? used / available : 1;
+      const dead = Math.round(available - used);
+      // Floor calibration: with the viz at the brand kit's 480px viewBox cap, a
+      // tag + title + viz + 3-line-body slide tops out near 79% fill. An 80% floor
+      // would therefore fail correctly-built slides. 72% (~320px dead, about a
+      // quarter of the content area) is the point where the slide reads as broken.
+      if (ratio < 0.72) {
+        slideFindings.push({
+          check: 'vertical-fill',
+          status: 'FAIL',
+          detail: `Content fills ${Math.round(ratio * 100)}% of the area between the top of the content and the footer, leaving ${dead}px dead. Minimum 72%. Grow the diagram, do not add filler.`,
+        });
+      } else if (ratio < 0.82) {
+        slideFindings.push({
+          check: 'vertical-fill',
+          status: 'WARN',
+          detail: `Content fills ${Math.round(ratio * 100)}% of the available height, leaving ${dead}px dead.`,
+        });
+      } else {
+        slideFindings.push({ check: 'vertical-fill', status: 'PASS' });
+      }
     }
 
     // --- Check: brand punctuation (no em/en dashes or curly quotes in visible text) ---

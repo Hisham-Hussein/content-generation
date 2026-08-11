@@ -21,6 +21,16 @@ Provide a LinkedIn post (paste or screenshot). Specify if it's your own post or 
 
 3a. **Capitalize and punctuate normally.** Start sentences with a capital letter and use commas, periods and apostrophes the way a literate person does. All-lowercase comments are their own AI tell: they read as someone straining to look casual. "Imperfect punctuation" means the occasional missing period, a comma splice, a sentence fragment. It does not mean abandoning capitalization.
 
+3b. **Write the way you talk, not the way you write.** Say it out loud first. If you would never say the sentence to someone standing next to you, it is wrong. Use plain everyday words and ordinary sentence shapes. Kill compressed noun phrases ("Skills carrying across both tabs matters more than the pick"), stacked abstractions, and clever inverted constructions. A comment that is grammatically clean but sounds assembled is worse than one that rambles slightly.
+
+   Rejected: "Skills carrying across both tabs matters more than the pick, since either way you still have to write one that knows how you actually work."
+
+   Accepted: "Honestly the tab matters less than the Skill. Either way you have to sit down and teach it how you actually work, and that part takes a week."
+
+   What changed: a real spoken opener ("Honestly"), short plain subject-verb sentences, concrete verbs ("sit down and teach it") instead of an abstract gerund subject.
+
+3c. **Keep it short in total length, not in sentence count.** A couple of lines on screen. Cut explanatory tails, setup clauses, and any half that restates the point already made. Sentence arithmetic is not the test, bulk on screen is.
+
 4. **Never fabricate.** No invented stats, client industries, team sizes, or experiences. If you don't have a real example, add value through perspective instead.
 
 5. **Never position the author as a novice.** No "I learned", "I realized", "I was doing X wrong." The author is an expert.
@@ -87,6 +97,18 @@ These patterns have been flagged repeatedly as AI tells. Using any of them will 
 - crucial / pivotal / landscape / delve / foster / showcase
 - firsthand
 
+**Written-not-spoken constructions (the say-it-out-loud bans):**
+These pass every other check and still sound like nobody on earth. Each one has been rejected in real use.
+- Commentary-verb pointers: "trips people up", "does the heavy lifting", "bites hardest", "compounds quietly", "is what gets people", "costs the most quietly"
+- Any pointer phrase that grades an item in the post instead of reacting to it ("Point 4 trips people up the most")
+- Gapped/elliptical second halves: "Building it got easy, spotting the errors did not", "X changed, Y didn't"
+- Compressed noun phrases as subjects: "Skills carrying across both tabs matters more than the pick"
+- Pseudo-clefts: "What sits under it is a rebuild", "What tends to go missing is X"
+
+Rejected → accepted, real examples:
+- "Point 4 trips people up the most. Building the thing got easy, spotting when it quietly hands you a wrong answer did not." → "Everyone gets stuck on 4. Building the thing got easy, but you still can't tell when it's quietly wrong."
+- "Skills carrying across both tabs matters more than the pick, since either way you still have to write one that knows how you actually work." → "Honestly the tab matters less than the Skill. Either way you have to sit down and teach it how you actually work."
+
 **Tone bans:**
 - Em dashes
 - Essay-grade polish (perfectly balanced clauses, semicolons, formal transitions)
@@ -123,6 +145,18 @@ Scan every word against the banned patterns list above. Rewrite any violations. 
 - "most teams/people"
 - Thesis statement structure
 - "we've seen" / "we built" / "we do" as openers
+
+**Step 4b: The say-it-out-loud gate. MANDATORY, and it is a written check, not a feeling.**
+Take each sentence of the draft one at a time and answer, in your head, this exact question:
+"Would I say this sentence out loud, in these words, to someone standing next to me?"
+
+Any sentence that gets a "no" is rewritten before you continue. You are not allowed to reach
+Step 5 with a "no" still in the comment. Watch specifically for the first sentence, which is
+where the pointer constructions hide ("Point 4 trips people up", "Number 5 bites hardest") —
+a real person just names the item and says what happens ("Everyone gets stuck on 4").
+
+Rewrite recipe when a sentence fails: give it a human subject doing a plain verb, use the
+words you would use in speech, and break the gapped second half into its own plain clause.
 
 **Step 5: Invoke the humanizer skill.**
 Run the final comment through the humanizer skill. Apply its output as the delivered version. This is not optional.

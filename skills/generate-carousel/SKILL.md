@@ -157,6 +157,8 @@ Geometry checks:
 - Body→footer gap: verify `.slide-body` bottom does not overlap `.author-footer` top
 - SVG clipping: verify no SVG element extends beyond its viewBox or the slide canvas
 - Element overflow: verify no absolutely positioned element escapes the 1080×1350 frame
+- **Viz viewBox height:** every `.slide-viz svg` viewBox height must sit in the brand kit's documented 340–480px band. Below 340 is a hard FAIL, above 480 a warning. A viewBox sized to the drawing instead of to the slide is what produces a deck crammed into the top half.
+- **Vertical fill:** the content column must occupy at least 72% of the height between the top of `.slide-content` and the top of `.author-footer`. Under 72% is a hard FAIL, under 82% a warning. (The floor is set by arithmetic, not taste: with the viz at the 480px viewBox cap, a tag + title + viz + 3-line-body slide tops out near 79%, so a higher floor would fail correctly-built slides. 72% is roughly a quarter of the content area left empty.) Centered layouts (`.slide-content-center`) are exempt, since they distribute their slack by design. Fix a failure by growing the diagram, never by padding with filler.
 - Cross-slide structural check: flags extreme monotony (8+ consecutive identical wrapper structures). Visual layout variety is verified by the QA subagent in Step 6, not this script.
 
 SVG property checks (from the general carousel kit README — theme-agnostic):

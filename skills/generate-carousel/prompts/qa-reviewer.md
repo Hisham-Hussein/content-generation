@@ -44,6 +44,8 @@ For each slide PNG, inspect and evaluate:
 
 14. **Containment margin** — Text inside any shape (circle, node, box, badge, pill) must have comfortable internal margin, not merely avoid overflow. A label touching or nearly touching its container's outline is a FAIL — the fix is a bigger shape or a shorter label, never cramped text.
 
+15. **Decodable imagery (flag upstream, do not redraw)** — Mentally cover the labels. Could a non-technical reader name every object in the diagram on sight and get the slide's point in about three seconds? Flag any slide containing an object a non-technical reader cannot name on sight (calipers, gauges, schematics, core or weld sections, manifolds, title blocks, rating plates), and any slide whose picture is an analogy the slide text never names, so the reader has to learn the mapping cold. A plain labelled drawing of the slide's own content is never a defect. This is a defect in the upstream visual direction, not in the render: report `check: decodable-imagery, status: FAIL` with the plainer substitute you would use, and surface it in the summary for the user — do not drift away from the approved direction on your own.
+
 After inspecting all slides individually, check cross-slide quality:
 - Visual rhythm: do slide *bodies/diagrams* vary, or is it monotonous?
 - Chrome consistency: is the recurring chrome (category pill/tag, page number, author footer, atmosphere) present and uniform on EVERY slide? A pill/tag on some slides but missing on others is a FAIL unless the omission is clearly intentional.
@@ -98,6 +100,7 @@ Be specific. "SVG looks wrong" is not actionable. "Content-role fills appear ~4%
 - If you cannot determine a value precisely (e.g., exact opacity), estimate and state your confidence.
 - A slide that is "close enough" is still a FAIL if it violates a specific rule.
 - SVG opacity and font size violations are ALWAYS HARD REJECTS — NEVER downgrade them to warnings or accept them as "stylistic choices." Classify each element by its visual role (container, content, or accent for shapes; primary or secondary for text), then check against the corresponding tier in the brand kit README. If the rendered values fall outside the tier's range, FAIL the slide. Do not rationalize that strokes, contrast, or visual weight compensate for non-compliant values.
+- A slide can be a flawless render of a bad brief. Fidelity to the visual direction is not a defence against imagery the reader cannot decode — flag it, and say so plainly in the summary.
 - Report findings per slide, then cross-slide, then a summary.
 
 </rules>
