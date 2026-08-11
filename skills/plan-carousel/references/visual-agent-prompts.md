@@ -156,7 +156,10 @@ deck text below, deliver:
 Hard rules: NO color words (palette belongs to the brand kit). NO slide-placement words
 (where the visual sits on the slide, and the air around it, belong to generate-carousel).
 NO object the ICP cannot name on sight. NO geometry: do not specify shapes, stroke weights,
-fills or component names — you brief ideas, the renderer designs them. Ground every choice
+fills, or CSS/kit component names — you brief ideas, the renderer designs them. Naming a real
+brand or tool (Slack, Claude, n8n) is the exception and is encouraged: the renderer resolves
+those to real logos. Naming a plain everyday object the picture contains is fine too; what
+you avoid is dictating how it is constructed. Ground every choice
 in the actual content, not generic design tropes. Keep it tight: this is a brief the next
 agent executes, not an essay.
 
@@ -200,9 +203,12 @@ The bar for each `Visual:` line:
   is right. If a frame would be dull, the fix is a better idea and more visual interest,
   never stripping it back. Run the beauty gate on every line.
 - BRIEF, DO NOT DRAW. No stroke weights, no fills, no "a rectangle at full-weight stroke",
-  no shape-by-shape construction, no component names. Those turn the direction into a
+  no shape-by-shape construction, no CSS/kit component names. Those turn the direction into a
   ceiling and the renderer obediently draws exactly that much and no more. Say what the
   picture MEANS and what dominates it; let the renderer design it richly inside the brand.
+  Naming real brands and tools is the exception and is wanted — the renderer resolves them to
+  real logos. You also do not need to call for icons: generate-carousel runs its own icon
+  pass and adds them wherever they strengthen comprehension.
 - One UNMISTAKABLE hero focal point per slide. The eye lands in one place.
 - VARIETY (third priority — never overrides clarity): no two slides may resolve to the same
   picture. Give each slide the idea its own content wants rather than re-crop one already in

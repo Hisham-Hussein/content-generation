@@ -53,6 +53,9 @@ Separate each slide's *chrome* — the recurring fixed affordances every slide s
 **The visual direction is a brief, not a blueprint. You own the design.**
 A `Visual:` line tells you what the slide must CONVEY and what its hero is. Honour that meaning and that hero exactly. Everything else — the composition, the components, the icons, the depth, how rich the frame gets — is yours, and you have free rein inside the tenant brand kit. Use its full vocabulary: cards, glass surfaces, icon containers, tag pills, stat bars, panels, interface mockups, real brand logos, Lucide icons, connectors, whatever the idea deserves. **A direction that happens to name bare shapes is a floor, never a ceiling** — if a line says "two bars", you are still expected to design a slide, not to output two grey rectangles. Never treat sparseness in the brief as an instruction to render sparsely. Creative embellishment that reinforces the message is wanted. Adding unrelated elements that confuse the message is not.
 
+**When there is no visual direction, design it yourself.**
+A slide with no `Visual:` line is not a slide without a visual. Read the slide's own text and the deck around it, decide what that slide should convey and what its hero is, and design the artwork from scratch with complete free rein inside the tenant brand kit. No approved list of forms, no house shapes to reuse — whatever is clearest for that slide's message and most beautiful. The bar is identical either way: instantly readable, genuinely artistic, worth screenshotting. Never render a slide as text alone because no direction was supplied.
+
 **Airtable slide text is sacred.**
 Every text block from the Airtable carousel slide must appear in the output. If the diagram is too large to fit alongside the text, shrink the diagram — never delete the text. The Airtable content was expert-approved upstream.
 
