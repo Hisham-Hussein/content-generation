@@ -146,17 +146,53 @@ Scan every word against the banned patterns list above. Rewrite any violations. 
 - Thesis statement structure
 - "we've seen" / "we built" / "we do" as openers
 
-**Step 4b: The say-it-out-loud gate. MANDATORY, and it is a written check, not a feeling.**
-Take each sentence of the draft one at a time and answer, in your head, this exact question:
-"Would I say this sentence out loud, in these words, to someone standing next to me?"
+**Step 4b: The say-it-out-loud gate. MANDATORY. It produces visible output or it did not happen.**
 
-Any sentence that gets a "no" is rewritten before you continue. You are not allowed to reach
-Step 5 with a "no" still in the comment. Watch specifically for the first sentence, which is
-where the pointer constructions hide ("Point 4 trips people up", "Number 5 bites hardest") —
-a real person just names the item and says what happens ("Everyone gets stuck on 4").
+This gate has failed in real use every single time it was run "in my head." An internal check is
+unfalsifiable, so it gets asserted instead of executed. The fix is that Step 4b must be **written
+out in the response**, one row per sentence, before the final comment appears. No table in the
+response means the gate was skipped and the comment is invalid.
 
-Rewrite recipe when a sentence fails: give it a human subject doing a plain verb, use the
-words you would use in speech, and break the gapped second half into its own plain clause.
+Do not ask yourself the soft question "would I say this out loud." Any grammatical sentence passes
+that. Run these five detectors against each sentence instead. They trip on structure, not on feel.
+
+| # | Detector | Trips when |
+|---|----------|-----------|
+| D1 | Copula thesis | Any clause of the shape "X is the Y" or "X is [descriptor]" used to make a point. Includes "that X is", which is the same crime wearing a different article. |
+| D2 | Comparison or summary tail | The sentence ends by grading the thing it just said: "probably matters more than X", "counts for more than Y", "which is the real win". Cut the tail, keep the clause. |
+| D3 | Clause count | More than two clauses stacked with commas or "and ... so ...". Speech breaks into separate sentences. Writing stacks. |
+| D4 | Subject shape | The subject is a gerund phrase or an abstraction ("skipping that component", "state parked in a sandbox") rather than a person, a team, or a named thing doing a plain verb. |
+| D5 | Gapped or elliptical half | A second half that drops its verb or mirrors the first half for balance: "cheap on day one, impossible after", "building it got easy, spotting it did not". |
+
+Write the gate like this, verbatim shape:
+
+```
+S1 "Respect for publishing the losing table."  D1 no  D2 no  D3 no  D4 no  D5 no  PASS
+S2 "Worth adding that a batch retrain needs a drift detector to fire, and tuning one is a
+    project on its own, so not needing one probably matters more than the hit rate gap."
+    D2 TRIP (ends on a comparison tail)  D3 TRIP (three stacked clauses)  REWRITE
+```
+
+Every TRIP gets rewritten and re-run through all five detectors. You are not allowed to reach
+Step 5 with a TRIP outstanding.
+
+**Also report what you killed.** Under the table, list the drafts the gate rejected and which
+detector caught them. A gate that never rejects anything is a gate that never ran. Real rejections
+from live use, for calibration:
+
+- "The pause is the part I'd watch" → D1
+- "The waiting is the real feature" → D1, plus it handed the author his own words back
+- "Skipping that component is the real win" → D1, D2
+- "Cheap to put in on day one, impossible to put in after" → D5
+- "Compute breaks in the quietest way" → D4
+- "Point 4 trips people up the most" → D4 (pointer construction; a real person says "Everyone gets stuck on 4")
+
+**Rewrite recipe when a detector trips:** give the sentence a human subject doing a plain verb,
+use the words you would use in speech, break the stacked clauses into separate sentences, and
+delete the grading tail entirely rather than trying to rephrase it.
+
+**Watch the target you are optimizing for.** Balanced, tight and quotable is the wrong goal and it
+is the direct cause of nearly every trip above. Aim for plain and slightly loose instead.
 
 **Step 5: Invoke the humanizer skill.**
 Run the final comment through the humanizer skill. Apply its output as the delivered version. This is not optional.
@@ -172,6 +208,8 @@ Run the final comment through the humanizer skill. Apply its output as the deliv
 - Writing more than 3 sentences
 - Using any word or construction from the banned list
 - Skipping the humanizer pass
+- Running Step 4b silently and claiming it passed. If the detector table is not printed, the gate did not run
+- Delivering a comment when the gate rejected nothing, which almost always means it was not executed
 - Being sycophantic without adding substance
 - Using fictional "we had a client who..." stories
 - Starting every comment the same way
@@ -182,6 +220,8 @@ Run the final comment through the humanizer skill. Apply its output as the deliv
 
 - [ ] 1-3 sentences
 - [ ] Adds value the post didn't already cover
+- [ ] Step 4b detector table printed in the response, one row per sentence, zero TRIPs outstanding
+- [ ] Rejected drafts listed under the table with the detector that caught each
 - [ ] No banned patterns survived
 - [ ] Sounds like a human typed it quickly
 - [ ] Normal capitalization, not all-lowercase
