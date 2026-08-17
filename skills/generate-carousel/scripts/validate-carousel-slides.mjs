@@ -191,11 +191,15 @@ const results = await page.evaluate(({ slideWidth, slideHeight, minFooterGap }) 
     const VB_MIN = 340, VB_MAX = 480;
     let vbFailed = false, vbChecked = 0;
     slide.querySelectorAll('.slide-viz svg').forEach((svg) => {
+      // Lucide renders each icon as its own 24x24 <svg>. Icons are not diagrams,
+      // so they are exempt from the diagram sizing band.
+      if (svg.classList.contains('lucide') || svg.hasAttribute('data-lucide')) return;
       const vb = svg.getAttribute('viewBox');
       if (!vb) return;
       const parts = vb.trim().split(/[\s,]+/).map(Number);
       if (parts.length < 4 || !isFinite(parts[3])) return;
       const h = parts[3];
+      if (parts[2] <= 64 && h <= 64) return;   // any icon-sized svg, Lucide or not
       vbChecked++;
       if (h < VB_MIN) {
         vbFailed = true;
@@ -258,6 +262,27 @@ const results = await page.evaluate(({ slideWidth, slideHeight, minFooterGap }) 
         });
       } else {
         slideFindings.push({ check: 'vertical-fill', status: 'PASS' });
+      }
+    }
+
+    // --- Check: cover title must be a single line ---
+    // A cover headline that wraps to "Agent / architecture has / a half-life" reads
+    // as broken typography, not as a hook. Fix it by cutting words first and only
+    // then by dropping the size; never by letting it wrap.
+    const coverHook = slide.querySelector('.c-cover-hook');
+    if (coverHook) {
+      const cs = window.getComputedStyle(coverHook);
+      let lh = parseFloat(cs.lineHeight);
+      if (!isFinite(lh)) lh = parseFloat(cs.fontSize) * 1.05;
+      const lines = Math.max(1, Math.round(coverHook.getBoundingClientRect().height / lh));
+      if (lines > 1) {
+        slideFindings.push({
+          check: 'cover-title-lines',
+          status: 'FAIL',
+          detail: `The cover title renders on ${lines} lines. It must be one. Cut words first, then reduce the font size; do not let it wrap.`,
+        });
+      } else {
+        slideFindings.push({ check: 'cover-title-lines', status: 'PASS' });
       }
     }
 
