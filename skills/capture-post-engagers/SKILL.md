@@ -18,6 +18,7 @@ User gives a post URL. You pick the mode, scrape the engagers, filter to ICP-fit
 **Airtable IDs (iSemantics Content Engine):**
 - Base: `appXFk4T8KyNf4odQ`
 - ICP Accounts: `tblOY0n0NKqp9iDsJ`
+- Companies: `tblJL67KxgQQhoLvD` (account-level facts: Industry, company Tier, Warm Path, Progression — people link to it via Company Link)
 - Engagement Log: `tblyaWrUUMsyveMhn`
 - Posts (our published content): `tblSqtKPIEod2c1bW`
 - Strategy (ICP definition per persona): `tblBvVhf42xIhxosN`
@@ -29,7 +30,8 @@ User gives a post URL. You pick the mode, scrape the engagers, filter to ICP-fit
 | Account Name | `fldaixpV78VeByf4B` |
 | LinkedIn URL | `fldb4Un5lqk7dwsBO` |
 | LinkedIn Posts URL | `fldRJc1rHebU92Q0T` |
-| Company | `fldux9S6rYBKItllT` |
+| Company | `fldux9S6rYBKItllT` (free text — kept for backend mapper compatibility, always populate) |
+| Company Link | `fldFcopgChy3xvErw` (→ Companies record) |
 | Job Title | `fldB585YwEvkryf2P` |
 | Account Type | `fldWjxqeaadB3pEq9` |
 | Engagement Role | `fldDEj7z3WCTclrNQ` (Convert / Amplify / Refer) |
@@ -110,8 +112,8 @@ Present the three buckets to the user. **They confirm/reject before anything is 
 **Step 4: Dedup + merge, then create (per confirmed engager)**
 
 Dedup against existing ICP Accounts by LinkedIn slug (commenters) or URN (reactors):
-- **New person** → enrich via the profile scraper (`onboard-icp-account`'s scraper, `pnpm scrape:dev-fusion "{profile-url}"`) to get clean slug, company, title. Create the ICP Account:
-  - `Account Name`, `Company`, `Job Title`, `LinkedIn URL` (clean slug), `LinkedIn Posts URL`, `Persona` (from Step 1).
+- **New person** → enrich via the profile scraper (`onboard-icp-account`'s scraper, `pnpm scrape:dev-fusion "{profile-url}"`) to get clean slug, company, title. **Find-or-create their Companies record** (`tblJL67KxgQQhoLvD`) exactly as in `onboard-icp-account` Step 3b: match by Company LinkedIn URL first, then name; only create if absent (Industry mapped from `companyIndustry` — ask the user when ambiguous; Progression = Unaware; company Tier/Warm Path asked only when the account matters enough to tier — for bulk-captured engagers it's fine to leave Tier/Warm Path empty for later review). Then create the ICP Account:
+  - `Account Name`, `Company` (free text, always), `Company Link` (→ the Companies record), `Job Title`, `LinkedIn URL` (clean slug), `LinkedIn Posts URL`, `Persona` (from Step 1).
   - `Account Source` = the mode's value (Inbound or Outbound). `Discovery Source` = the amplifier (amplifier-mode only).
   - `Engagement Role` = the Step-3 bucket (Convert or Amplify). `Account Type` = Buyer (or Strategic Partner for an Amplify peer). `Engagement Status` = New. `Account Tier` = your Step-3 judgment.
 - **Already an ICP Account** → do **NOT** recreate and do **NOT** overwrite `Account Source` (an existing Outbound target who now engages inbound is a strong cold→warm signal — preserve origin). Just log the new activity (Step 5).

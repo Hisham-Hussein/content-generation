@@ -16,9 +16,12 @@ User provides a LinkedIn profile URL. You scrape it, review the data together, t
 **Airtable IDs (iSemantics Content Engine):**
 - Base: `appXFk4T8KyNf4odQ`
 - ICP Accounts table: `tblOY0n0NKqp9iDsJ`
+- Companies table: `tblJL67KxgQQhoLvD`
 - ICP Posts table: `tblt9rQd8xnahLB99`
 - Engagement Log table: `tblyaWrUUMsyveMhn`
 - Personas table: `tblQ4ggCKuBmkSZ6B`
+
+**People vs companies.** ICP Accounts holds the *people*; the Companies table holds the *account-level* facts (Industry, company Tier A/B, Warm Path / Trigger, Progression Stage). Every onboarded contact links to exactly one Companies record via `Company Link`. Company-level facts are written once on the Companies record — never duplicated across contact rows.
 
 **Never fabricate values.** LinkedIn profile slugs, record IDs, and URLs must come from real data — scraper output, Airtable responses, or the user. Never guess a LinkedIn slug from a display name.
 
@@ -31,6 +34,7 @@ User provides a LinkedIn profile URL. You scrape it, review the data together, t
 - Cost: ~$0.003 per profile
 - Output: JSON capture saved to `captures/` directory
 - Note: the two actors use different field names for the same data (e.g. dev-fusion `experiences`/`about`/`followers` vs supreme-coder `positions`/`summary`/`followerCount`). The Step 4 field mapping below targets the dev-fusion schema.
+- Company firmographics likewise differ by actor: the Step 3b company mapping below uses the dev-fusion keys (`companyName`, `companyIndustry`, `companyWebsite`, `companyLinkedin`, `companySize`). On the supreme-coder fallback, verify the equivalent keys in the capture JSON before mapping — do not assume the same names.
 
 </essential_principles>
 
@@ -90,6 +94,28 @@ Then ask for these decisions:
 
 **Account Source** is not a decision here — this skill always sets it to **Outbound** (you found them by exploring LinkedIn). Inbound accounts are created by the `capture-post-engagers` skill instead.
 
+**Step 3b: Find or create the Companies record**
+
+Before creating the ICP Account, resolve the person's company against the Companies table (`tblJL67KxgQQhoLvD`):
+
+1. **Find:** search Companies by `Company LinkedIn URL` (`fldCQx2MPPk7wKnKC`) matching the scraped `companyLinkedin` first; fall back to `Company Name` (`fldiIz7XunMr3pGRb`) matching `companyName`. A second contact at a known company MUST resolve to the existing record — never create a duplicate.
+2. **Create** (only if not found) with these fields, mapped from the dev-fusion capture:
+
+| Field ID | Field | Source |
+|----------|-------|--------|
+| `fldiIz7XunMr3pGRb` | Company Name | `companyName` from scrape |
+| `fldw4y1bH3RYsKeDC` | Industry | Map `companyIndustry` to the nearest existing option (EdTech, Legal, Influencer Marketing, Marketing Agency, Retail, Software House, Other). If the mapping is ambiguous or no option fits, ask the user — never guess silently. Industry is descriptive (cluster posts, proof-matching), never a qualification filter. |
+| `fldCQx2MPPk7wKnKC` | Company LinkedIn URL | `companyLinkedin` from scrape |
+| `fldFXCK1PHGZxy9Go` | Website | `companyWebsite` from scrape |
+| `fldHNsbT4JWlvmGUf` | Company Size | `companySize` from scrape |
+| `fldtq3CFkMsbJO4H3` | Account Tier | Ask the user: Tier A (weekly founder attention — warm path or live trigger) or Tier B (monitored) |
+| `fldoORk6qbtDlre6Z` | Warm Path / Trigger | Ask the user. Record honestly — note explicitly when the case is proof-match-only with no live trigger |
+| `fldgrAAIX0UArtnZI` | Progression Stage | `Unaware` (always starts here) |
+| `fldVmzrGxa2Nu727v` | Notes | Proof-match case study + pitch angle, from user context |
+| `fldP0Y7L5l8lyQz1R` | Persona | Same persona record as the contact (Step 3 decision) |
+
+Save the Companies record ID — Step 4 links the contact to it. The company-level questions (Tier, Warm Path, Industry confirmation) are asked only on first creation; onboarding further contacts at the same company skips them.
+
 **Step 4: Create the ICP Account record**
 
 Create the record in the ICP Accounts table (`tblOY0n0NKqp9iDsJ`) with these fields:
@@ -103,7 +129,8 @@ Create the record in the ICP Accounts table (`tblOY0n0NKqp9iDsJ`) with these fie
 | `fldqQfgZPVOSvtN9h` | Discovery Source | Optional. Record ID of the Amplify account whose comment section surfaced this buyer (see amplifier note below). Leave empty otherwise. |
 | `fldb4Un5lqk7dwsBO` | LinkedIn URL | The profile URL used for scraping |
 | `fldRJc1rHebU92Q0T` | LinkedIn Posts URL | Constructed from `publicIdentifier` |
-| `fldux9S6rYBKItllT` | Company | `companyName` from scrape |
+| `fldux9S6rYBKItllT` | Company | `companyName` from scrape. Kept as free text deliberately — the backend mapper (`icp-account-mapper.ts`) reads this field as a string; never convert or stop populating it |
+| `fldFcopgChy3xvErw` | Company Link | Record ID of the Companies record from Step 3b |
 | `fldB585YwEvkryf2P` | Job Title | `jobTitle` from scrape |
 | `fld7BZDeJGfQ8ecj1` | Account Tier | User's choice from Step 3 |
 | `fld2aZsRmziCwNyqM` | Engagement Status | "New" (always starts here) |
@@ -174,6 +201,7 @@ Show the user a clean summary of everything created:
 <success_criteria>
 Onboarding is complete when:
 - ICP Account record exists with all available fields populated
+- The contact is linked to exactly one Companies record via Company Link (found or created in Step 3b, no duplicate company records)
 - LinkedIn Posts URL is constructed and saved
 - ICP Post record exists (if there was a specific post)
 - Engagement Log entries exist (if there were interactions)
