@@ -196,6 +196,8 @@ Show the user a clean summary of everything created:
 - The Framework Detail with next actions
 - The LinkedIn Posts URL they can use to monitor posts without profile views
 
+For a Buyer/Convert contact, hand off to the `run-outreach` skill (draft workflow) to create the opener record, so the contact enters the outreach queue.
+
 </process>
 
 <success_criteria>

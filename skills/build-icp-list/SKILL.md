@@ -24,7 +24,7 @@ Source, qualify, and tier up to ~50 candidate companies per industry cluster for
 
 **Cost discipline (CLAUDE.md Operating Principle 2).** Web search and research agents are free; profile scraping costs (~$0.003/profile via Apify). Use the two-pass funnel: screen the long list on free evidence (search results, directory data, headlines), scrape only finalists — and confirm with Hisham before any bulk scrape (>10 profiles).
 
-**Outreach copy is out of scope.** This skill ends at onboarding. DMs are drafted later, in English only (Hisham renders Arabic himself), via the Outreach-table flow.
+**Outreach copy is out of scope.** This skill ends at onboarding. DMs are drafted, logged, and followed up via the `run-outreach` skill.
 
 </essential_principles>
 
@@ -46,16 +46,17 @@ Spawn parallel web-research agents (one per channel or per sub-question), each i
 2. **Sector lists and directories:** industry directories, accelerator/incubator portfolios (§16.5), award lists, market-landscape articles. For legal: the LawNext Directory and Legaltech Hub (both already in the base as amplifiers) are sourcing databases.
 3. **LinkedIn discovery:** find people via web search that surfaces LinkedIn URLs (search "<company> CEO LinkedIn", "<role> <industry> <geo> site:linkedin.com"), then verify by scraping. There is no verified people-search actor — never construct profile slugs from names.
 4. **Own intent data:** engagers captured by `capture-post-engagers`, amplifier comment sections, and existing base records flagged for the cluster.
+5. **Institutional plug-in targets:** organizations that already run infrastructure the solution can sit on top of, rather than needing to become a standalone product — lower-friction than pitching a platform to add a feature. See `references/tiering-model.md` for the per-cluster examples and trigger types.
 
 Cache agent findings; every candidate carries its source URL(s).
 
 **Step 4: Gate (anti-ICP, §11 — pass/fail, before any scoring)**
 
-Exclude, with the reason recorded: tender-only cold pursuits (a formal RFP with no warm path, no partner, no adjacent shipped proof — an RFP *with* those is pursuable, e.g. IsDB via IFAAS); pre-revenue startups cofounder-hunting; price-shoppers for commodity automations; no nameable pain or no real intent to pay. No signal compensates for failing the gate.
+Apply only the research-observable tests, with the reason recorded: tender-only cold pursuits (a formal RFP with none of the four unlocks: warm path, partner, adjacent shipped proof, or a live public demo of the solution class — any one unlock makes it pursuable, e.g. IsDB via IFAAS); pre-revenue startups cofounder-hunting; dormant companies (no operating activity since 2024); core-competency conflict (AI is the core product AND an established in-house AI/ML team exists — they build, not buy). An acquired company is never gated — it is an ordinary candidate with its own budget. Do NOT infer §11's other two tests (price-shopper, no intent to pay) from search — they are conversation-stage disqualifiers Hisham applies after contact. Nonprofit status and missing procurement records are not gate criteria. No signal compensates for failing the gate.
 
 **Step 5: Tier the survivors**
 
-Assign Tier A / B / C per `references/tiering-model.md`. Summary: **A** = gate + (genuine warm path OR fresh live trigger OR validated demand + peers responding) → founder attention this week. **B** = gate + validated demand, no live signal → light touch, watch. **C** = gate only → monitored bench. Apply the three movement rules: warm path promotes a tier (10–20x conversion evidence); triggers decay (full <30 days, half to 90, expired after); 2+ cold peers in the cluster replying promotes the remaining cluster accounts one tier. Use the worksheet's points only to order accounts *within* a tier.
+Assign Tier A / B / C per `references/tiering-model.md`. Summary: **A** = gate + (genuine warm path OR fresh live trigger OR validated demand + peers responding) → founder attention this week. **B** = gate + validated demand, no live signal → light touch, watch. **C** = gate passed but the cluster has no validated demand yet (empty for EdTech/Legal/Influencer Marketing) → monitored bench. Apply the three movement rules: warm path promotes a tier (10–20x conversion evidence); triggers decay (full <30 days, half to 90, expired after); 2+ cold peers in the cluster replying promotes the remaining cluster accounts one tier. Use the worksheet's points only to order accounts *within* a tier.
 
 **Step 6: Map buying committees (Tier A + upper Tier B only)**
 
@@ -73,9 +74,9 @@ Write the bench document to `/home/hisham/ai-agency/content-engine/docs/marketin
 # <Cluster> ICP bench
 **Run date:** <date> · **Sources:** <channels used> · **Calibration:** passed/details
 ## Tier A — founder attention this week
-| Company | Why this tier (signal + evidence URL) | Proposed contacts (entry → destination) | Proof-match |
+| Company — what they do | Why the companion fits them (product-level, specific) | Why this tier (signal + evidence URL) | Proposed contacts (entry → destination) | Status |
 ## Tier B — light touch, watch for signals
-| Company | Validated demand basis | Known signals watchlist |
+| Company — what they do | Why the companion fits them | Known signals watchlist | Status |
 ## Tier C — monitored bench
 | Company | Gate-pass basis |
 ## Gated out (with reasons)
@@ -83,11 +84,13 @@ Write the bench document to `/home/hisham/ai-agency/content-engine/docs/marketin
 <candidates where research found no trigger/warm path — stated plainly>
 ```
 
-Present the Tier A recommendations in conversation (spelled out, not just the file) and ask Hisham which accounts to approve. Never onboard from the bench without explicit per-account approval.
+Every Tier A and Tier B row starts with Status `Proposed` (values: Proposed / Approved / Rejected / Onboarded). Tier A Proposed rows are the pending approval decisions the `run-outreach` Status report surfaces; Tier B rows stay Proposed (light touch) unless Hisham chooses to approve one.
+
+Present the Tier A recommendations in conversation (spelled out, not just the file — lead with WHAT THEY DO and WHY WE FIT, then the trigger; a trigger says when to call, fit says why they'd care) and ask Hisham which accounts to approve. Never onboard from the bench without explicit per-account approval.
 
 **Step 9: Chain approved accounts into onboarding**
 
-For each approved account, invoke `onboard-icp-account` (its Step 3b creates the Companies record with Industry, Tier, honest Warm Path text, Progression = Unaware; contacts follow). Bench entries that were onboarded get marked `→ onboarded <date>` in the bench file.
+For each approved account, invoke `onboard-icp-account` (its Step 3b creates the Companies record with Industry, Tier, honest Warm Path text, Progression = Unaware; contacts follow). Record Hisham's per-account answers in the bench Status column immediately (Approved / Rejected), and set `Onboarded` once the account is in Airtable.
 
 **Step 10: Maintenance mode (re-tiering)**
 

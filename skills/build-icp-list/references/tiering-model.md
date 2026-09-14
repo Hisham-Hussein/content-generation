@@ -20,11 +20,28 @@ ALL CANDIDATES → GATE (anti-ICP, pass/fail) → TIER A / B / C → (points = t
 
 ## Gate (from strategy §11 — no signal compensates for failing it)
 
-- Tender-only cold pursuits: only path to a deal is a formal RFP chased cold (no warm path,
-  no partner, no adjacent shipped proof). An RFP WITH warm path/partner passes (IsDB via IFAAS).
-- Pre-revenue startups seeking a technical cofounder in vendor's clothing
-- Price-shoppers for commodity automations
-- No nameable pain or no real intent to pay
+Only what web research can actually observe belongs in the sourcing gate. Two of §11's four anti-ICP
+tests are conversation-stage facts and are deliberately NOT applied here.
+
+**Sourcing gate (applied by this skill, research-observable):**
+- Tender-only cold pursuit: the only path to a deal is a formal RFP chased cold. Four unlocks, any one
+  of which passes a government/RFP account: warm path · partner carrying us in · adjacent shipped
+  proof · a live public demo of the solution class (the iSemantics AI book/learning companion demo,
+  once live — a public buyer can experience the product before any procurement step). IsDB via IFAAS
+  passes on partner + adjacent proof.
+- Pre-revenue startup seeking a technical cofounder in vendor's clothing (visible from stage/funding).
+- Dormant: no operating activity since 2024 (no product updates, posts, or news).
+- Core-competency conflict: AI is the company's core product AND it has an established in-house AI/ML
+  engineering team (observable: product description + AI/ML roles or a CTO-led AI product in production).
+  Such companies build, not buy, the thing we sell. Both halves must hold — an AI-native startup with
+  funding but no team yet buys speed (§16.5 enablement motion) and passes; technical founders at seed
+  stage are a first-call build-vs-buy qualifier, not a gate.
+
+**Conversation-stage disqualifiers (applied by Hisham after first contact — never inferred from search):**
+- Price-shopper for commodity automations
+- No nameable pain, or no real intent to pay
+These feed the drop rule (movement rule 4), not the sourcing gate. Legal form (nonprofit,
+foundation) and absence of public procurement records are NOT gate criteria at either stage.
 
 ## Tiers and their attached actions
 
@@ -32,7 +49,7 @@ ALL CANDIDATES → GATE (anti-ICP, pass/fail) → TIER A / B / C → (points = t
 |---|---|---|
 | **A** | Gate + ANY of: genuine warm path · fresh live trigger (<30d) · validated demand AND peers responding to the live campaign | Founder 1:1 attention this week: committee mapped, entry contact chosen, outreach sequence drafted |
 | **B** | Gate + validated demand (a paying client exists in this cluster, any channel) but no live signal | Light touch: cluster-aimed posts, occasional comment; watch for triggers |
-| **C** | Gate only | Monitored bench; promoted when a signal appears |
+| **C** | Gate passed, but the cluster has NO validated demand yet (no paying client in this cluster — e.g. Banking at the time of writing). Empty by definition for any cluster with a paid project (EdTech, Legal, Influencer Marketing) | Monitored bench; the whole tier converts to B the day the cluster's first paid project lands |
 
 ## Signal definitions
 
@@ -43,7 +60,9 @@ ALL CANDIDATES → GATE (anti-ICP, pass/fail) → TIER A / B / C → (points = t
   DIFFERENT signal from demand — it proves our pitch manufactures awareness in the unaware
   (an inbound client only proves demand among the already-aware, who self-selected).
 - **Live trigger:** AI hiring, funding, public AI initiative, acquisition of AI capability,
-  regulatory pressure. Must be evidenced with a URL and a date.
+  regulatory pressure. Must be evidenced with a URL and a date. Buying a non-AI company is NOT a
+  trigger. An acquisition never gates the acquired company: it is an ordinary candidate with its own
+  budget and buying decisions.
 - **Warm path:** existing 1st-degree connection, a referral/introducer, a partner carrying us in,
   or meaningful engagement with our content. Must name the actual path.
 
@@ -88,3 +107,25 @@ the worksheet just sorts the queue.
   via Aroob, no live signal) — the model must reproduce both states
 - King Fahad National Library → Tier A (live conversation via Nabeel)
 - A procurement-only ministry → must fail the gate
+
+
+## Institutional plug-in targets (channel 5 detail)
+
+Organizations that already run infrastructure the solution can sit on top of, across the whole
+target geography for the cluster at once (e.g. GCC + Egypt together, not country by country):
+
+- **EdTech:** universities (private ones pass the gate directly; public ones need an unlock),
+  corporate L&D departments, and digital libraries already running an LMS, curriculum platform,
+  or digital collection — the companion plugs into the existing system. Trigger types: a new
+  AI-in-teaching or digital-transformation initiative, a new e-learning deanship or CDO-type hire,
+  LMS migration, NELC/accreditation-linked digital-program approval.
+- **Legal:** law firms and corporate legal departments with an existing document-management or
+  matter-management system.
+- **Retail:** chains with an existing e-commerce or CRM platform.
+- **Influencer Marketing:** agencies with an existing campaign-management tool.
+
+A consultant or advisor already contracted to pitch an institution is both a Tier A account in
+their own right and a repeatable broker channel — ask who else they advise. Template case:
+Almaarefa University (Tier A, Proposal stage) via Dr. Saja Aldera, an existing iSemantics client
+now consulting there, who contracted an LMS provider and is negotiating the AI-companion layer
+for six diploma modules.
