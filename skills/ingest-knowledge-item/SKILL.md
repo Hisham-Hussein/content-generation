@@ -108,7 +108,7 @@ If the user's intent is clear from context (e.g., they've been ingesting similar
 
 **Step 7: Create the Airtable record**
 
-Use `mcp__airtable__create_records_for_table` with the field IDs from the mappings reference. Set these fields:
+Use `mcp__claude_ai_Airtable__create_records_for_table` with the field IDs from the mappings reference. Set these fields:
 
 - **Title** (required) — descriptive name of the source
 - **Type** — from Step 6 (usually "External Knowledge")
