@@ -11,9 +11,9 @@ if [[ ! -f "$CE/.env" ]]; then
   echo "seo.sh: no .env in $CE (set CONTENT_ENGINE_DIR)" >&2
   exit 2
 fi
-if [[ ! -f "$MAIN" ]]; then
-  echo "seo.sh: CLI not built; building @repo/keyword-research" >&2
-  (cd "$CE" && npx turbo run build --filter=@repo/keyword-research >&2)
+if [[ -z "${SEO_CLI_MAIN:-}" ]]; then
+  # Always build: turbo's cache makes it quick, and a stale build would miss CLI changes pulled since.
+  (cd "$CE" && npx turbo run build --filter=@repo/keyword-research --output-logs=errors-only >&2)
 fi
 
 set -a

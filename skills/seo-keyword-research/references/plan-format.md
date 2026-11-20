@@ -48,7 +48,7 @@
 | `pages[].id` | A stored page's record ID (`rec…` from the summary's `# pages`) to update that page. Omit for a new page |
 | `pages[].markets` | One or more market labels of one language. One page per language serves every market in it; one country only when the topic exists only there (Mawthooq: Saudi Arabia) or that country's own words have real volume. A stored page may change its markets, not its language |
 | `pages[].pillar` | A pillar in this plan or a stored pillar, by name |
-| `pages[].hub` | Optional. The hub page of its cluster: a stored page's record ID, or another plan page's primary merge key (same language; if two plan pages match, use a record ID) |
+| `pages[].hub` | The hub page of its cluster (see Hubs in SKILL.md; leave it out only for a hub or a standalone page): a stored page's record ID, or another plan page's primary merge key (same language; if two plan pages match, use a record ID) |
 | `pages[].contentType` | Free text, e.g. `landing page`, `comparison`, `how-to guide`, `use case`, `glossary` |
 | `pages[].format` | `searchable`, `shareable`, `both` |
 | `pages[].buyerStage` | `awareness`, `consideration`, `decision`, `implementation` |
