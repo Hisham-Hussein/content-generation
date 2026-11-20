@@ -1,6 +1,6 @@
 ---
 name: seo-keyword-research
-description: Plans a product's SEO content from real keyword data - pillars, seed keywords, DataForSEO keyword and competitor fetches, relevance scoring, and a page plan (one primary keyword per page) saved to the product's Airtable base. Use whenever Hisham wants keyword research, an SEO content plan, a keyword-to-page map, competitor keywords, "what should we write for SEO", or to refresh or extend an existing keyword plan for Kastio or any product with a .agents/product-marketing.md, including Arabic / GCC markets, even if he doesn't say "DataForSEO" or "Airtable".
+description: Plans a product's SEO content from real keyword data - pillars, seed keywords, DataForSEO keyword and competitor fetches, relevance scoring, and a page plan (one primary keyword per page) saved to the product's Airtable base. Use whenever Hisham wants keyword research, an SEO content plan, a keyword-to-page map, competitor keywords, "what should we write for SEO", or to refresh or extend an existing keyword plan for Kastio or any product with a .agents/product-marketing.md, including Arabic / MENA markets, even if he doesn't say "DataForSEO" or "Airtable".
 ---
 
 # SEO keyword research
@@ -44,7 +44,7 @@ bash $S/seo.sh <command> --product <absolute path of the product repo> [options]
 | `save --run <id> [--plan <file>] --dry-run` | Validates the plan, prints create/update counts | Free read |
 | `save --run <id> [--plan <file>]` | Writes the plan to Airtable | **Writes** |
 
-A market label is `<location_name>/<language_name>` as DataForSEO spells them, e.g. `Saudi Arabia/Arabic`, `United Arab Emirates/English`.
+A market label is `<location_name>/<language_name>` as DataForSEO spells them, e.g. `Egypt/Arabic`, `United Arab Emirates/English`.
 
 ## The run
 
@@ -59,7 +59,11 @@ A market label is `<location_name>/<language_name>` as DataForSEO spells them, e
      "airtableTokenEnv": "KEYWORD_AIRTABLE_TOKEN",
      "ownDomain": "kastio.ai",
      "competitorDomains": ["modash.io", "hypeauditor.com"],
-     "markets": [{ "location": "Saudi Arabia", "language": "Arabic" }],
+     "markets": [
+       { "location": "Egypt", "language": "Arabic" },
+       { "location": "Saudi Arabia", "language": "Arabic" },
+       { "location": "United Arab Emirates", "language": "English" }
+     ],
      "caps": { "suggestions": 200, "related": 200, "ranked": 200, "site": 200 }
    }
    ```
@@ -73,16 +77,16 @@ Invoke `marketing-skills:content-strategy` and work from its "Content Pillars an
 
 - Run `pillars`. On a re-run, reuse stored pillar names exactly (matching is by name), so the plan grows instead of forking.
 - Pick 3–5 pillars, each tied to what the product sells.
-- Markets come from the config's `markets`, otherwise from the context file; ask only if it doesn't settle them.
+- Markets come from the config's `markets`, otherwise from the context file; ask only if it doesn't settle them. Run every market they list; never narrow to one country on your own.
 - Write seeds per pillar **in each market's language**, spread across buyer stages (awareness, consideration, decision, implementation) with the stage's modifiers ("what is", "best", "vs", "pricing", "how to"). A seed only runs in markets whose language matches its `language`, so an English seed needs an English market.
-- Arabic seeds use the words buyers actually type, often colloquial or Gulf usage (e.g. موثوق, مشاهير), not formal Modern Standard terms; formal phrasings tend to return near-zero volume.
+- Arabic seeds use the words buyers actually type, often colloquial and in the market's own dialect, which differs between Egypt, Saudi Arabia and the UAE (e.g. مشاهير), not formal Modern Standard terms; formal phrasings tend to return near-zero volume.
 - Intent mode: `claude` (you tag intent, free) unless Hisham asks for DataForSEO's intent (`dataforseo`, a second paid step).
 
 Write the input file outside the product repo (e.g. the session scratchpad):
 
 ```json
 {
-  "markets": [{ "location": "Saudi Arabia", "language": "Arabic" }],
+  "markets": [{ "location": "Egypt", "language": "Arabic" }],
   "intentMode": "claude",
   "seeds": [{ "keyword": "منصة مشاهير", "language": "Arabic", "pillar": "Influencer discovery" }]
 }

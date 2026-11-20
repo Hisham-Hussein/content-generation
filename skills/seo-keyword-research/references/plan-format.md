@@ -10,13 +10,13 @@
     { "name": "Influencer discovery", "rationale": "Why buyers care", "connection": "How the product serves it" }
   ],
   "keywords": [
-    { "mergeKey": "منصه مشاهير", "market": "Saudi Arabia/Arabic", "relevance": 3, "intent": "commercial" },
-    { "mergeKey": "مشاهير سناب", "market": "Saudi Arabia/Arabic", "relevance": 1 }
+    { "mergeKey": "منصه مشاهير", "market": "Egypt/Arabic", "relevance": 3, "intent": "commercial" },
+    { "mergeKey": "مشاهير سناب", "market": "Egypt/Arabic", "relevance": 1 }
   ],
   "pages": [
     {
-      "title": "منصة للبحث عن مشاهير السوشال ميديا في السعودية",
-      "market": "Saudi Arabia/Arabic",
+      "title": "منصة للبحث عن مشاهير السوشال ميديا في مصر",
+      "market": "Egypt/Arabic",
       "pillar": "Influencer discovery",
       "contentType": "landing page",
       "format": "searchable",
