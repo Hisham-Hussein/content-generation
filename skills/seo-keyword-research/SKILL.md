@@ -77,6 +77,7 @@ Invoke `marketing-skills:content-strategy` and work from its "Content Pillars an
 
 - Run `pillars`. On a re-run, reuse stored pillar names exactly (matching is by name), so the plan grows instead of forking.
 - Pick 3–5 pillars, each tied to what the product sells.
+- **Objective:** every run has one: `launch` (decision and comparison pages first, with awareness basics), `awareness` or `sales`. Take it from Hisham's request, otherwise ask him. It goes in the input file and drives how you score customer impact.
 - Markets come from the config's `markets`, otherwise from the context file; ask only if it doesn't settle them. Run every market they list; never narrow to one country on your own.
 - Write seeds per pillar **in each market's language**, spread across buyer stages (awareness, consideration, decision, implementation) with the stage's modifiers ("what is", "best", "vs", "pricing", "how to"). A seed only runs in markets whose language matches its `language`, so an English seed needs an English market.
 - Arabic seeds use the words buyers actually type, often colloquial and in the market's own dialect, which differs between Egypt, Saudi Arabia and the UAE (e.g. مشاهير), not formal Modern Standard terms; formal phrasings tend to return near-zero volume.
@@ -87,6 +88,7 @@ Write the input file outside the product repo (e.g. the session scratchpad):
 ```json
 {
   "markets": [{ "location": "Egypt", "language": "Arabic" }],
+  "objective": "launch",
   "intentMode": "claude",
   "seeds": [{ "keyword": "منصة مشاهير", "language": "Arabic", "pillar": "Influencer discovery" }]
 }
@@ -115,7 +117,10 @@ This is the part only you can do. Use `marketing-skills:content-strategy` ("Prio
   0 = no angle.
   Only new keywords scored 2–3, and every keyword placed on a page, are saved; the rest stay in the raw files.
 - **Intent** (`claude` mode only): informational, navigational, commercial or transactional, required for every keyword scored 2–3 and every keyword on a page. In `dataforseo` mode leave intent out.
-- **Pages:** group keywords into clusters; each page gets exactly one primary keyword plus supporting ones, all in the page's market, and each keyword sits on at most one page. Extend before you add: if a stored page already covers a cluster, list it with its `id` and its full new keyword set. A keyword on a page whose status is writing or published is locked to that page and role. Score each page 1–10 on customer impact, content fit, search potential and resources (the CLI weights them 40/30/20/10), set buyer stage, format and content type, and write "why this page" in one or two plain sentences grounded in the summary's numbers.
+- **Pages:** group keywords into clusters; each page gets exactly one primary keyword plus supporting ones, and each keyword sits on at most one page. One page per language serves every market in that language (one Arabic page for Egypt, Saudi Arabia and the UAE); give a country its own page only when the topic exists only there (Mawthooq: Saudi Arabia) or that country's own words have real search volume. When a keyword is weak (relevance 0–1) or locked elsewhere in one market, narrow the page's markets or leave that keyword off. Extend before you add: if a stored page already covers a cluster, list it with its `id` and its full new keyword set; a stored Saudi-only page can be widened to the other markets of its language.
+- **Re-score the whole backlog:** list every stored page whose status is planned or empty and that has a market in this run, with fresh scores; the save rejects a plan that leaves one out. Pages outside the run's markets keep their scores until a run covers them, so a run across all markets re-scores the whole backlog. Retire a planned page that was merged into another or is obsolete with a drop entry. A keyword on a page whose status is writing or published is locked to that page and role.
+- **Scores:** score each page 1–10 on customer impact (against the run's objective: an awareness run ranks awareness pages higher, a sales run decision pages), content fit and resources. Search potential is computed by the CLI from the page's volume and its primary keyword's difficulty; never set it. Set buyer stage, format and content type, and write "why this page" in one or two plain sentences grounded in the summary's numbers.
+- **Before saving, two checks:** (1) do the pillars still fit the data? Rename, merge or add pillars (a renamed pillar is new; the old one keeps the pages you don't list). (2) the mix: the dry run prints page counts by buyer stage, intent and format for the top 10 and for all planned pages; compare them with the objective and rebalance customer impact if they don't fit. Corey's 60% searchable, 30% shareable, 10% experimental is a starting ratio, not a rule.
 
 Exact JSON shape, field values and the save's validation rules: read `references/plan-format.md` before writing the plan.
 
@@ -135,7 +140,7 @@ node $S/plan-tools.mjs assemble <runDir>/judgment.json <runDir>/plan.json <runDi
 
 1. Write the plan to `<runDir>/plan.json` (the default path `save` reads).
 2. `save --run <id> --dry-run`. Errors are printed one per line; fix the plan and repeat until it prints the counts.
-3. Show Hisham the counts (pillars, pages, keywords to create / update) and the top pages by priority. On yes: `save --run <id>`.
+3. Show Hisham the counts (pillars, pages, keywords to create / update), the pages to be deleted by name, the mix against the objective and the top pages by priority. On yes: `save --run <id>`.
 4. Finish in at most three short lines: what was saved, the cost, anything he must do (e.g. review pages in Airtable).
 
 Saving the same plan twice changes nothing, so a re-run of `save` after an interruption is safe.
