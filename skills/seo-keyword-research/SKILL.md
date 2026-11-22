@@ -1,6 +1,6 @@
 ---
 name: seo-keyword-research
-description: Plans a product's SEO content from real keyword data - pillars, seed keywords, DataForSEO keyword and competitor fetches, relevance scoring, Google's top results for the keywords that matter, and a page plan (one primary keyword per page) saved to the product's Airtable base. Use whenever Hisham wants keyword research, an SEO content plan, a keyword-to-page map, competitor keywords, what ranks on Google for our keywords, "what should we write for SEO", or to refresh or extend an existing keyword plan for Kastio or any product with a .agents/product-marketing.md, including Arabic / MENA markets, even if he doesn't say "DataForSEO" or "Airtable".
+description: Plans a product's SEO content from real keyword data - pillars, seed keywords, DataForSEO keyword and competitor fetches, relevance scoring, Google's top results for the keywords that matter, and a page plan (one primary keyword per page) saved to the product's Airtable base. Use whenever Hisham wants keyword research, an SEO content plan, a keyword-to-page map, competitor keywords, what ranks on Google for our keywords, "what should we write for SEO", or to refresh or extend an existing keyword plan for Kastio or any product with a .agents/product-marketing.md, including Arabic / MENA markets, even if he doesn't say "DataForSEO" or "Airtable". Also use it to check a few named keywords in their markets without a full run (a keyword check): "check this keyword", "how hard is X to rank for", "volume of X in Saudi", "what ranks for X".
 ---
 
 # SEO keyword research
@@ -13,7 +13,7 @@ Design spec, if a rule here is unclear: `~/ai-agency/content-engine/docs/superpo
 
 These come from how Hisham works and from the spec's anti-goals; each has a reason.
 
-- **Money and Airtable need his yes, every time.** DataForSEO calls cost real money, and the base is his live plan. Never pass `--confirm` to `fetch`, `intent`, `results` or `traffic`, never run `save` without `--dry-run`, and never run `provision`, until Hisham has said yes to that step in this conversation. Show the number (dollars, or rows to create/update) when you ask.
+- **Money and Airtable need his yes, every time.** DataForSEO calls cost real money, and the base is his live plan. Never pass `--confirm` to `fetch`, `intent`, `results`, `traffic` or `check`, never run `save` or `check --save` without `--dry-run`, and never run `provision`, until Hisham has said yes to that step in this conversation. Show the number (dollars, or rows to create/update) when you ask. One yes covers a whole keyword check (figures, Google's results and traffic): `check --confirm` is the one paid step, so a later `check --collect` that sends the traffic calls it paid for needs no new yes.
 - **Never read raw API rows.** Raw responses sit in `<product>/.agents/seo/raw/<runId>/` (Google's results under `results/`, traffic under `traffic/`) and can be thousands of rows; they burn context and invite you to quote numbers out of context. Read only `summary.txt`. For one keyword's full record, its Google results and traffic figures included, use `detail`.
 - **Never invent values.** Volume, difficulty, intent, position, competitor ranks, Google's results and traffic figures come from the API or stay empty. Your judgments go only into the plan's own fields (relevance, intent in `claude` mode, page scores, why).
 - **Never guess domains or IDs.** Competitor domains, the base ID and record IDs come from Hisham, the summary or a command's output.
@@ -28,7 +28,7 @@ S=<this skill's directory>/scripts
 bash $S/seo.sh <command> --product <absolute path of the product repo> [options]
 ```
 
-`--product` must be absolute. Each command prints one JSON line on stdout; errors go to stderr with exit code 1. Commands:
+`--product` must be absolute. Each command prints one JSON line on stdout, except `check --confirm`, which prints the figures line first and the final report after it (read the last line for the report); errors go to stderr with exit code 1. Commands:
 
 | Command | What it does | Costs / writes |
 |---|---|---|
@@ -45,11 +45,26 @@ bash $S/seo.sh <command> --product <absolute path of the product repo> [options]
 | `results --run <id> --collect` | Collects pending tasks only; posts nothing | Free |
 | `traffic --run <id> [--plan <file>]` | Estimate for the monthly traffic of the top results of each page's primary keyword | Free |
 | `traffic --run <id> [--plan <file>] --confirm` | Runs the traffic calls | **Paid** |
-| `detail --run <id> --key <merge key> --market <label>` | One keyword with every source row, its Google results (`results`) and traffic figures (`traffic`) | Local only |
+| `detail --run <id> --key <merge key> --market <label>` | One keyword with every source row, its Google results (`results`), traffic figures (`traffic`) and Kw. per URL (`kw`: the keywords that URL ranks for) | Local only |
 | `save --run <id> [--plan <file>] --dry-run` | Validates the plan, prints create/update counts | Free read |
 | `save --run <id> [--plan <file>]` | Writes the plan to Airtable | **Writes** |
+| `check --input <file>` | Creates a keyword check run, prints its `runId` and estimate | Local only |
+| `check --run <id> --confirm [--compare]` | Fetches the check's figures, posts its Google results tasks, collects, then sends its traffic calls | **Paid** |
+| `check --run <id> --collect [--compare]` | Collects pending tasks; sends the traffic calls the confirm paid for once none is pending | Free (paid at confirm) |
+| `check --run <id> --save [--compare] [--dry-run]` | Writes the checked keywords and a run-log row to Airtable; `--dry-run` prints what it would write | **Writes** / free read |
 
 A market label is `<location_name>/<language_name>` as DataForSEO spells them, e.g. `Egypt/Arabic`, `United Arab Emirates/English`.
+
+## Keyword check
+
+A keyword check looks up a few named keywords in their markets without a full run, Ahrefs Keywords Explorer style: volume, difficulty, CPC, intent and trend, Google's top results with each URL's traffic and Kw., traffic potential, and the results group. It is a run of its own (Run ID `check-…`), so it never touches a run's files.
+
+1. **Write the input file** in a scratch place (e.g. `/tmp/check-input.json`): `{ "keywords": [{ "keyword": "…", "markets": ["Saudi Arabia/Arabic"] }] }`. Spell each keyword as Hisham gave it, since the check reports that spelling. Take the markets from his request, else from the context file's markets; ask when it's unclear. List each keyword once with all its markets: the CLI rejects a keyword named twice, and allows at most 100 keywords in a market.
+2. `check --input <file>` creates the check and prints its estimate (`estimate.total` in dollars, at caps, so the real cost is usually lower). Show Hisham the dollars and ask for his yes. In the same question offer the compare option unless he already asked for it: a free read of his Airtable plan that says which planned page a keyword's results group belongs to.
+3. On yes: `check --run <id> --confirm`, plus `--compare` if he said yes to it, with a 600000 ms Bash timeout, since it collects Google's results for up to 8 minutes. Both lines come back at the end: the figures line first, the report on the last line. If the timeout cuts it short, run `--confirm` again (it pays for nothing already recorded) or `--collect`. If it stops with `may have been sent before the command stopped`, a request may have been charged with no answer saved: tell Hisham and don't re-run on a guess.
+4. While the report's `pending` is above 0, run `check --run <id> --collect` (the same `--compare` choice), each with a 600000 ms timeout; Google's first results take about 5 minutes. The loop ends: a task still pending after 3 collects becomes failed, and failed tasks are reported. `unconfirmedPosts` in the output means a results request may have been charged without being recorded: tell Hisham to check the DataForSEO task list.
+5. **Present it from the last line's report only**, never from the raw files (`detail` does not work on a check run). Keep it brief, as a table per market when there are more than a few keywords: per keyword and market, volume, KD (null is "no KD", never 0), CPC, intent and trend; the top results with traffic and Kw. per URL; traffic potential (the #1 result's traffic, Ahrefs' definition); people also ask; whether Google shows an AI overview and the domains it cites; and the results group. With `--compare`, a group's `stored` names the planned keyword it joined, its page and its Results date: say "this keyword belongs to the page you planned for X". List `noData` keywords as "DataForSEO has no data" and `figuresFailed` keywords as "figures call failed (check again to retry)". Report `stopped` (a part cost more than its share of the estimate, so the check paid nothing more) and failed tasks plainly.
+6. **Save only when Hisham asks.** Run `check --run <id> --save --dry-run` (the same `--compare` choice), show him the new and updated rows, the keywords saved with empty figures (`noData`, `figuresFailed`) and the cost, then `check --run <id> --save` after his yes. Saved rows get `check` in Sources. New rows are gap keywords with no relevance or page, so a later run can place them; an existing row keeps its page, relevance and spelling, because the plan owns those.
 
 ## The run
 
@@ -175,7 +190,7 @@ This makes the plan's keywords exactly `scores.json`, the scores the results ste
 
 1. `traffic --run <id>` → the estimate (`estimate` in dollars, `calls`, `urls`, `withoutResults`). Show Hisham the dollars, the URL count and the primary keywords in `withoutResults` (no Google results, so nothing to measure), and ask for a yes.
 2. On yes: `traffic --run <id> --confirm`; report `costUsd` and any `failedCalls`. If `traffic` fails with `may have been sent before the command stopped`, a call may have been charged with no answer saved. Stop and tell Hisham. Every later `traffic` run stops on it until the intent file the message names (`traffic/call-<n>.intent.json`) is deleted: delete it only on Hisham's yes, after the DataForSEO dashboard shows whether the call was charged, because the next `--confirm` sends that call again.
-3. Read the figures with `detail` (its `traffic` key: estimated monthly visits per top URL). They inform the judgment and never decide it: a URL can show 0, or a one-off spike.
+3. Read the figures with `detail` (its `traffic` key: estimated monthly visits per top URL; `kw`: the keywords each URL ranks for). They inform the judgment and never decide it: a URL can show 0, or a one-off spike.
 
 A primary in `withoutResults` is judged from its other data; running step 5's results commands after the plan names it fetches its results if it qualifies (scored 2–3, volume above 0). Running `traffic` again after you change a primary pays only for URLs not measured yet.
 
@@ -186,6 +201,6 @@ A primary in `withoutResults` is judged from its other data; running step 5's re
 3. Show Hisham the counts (pillars, pages, keywords to create / update), the pages to be deleted by name, the mix against the objective, the pages left without a hub and the top pages by priority. On yes: `save --run <id>`.
 4. Finish in at most three short lines: what was saved, the full cost (fetch, intent, results and traffic), anything he must do (e.g. review pages in Airtable).
 
-Besides the plan, the save writes each keyword's Google results fields from this run (SERP link, top results, people also ask, AI overview and its cites, results group, results date; a primary keyword's top results carry their traffic figures); the dry run's keyword counts include those changes. A keyword with no result this run (not fetched, or its task failed) keeps its stored results fields, so a re-run never blanks them. The run's logged cost adds the results and traffic costs to fetch and intent.
+Besides the plan, the save writes each keyword's Google results fields from this run (SERP link, top results, people also ask, AI overview and its cites, results group, results date; a primary keyword's top results carry their traffic figures, each line ending with Kw. when traffic was fetched); the dry run's keyword counts include those changes. A keyword with no result this run (not fetched, or its task failed) keeps its stored results fields, so a re-run never blanks them. The run's logged cost adds the results and traffic costs to fetch and intent.
 
 Saving the same plan twice changes nothing, so a re-run of `save` after an interruption is safe.
