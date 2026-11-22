@@ -15,7 +15,7 @@
 //     (normally the one scores.json). Writes the plan the CLI's save reads and prints
 //     {"keywords": n, "duplicates": [...]}; exits 1 when a keyword is scored twice.
 //
-// Any usage or JSON error exits 2.
+// Any usage, read or JSON error exits 2, with the reason (and the file, for JSON) on stderr.
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
@@ -42,13 +42,23 @@ async function split(summaryPath, outDir, size = '300') {
   console.log(JSON.stringify({ chunks, keywords: rows.length }));
 }
 
+// Reads one JSON file; a parse error names the file, so the caller knows which one to write again.
+async function readJsonFile(path) {
+  const text = await readFile(path, 'utf8');
+  try {
+    return JSON.parse(text);
+  } catch (error) {
+    throw new Error(`${path} is not valid JSON: ${error.message}`);
+  }
+}
+
 // Reads the scores files in order; returns every entry and the mergeKey|market keys seen twice.
 async function readScores(command, scorePaths) {
   if (scorePaths.length === 0) throw new Error(`${command} needs at least one scores file`);
   const keywords = [];
   const seen = new Map();
   for (const path of scorePaths) {
-    const entries = JSON.parse(await readFile(path, 'utf8'));
+    const entries = await readJsonFile(path);
     if (!Array.isArray(entries)) throw new Error(`${path} must contain a JSON array`);
     for (const entry of entries) {
       const key = `${entry.mergeKey}|${entry.market}`;
@@ -69,7 +79,7 @@ async function scores(outPath, scorePaths) {
 
 async function assemble(judgmentPath, outPath, scorePaths) {
   const { keywords, duplicates } = await readScores('assemble', scorePaths);
-  const judgment = JSON.parse(await readFile(judgmentPath, 'utf8'));
+  const judgment = await readJsonFile(judgmentPath);
   const plan = {
     runId: judgment.runId,
     ...(judgment.notes === undefined ? {} : { notes: judgment.notes }),

@@ -138,11 +138,11 @@ Google's top results for a keyword show what kind of page it rewards and which k
    node $S/plan-tools.mjs scores <runDir>/scores.json <runDir>/chunks/scores-*.json
    ```
 
-   It prints `{"keywords": n, "duplicates": [...]}`; `n` should equal the summary's keyword count, or a helper skipped rows. Exit 1 means a keyword was scored twice: keep one entry in the chunk files and merge again. Exit 2 means a chunk file is not a JSON array: dispatch that chunk again.
+   It prints `{"keywords": n, "duplicates": [...]}`; `n` should equal the summary's keyword count, or a helper skipped rows. Exit 1 means a keyword was scored twice: keep one entry in the chunk files and merge again. Exit 2 means a usage, read or JSON error: read stderr. When it names a chunk file that is not a JSON array or not valid JSON, dispatch that chunk again.
 2. `results --run <id>` → the estimate. If `toPost` is 0, nothing is paid: skip to item 4, collecting first if `pending` is above 0. Otherwise show Hisham the keywords to post and the dollars ($0.0012 a keyword) in a line or two, and ask for a yes.
 3. On yes: `results --run <id> --confirm`. Run it, and every `--collect`, with a 10-minute Bash timeout (600000 ms): each can collect for 8 minutes.
    - If the output has `stopped`, DataForSEO charged more per keyword than the estimate and nothing more was posted. Report it to Hisham and post nothing more until he decides: the price he said yes to no longer holds. Collecting what was posted stays free.
-   - If the command fails with `may already be charged`, a request may have created tasks whose answer never arrived. Stop and tell Hisham. Re-run only after the DataForSEO dashboard's task list shows whether that batch was created: if it was, re-running pays for those keywords again (up to $0.12 a batch), so Hisham decides.
+   - If the command fails with `may already be charged` or `may have been sent before the command stopped`, a request may have created and charged tasks the ledger does not know. Stop and tell Hisham. Every later `results` run, the estimate too, stops on it until the intent file the message names (`results/post-<n>.intent.json`) is deleted; `--collect` still collects and lists such requests in `unconfirmedPosts`. Re-run only after the DataForSEO dashboard's task list shows whether that batch was created, and delete the intent file only on Hisham's yes: if the batch was created, the next `--confirm` pays for those keywords again (up to $0.12 a batch).
    - If `pending` is above 0, run `results --run <id> --collect` (free, posts nothing) until it is 0. A task still pending after its third collect is recorded as failed, so this ends.
    - Report done, failed and `postCostUsd` in a line. Failed keywords are planned from their other data; a later run of this step posts them again (its own estimate and yes, cost added).
 4. Re-run `summary --run <id>` and read it again: the `results_group` column is now filled.
@@ -174,7 +174,7 @@ This makes the plan's keywords exactly `scores.json`, the scores the results ste
 **Traffic of the top results (paid).** Once the pages are drafted in `plan.json`:
 
 1. `traffic --run <id>` → the estimate (`estimate` in dollars, `calls`, `urls`, `withoutResults`). Show Hisham the dollars, the URL count and the primary keywords in `withoutResults` (no Google results, so nothing to measure), and ask for a yes.
-2. On yes: `traffic --run <id> --confirm`; report `costUsd` and any `failedCalls`.
+2. On yes: `traffic --run <id> --confirm`; report `costUsd` and any `failedCalls`. If `traffic` fails with `may have been sent before the command stopped`, a call may have been charged with no answer saved. Stop and tell Hisham. Every later `traffic` run stops on it until the intent file the message names (`traffic/call-<n>.intent.json`) is deleted: delete it only on Hisham's yes, after the DataForSEO dashboard shows whether the call was charged, because the next `--confirm` sends that call again.
 3. Read the figures with `detail` (its `traffic` key: estimated monthly visits per top URL). They inform the judgment and never decide it: a URL can show 0, or a one-off spike.
 
 A primary in `withoutResults` is judged from its other data; running step 5's results commands after the plan names it fetches its results if it qualifies (scored 2–3, volume above 0). Running `traffic` again after you change a primary pays only for URLs not measured yet.

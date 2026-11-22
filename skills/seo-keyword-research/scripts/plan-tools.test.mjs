@@ -68,6 +68,20 @@ test('scores rejects a non-array file', async () => {
   assert.match(result.stderr, /must contain a JSON array/);
 });
 
+test('scores rejects a malformed chunk and names it', async () => {
+  // A helper agent can leave a half-written file; exit 2 must say which chunk to dispatch again.
+  const dir = await tempDir();
+  const good = await writeJson(dir, 'scores-01.json', [A]);
+  const bad = join(dir, 'scores-02.json');
+  await writeFile(bad, '[{"mergeKey": "b", "market": "X/Y", "relevance": 1', 'utf8');
+
+  const result = run('scores', join(dir, 'scores.json'), good, bad);
+
+  assert.equal(result.code, 2);
+  assert.match(result.stderr, /scores-02\.json is not valid JSON/);
+  await assert.rejects(readFile(join(dir, 'scores.json')), { code: 'ENOENT' }, 'no out file from a malformed chunk');
+});
+
 test('scores needs chunk files', async () => {
   const dir = await tempDir();
 
