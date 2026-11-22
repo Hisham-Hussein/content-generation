@@ -40,7 +40,7 @@ bash $S/seo.sh <command> --product <absolute path of the product repo> [options]
 | `merge --run <id>` | Dedupes and folds Arabic variants into `merged.json` | Local only |
 | `intent --run <id> [--confirm]` | DataForSEO intent (only in `dataforseo` mode); estimate first | **Paid** with `--confirm` |
 | `summary --run <id>` | Writes `summary.txt`, prints its path and counts | Free read |
-| `results --run <id>` | Estimate for Google's results: keywords to post (`toPost`) and dollars, plus `pending` / `done` / `failed` tasks | Free |
+| `results --run <id>` | Estimate for Google's results: keywords to post (`toPost`) and dollars, plus `pending` / `done` / `failed` tasks and `failedPermanent` (failed keywords never posted again) | Free |
 | `results --run <id> --confirm` | Posts a Google results task for each keyword scored 2–3 in `scores.json` with volume above 0 (never one already pending or done), then collects for up to 8 minutes | **Paid** |
 | `results --run <id> --collect` | Collects pending tasks only; posts nothing | Free |
 | `traffic --run <id> [--plan <file>]` | Estimate for the monthly traffic of the top results of each page's primary keyword | Free |
@@ -139,12 +139,12 @@ Google's top results for a keyword show what kind of page it rewards and which k
    ```
 
    It prints `{"keywords": n, "duplicates": [...]}`; `n` should equal the summary's keyword count, or a helper skipped rows. Exit 1 means a keyword was scored twice: keep one entry in the chunk files and merge again. Exit 2 means a usage, read or JSON error: read stderr. When it names a chunk file that is not a JSON array or not valid JSON, dispatch that chunk again.
-2. `results --run <id>` → the estimate. If `toPost` is 0, nothing is paid: skip to item 4, collecting first if `pending` is above 0. Otherwise show Hisham the keywords to post and the dollars ($0.0012 a keyword) in a line or two, and ask for a yes.
+2. `results --run <id>` → the estimate. If `toPost` is 0, nothing is paid: skip to item 4, collecting first if `pending` is above 0. Otherwise show Hisham the keywords to post and the dollars ($0.0012 a keyword) in a line or two, plus `failedPermanent` when above 0 (keywords DataForSEO refused, which are not posted again), and ask for a yes.
 3. On yes: `results --run <id> --confirm`. Run it, and every `--collect`, with a 10-minute Bash timeout (600000 ms): each can collect for 8 minutes.
    - If the output has `stopped`, DataForSEO charged more per keyword than the estimate and nothing more was posted. Report it to Hisham and post nothing more until he decides: the price he said yes to no longer holds. Collecting what was posted stays free.
    - If the command fails with `may already be charged` or `may have been sent before the command stopped`, a request may have created and charged tasks the ledger does not know. Stop and tell Hisham. Every later `results` run, the estimate too, stops on it until the intent file the message names (`results/post-<n>.intent.json`) is deleted; `--collect` still collects and lists such requests in `unconfirmedPosts`. Re-run only after the DataForSEO dashboard's task list shows whether that batch was created, and delete the intent file only on Hisham's yes: if the batch was created, the next `--confirm` pays for those keywords again (up to $0.12 a batch).
    - If `pending` is above 0, run `results --run <id> --collect` (free, posts nothing) until it is 0. A task still pending after its third collect is recorded as failed, so this ends.
-   - Report done, failed and `postCostUsd` in a line. Failed keywords are planned from their other data; a later run of this step posts them again (its own estimate and yes, cost added).
+   - Report done, failed and `postCostUsd` in a line. Failed keywords are planned from their other data; a later run of this step posts again only temporary failures (its own estimate and yes, cost added), never a refused request (`failedPermanent`). A keyword Google has no results for counts as done, with no results.
 4. Re-run `summary --run <id>` and read it again: the `results_group` column is now filled.
 
 ### 6. Judgment
