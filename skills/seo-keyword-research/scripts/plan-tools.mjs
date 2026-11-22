@@ -1,14 +1,21 @@
 #!/usr/bin/env node
-// Helpers for large runs. Neither command judges anything; they only move rows and JSON.
+// Helpers for the plan. No command judges anything; they only move rows and JSON.
 //
 //   split <summary.txt> <out dir> [rows per chunk = 300]
 //     Writes the "# keywords" section of summary.txt as keywords-01.tsv, keywords-02.tsv, ...
 //     (each with the header line), and prints {"chunks": n, "keywords": total}.
 //
-//   assemble <judgment.json> <out plan.json> <scores-*.json ...>
-//     judgment.json = {runId, notes?, pillars, pages}; each scores file = an array of
-//     {mergeKey, market, relevance, intent?}. Writes the plan the CLI's save reads and prints
+//   scores <out scores.json> <scores-*.json ...>
+//     Each scores file = an array of {mergeKey, market, relevance, intent?}. Concatenates them
+//     in order into one array at <out> and prints {"keywords": n, "duplicates": [...]};
+//     exits 1 (the file is still written) when a mergeKey|market is scored twice.
+//
+//   assemble <judgment.json> <out plan.json> <scores.json ...>
+//     judgment.json = {runId, notes?, pillars, pages}; the scores files are read as by scores
+//     (normally the one scores.json). Writes the plan the CLI's save reads and prints
 //     {"keywords": n, "duplicates": [...]}; exits 1 when a keyword is scored twice.
+//
+// Any usage or JSON error exits 2.
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
@@ -35,9 +42,9 @@ async function split(summaryPath, outDir, size = '300') {
   console.log(JSON.stringify({ chunks, keywords: rows.length }));
 }
 
-async function assemble(judgmentPath, outPath, scorePaths) {
-  if (scorePaths.length === 0) throw new Error('assemble needs at least one scores file');
-  const judgment = JSON.parse(await readFile(judgmentPath, 'utf8'));
+// Reads the scores files in order; returns every entry and the mergeKey|market keys seen twice.
+async function readScores(command, scorePaths) {
+  if (scorePaths.length === 0) throw new Error(`${command} needs at least one scores file`);
   const keywords = [];
   const seen = new Map();
   for (const path of scorePaths) {
@@ -50,6 +57,19 @@ async function assemble(judgmentPath, outPath, scorePaths) {
     }
   }
   const duplicates = [...seen].filter(([, count]) => count > 1).map(([key]) => key);
+  return { keywords, duplicates };
+}
+
+async function scores(outPath, scorePaths) {
+  const { keywords, duplicates } = await readScores('scores', scorePaths);
+  await writeFile(outPath, `${JSON.stringify(keywords, null, 2)}\n`, 'utf8');
+  console.log(JSON.stringify({ keywords: keywords.length, duplicates }));
+  if (duplicates.length > 0) process.exitCode = 1;
+}
+
+async function assemble(judgmentPath, outPath, scorePaths) {
+  const { keywords, duplicates } = await readScores('assemble', scorePaths);
+  const judgment = JSON.parse(await readFile(judgmentPath, 'utf8'));
   const plan = {
     runId: judgment.runId,
     ...(judgment.notes === undefined ? {} : { notes: judgment.notes }),
@@ -64,8 +84,9 @@ async function assemble(judgmentPath, outPath, scorePaths) {
 
 try {
   if (command === 'split') await split(args[0], args[1], args[2]);
+  else if (command === 'scores') await scores(args[0], args.slice(1));
   else if (command === 'assemble') await assemble(args[0], args[1], args.slice(2));
-  else throw new Error('usage: plan-tools.mjs split <summary.txt> <out dir> [size] | assemble <judgment.json> <plan.json> <scores...>');
+  else throw new Error('usage: plan-tools.mjs split <summary.txt> <out dir> [size] | scores <scores.json> <scores-*.json...> | assemble <judgment.json> <plan.json> <scores.json...>');
 } catch (error) {
   console.error(`plan-tools: ${error.message}`);
   process.exitCode = 2;

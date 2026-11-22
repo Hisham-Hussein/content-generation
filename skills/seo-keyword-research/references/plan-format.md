@@ -41,7 +41,7 @@
 |---|---|
 | `runId` | The run's id, exactly |
 | `pillars[]` | New pillars, or stored ones whose rationale/connection you are updating. Matched by name, ignoring case |
-| `keywords[]` | Every keyword in the run's `# keywords` section exactly once. May also re-score a stored keyword |
+| `keywords[]` | Every keyword in the run's `# keywords` section exactly once: the run's `scores.json`, assembled by `plan-tools.mjs assemble` (never written by hand). `scores.json` holds run keywords only, so a stored keyword outside the run is re-scored by a run that fetches it |
 | `keywords[].mergeKey`, `.market` | Copied from the summary's `merge_key` and `market` columns, never retyped from the display spelling (the merge key is folded: ة→ه, أ/إ/آ→ا, ى→ي) |
 | `keywords[].relevance` | 0, 1, 2 or 3 |
 | `keywords[].intent` | `informational`, `navigational`, `commercial`, `transactional`. `claude` mode: required when relevance ≥ 2 or the keyword is on a page. `dataforseo` mode: never present |
